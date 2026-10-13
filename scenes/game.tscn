@@ -1,6 +1,11 @@
-[gd_scene load_steps=2 format=3]
+[gd_scene load_steps=7 format=3]
 
 [ext_resource type="Script" path="res://scripts/game.gd" id="1_game"]
+[ext_resource type="Script" path="res://scripts/board_view.gd" id="2_board"]
+[ext_resource type="Script" path="res://scripts/hud_controller.gd" id="3_hud"]
+[ext_resource type="Script" path="res://scripts/touch_controls.gd" id="4_touch"]
+[ext_resource type="PackedScene" path="res://scenes/pause_overlay.tscn" id="5_pause"]
+[ext_resource type="PackedScene" path="res://scenes/game_over_overlay.tscn" id="6_gameover"]
 
 [node name="Game" type="Control"]
 layout_mode = 3
@@ -20,13 +25,197 @@ grow_horizontal = 2
 grow_vertical = 2
 color = Color(0.043, 0.063, 0.125, 1)
 
-[node name="MenuButton" type="Button" parent="."]
-layout_mode = 0
-offset_left = 24.0
-offset_top = 24.0
-offset_right = 184.0
-offset_bottom = 104.0
-theme_override_font_sizes/font_size = 32
-text = "Menu"
+[node name="Root" type="VBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 8
 
-[connection signal="pressed" from="MenuButton" to="." method="_on_menu_pressed"]
+[node name="TopBar" type="HBoxContainer" parent="Root"]
+custom_minimum_size = Vector2(0, 112)
+layout_mode = 2
+size_flags_vertical = 0
+theme_override_constants/separation = 16
+
+[node name="Margin" type="MarginContainer" parent="Root/TopBar"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/margin_left = 24
+theme_override_constants/margin_top = 16
+theme_override_constants/margin_right = 24
+theme_override_constants/margin_bottom = 8
+
+[node name="Row" type="HBoxContainer" parent="Root/TopBar/Margin"]
+layout_mode = 2
+
+[node name="PauseButton" type="Button" parent="Root/TopBar/Margin/Row"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(88, 88)
+layout_mode = 2
+theme_override_font_sizes/font_size = 28
+text = "||"
+
+[node name="Spacer" type="Control" parent="Root/TopBar/Margin/Row"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="ScoreColumn" type="VBoxContainer" parent="Root/TopBar/Margin/Row"]
+layout_mode = 2
+alignment = 2
+
+[node name="ScoreLabel" type="Label" parent="Root/TopBar/Margin/Row/ScoreColumn"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(0.953, 0.965, 0.988, 1)
+theme_override_font_sizes/font_size = 44
+text = "0"
+horizontal_alignment = 2
+
+[node name="BestLabel" type="Label" parent="Root/TopBar/Margin/Row/ScoreColumn"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(0.604, 0.659, 0.745, 1)
+theme_override_font_sizes/font_size = 24
+text = "Best 0"
+horizontal_alignment = 2
+
+[node name="BoardContainer" type="CenterContainer" parent="Root"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="Aspect" type="AspectRatioContainer" parent="Root/BoardContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+ratio = 0.5
+stretch_mode = 2
+
+[node name="BoardView" type="Control" parent="Root/BoardContainer/Aspect"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+script = ExtResource("2_board")
+
+[node name="StatsBar" type="HBoxContainer" parent="Root"]
+custom_minimum_size = Vector2(0, 72)
+layout_mode = 2
+size_flags_vertical = 0
+
+[node name="Margin" type="MarginContainer" parent="Root/StatsBar"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/margin_left = 32
+theme_override_constants/margin_right = 32
+
+[node name="Row" type="HBoxContainer" parent="Root/StatsBar/Margin"]
+layout_mode = 2
+
+[node name="LinesLabel" type="Label" parent="Root/StatsBar/Margin/Row"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0.604, 0.659, 0.745, 1)
+theme_override_font_sizes/font_size = 26
+text = "Lines 0"
+
+[node name="LevelLabel" type="Label" parent="Root/StatsBar/Margin/Row"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0.604, 0.659, 0.745, 1)
+theme_override_font_sizes/font_size = 26
+horizontal_alignment = 2
+text = "Level 1"
+
+[node name="ControlsBar" type="HBoxContainer" parent="Root"]
+custom_minimum_size = Vector2(0, 176)
+layout_mode = 2
+size_flags_vertical = 0
+alignment = 1
+theme_override_constants/separation = 20
+
+[node name="Margin" type="MarginContainer" parent="Root/ControlsBar"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_constants/margin_left = 24
+theme_override_constants/margin_top = 16
+theme_override_constants/margin_right = 24
+theme_override_constants/margin_bottom = 32
+
+[node name="Row" type="HBoxContainer" parent="Root/ControlsBar/Margin"]
+layout_mode = 2
+size_flags_vertical = 3
+alignment = 1
+theme_override_constants/separation = 16
+
+[node name="LeftButton" type="Button" parent="Root/ControlsBar/Margin/Row"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(120, 120)
+layout_mode = 2
+theme_override_font_sizes/font_size = 36
+text = "<"
+
+[node name="RightButton" type="Button" parent="Root/ControlsBar/Margin/Row"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(120, 120)
+layout_mode = 2
+theme_override_font_sizes/font_size = 36
+text = ">"
+
+[node name="RotateButton" type="Button" parent="Root/ControlsBar/Margin/Row"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(120, 120)
+layout_mode = 2
+theme_override_font_sizes/font_size = 32
+text = "Rot"
+
+[node name="SoftDropButton" type="Button" parent="Root/ControlsBar/Margin/Row"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(120, 120)
+layout_mode = 2
+theme_override_font_sizes/font_size = 28
+text = "Soft"
+
+[node name="HardDropButton" type="Button" parent="Root/ControlsBar/Margin/Row"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(120, 120)
+layout_mode = 2
+modulate = Color(1, 0.788, 0.42, 1)
+theme_override_colors/font_color = Color(0.043, 0.063, 0.125, 1)
+theme_override_font_sizes/font_size = 24
+text = "HARD"
+
+[node name="Hud" type="Node" parent="."]
+unique_name_in_owner = true
+script = ExtResource("3_hud")
+
+[node name="TouchControls" type="Node" parent="."]
+unique_name_in_owner = true
+script = ExtResource("4_touch")
+
+[node name="RepeatTimer" type="Timer" parent="TouchControls"]
+unique_name_in_owner = true
+one_shot = true
+
+[node name="PauseOverlay" parent="." instance=ExtResource("5_pause")]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="GameOverOverlay" parent="." instance=ExtResource("6_gameover")]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
