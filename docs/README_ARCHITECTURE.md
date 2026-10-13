@@ -6,10 +6,14 @@ Use a small, understandable scene-based architecture. Avoid building a framework
 
 Use Godot 4.x with GDScript. Confirm the exact Godot version before starting and do not mix Godot 3 APIs with Godot 4 APIs.
 
+The optional account/sync feature adds one FastAPI backend service and a single client autoload. It must not leak into the gameplay architecture: the game logic and views stay network-free.
+
 ## 2. Suggested project structure
 
+The repository is a monorepo: the Godot project lives in `game/`, the FastAPI service in `backend/`, and the UI reference in `ui-prototype/`. Inside the Godot project:
+
 ```text
-res://
+game/ (res://)
 ├── project.godot
 ├── scenes/
 │   ├── main_menu.tscn
@@ -31,7 +35,7 @@ res://
 │   ├── fonts/
 │   ├── audio/
 │   └── icons/
-└── README_*.md
+└── addons/             # vendored GUT test framework
 ```
 
 This is a proposed starting point, not a requirement to create every file immediately. Prefer fewer files if combining responsibilities makes the first version clearer. Do not create empty scripts or scenes just to match the tree.
@@ -84,6 +88,17 @@ This is a proposed starting point, not a requirement to create every file immedi
 - Loads and saves best score and settings in local user data.
 - Handles missing/corrupt data gracefully.
 
+### `sync` autoload (sync release only)
+- Owns login state, JWT access/refresh tokens, and all HTTP calls.
+- Pushes local stats to `POST /v1/sync` and writes the merged result back to the save.
+- Queues and retries requests with backoff; failures never block or break gameplay.
+- The only place in the client allowed to use networking.
+
+### `backend/` FastAPI service (sync release only)
+- Exposes `/v1` routes for auth, profile, stats sync, and leaderboard.
+- Owns the server-side merge rule (`max` per stat) and the players table.
+- Game rules and scoring stay in the client; the server stores, it does not simulate.
+
 ## 4. Communication
 
 Prefer explicit signals or clear method calls over tight coupling and searching the scene tree for nodes at runtime.
@@ -134,7 +149,32 @@ Make transitions intentional. A paused or game-over game must not continue advan
 - Give variables and functions descriptive names.
 - Keep functions small and focused.
 - Avoid unnecessary third-party plugins.
-- Avoid external APIs, analytics, ads, authentication, and networking.
+- Keep gameplay logic, views, and input free of networking, analytics, and ads. The one sanctioned network client is the `sync` autoload talking to the project's own FastAPI backend.
 - Add comments for non-obvious logic, not for every line.
 - Handle errors rather than silently ignoring them.
 - Do not claim a feature is complete unless it is implemented and tested.
+
+## 9. Sync design (accounts, API, and data)
+
+**Stack:** Python 3.12, FastAPI, Pydantic v2, SQLAlchemy 2, Alembic. SQLite in development, PostgreSQL in production. Auth via JWT access tokens (~30 min) plus refresh tokens (~30 days); passwords hashed with bcrypt. Backend code and tests live in `backend/` in this repository.
+
+**API (all routes under `/v1`, JSON, proper status codes):**
+
+| Method | Path | Auth | Purpose |
+|---|---|---|---|
+| POST | `/v1/auth/register` | — | Email + password + username → account + tokens |
+| POST | `/v1/auth/login` | — | Email + password → tokens |
+| POST | `/v1/auth/refresh` | refresh | New access token |
+| GET | `/v1/players/me` | access | Profile: username + synced stats |
+| PATCH | `/v1/players/me` | access | Rename (unique, 3–20 chars) |
+| POST | `/v1/sync` | access | Push local stats, server merges, returns merged profile |
+| GET | `/v1/leaderboard` | — | Top 50 by best score: rank, username, best_score |
+| DELETE | `/v1/players/me` | access | Hard-delete account and data (store compliance) |
+
+**Data model:** one `players` table — `id` (UUID), `email` and `username` (both unique, case-insensitive), `password_hash`, `best_score`, `total_lines`, `games_played`, timestamps. Leaderboard is a query with an index on `best_score`; score history and rating tables come later and are not precluded.
+
+**Merge rule:** the local save stays the source of truth for gameplay. `POST /v1/sync` sends the three local stats and the server stores `max(server_value, client_value)` for each. All three counters are monotonic on the client, so "max" resolves offline play, reinstalls, and multi-device races without conflict handling. The response returns merged state, which the client writes back to its local save.
+
+**Client sync triggers (in the `sync` autoload):** after sign-in or registration; after a game ends; on app background (fire-and-forget); on app start when a refresh token exists. Requests queue in an outbox and retry with exponential backoff; any failure stays invisible to the player.
+
+**Security and privacy:** HTTPS only in production; `password_version` claim so password changes revoke refresh tokens; rate-limited auth endpoints; no PII beyond email; score submissions are trusted in this release (anti-cheat is a later concern and documented as such).

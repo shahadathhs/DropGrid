@@ -10,6 +10,14 @@ build/
 *.apk.idsig
 *.aab
 
+# Python (backend)
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+.ruff_cache/
+.env
+
 # This project's own inputs/artifacts, not part of the game
 *.zip
 

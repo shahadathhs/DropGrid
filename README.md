@@ -1,12 +1,22 @@
 # After Drop
 
-A polished, lightweight 2D falling-block puzzle game for Android, built with **Godot 4.x** and **GDScript**. Portrait, offline-first, no ads, accounts, or backend.
+A polished, lightweight 2D falling-block puzzle game built with **Godot 4.x** and **GDScript**. Portrait, offline-first, no ads or purchases. Optional accounts and a leaderboard run on a small FastAPI backend (Phases 9–10).
 
 > Working title: Dropgrid (temporary).
 
+## Repository layout
+
+```text
+game/           Godot project (scenes, scripts, assets, tests)
+backend/        FastAPI service: accounts, stats sync, leaderboard
+ui-prototype/   Next.js mockup of the screens (visual reference only)
+docs/           Specifications
+docker/         Container helper scripts (Godot image entrypoint, Android setup)
+```
+
 ## Status
 
-Playable prototype. Board logic, touch UI, sound, and local saves are in; Android device validation (Phase 7 of the [implementation plan](docs/README_IMPLEMENTATION_PLAN.md)) is pending.
+Playable prototype. Board logic, touch UI, sound, and local saves are in; Android device validation (Phase 7 of the [implementation plan](docs/README_IMPLEMENTATION_PLAN.md)) is pending. Next up: the sync release — optional accounts and a leaderboard on a FastAPI backend (Phases 9–10).
 
 ## Docs
 
@@ -16,16 +26,18 @@ Playable prototype. Board logic, touch UI, sound, and local saves are in; Androi
 - [Visual design](docs/README_VISUAL_DESIGN.md): theme, colors, layout, sound
 - [Implementation plan](docs/README_IMPLEMENTATION_PLAN.md): build phases and verification checklist
 
-## Development (Docker, no local Godot)
+## Development
 
-Godot runs headless in a container via `docker compose`; the image is pulled automatically on first use.
+Headless Godot runs in Docker via `docker compose`; the backend uses [uv](https://docs.astral.sh/uv/); the UI prototype uses pnpm.
 
 ```sh
-make help      # list targets
-make check     # import and parse-check the project
-make test      # run unit tests
-make apk       # export build/afterdrop-debug.apk
-make install   # adb install to a USB-connected phone (brew install --cask android-platform-tools)
+make help          # list targets
+make check         # import and parse-check the game
+make test          # run game unit tests
+make apk           # export game/build/afterdrop-debug.apk
+make install       # adb install to a USB-connected phone (brew install --cask android-platform-tools)
+make backend-run   # serve the backend at http://localhost:8000 (docs at /docs)
+make ui-dev        # serve the UI prototype at http://localhost:3000
 ```
 
 ## UI prototype

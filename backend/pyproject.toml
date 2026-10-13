@@ -1,0 +1,42 @@
+[project]
+name = "afterdrop-backend"
+version = "0.1.0"
+description = "after-drop — optional accounts, stats sync, and leaderboard backend"
+authors = [{ name = "after-drop" }]
+requires-python = ">=3.12"
+dependencies = [
+    "fastapi>=0.115.6",
+    "uvicorn[standard]>=0.34.0",
+    "sqlalchemy[asyncio]>=2.0.36",
+    "aiosqlite>=0.20.0",
+    "pydantic[email]>=2.10.0",
+    "pydantic-settings>=2.7.0",
+    "pyjwt>=2.10.0",
+    "bcrypt>=4.2.0",
+    "python-multipart>=0.0.20",
+    "httpx>=0.28.1",
+]
+
+[dependency-groups]
+dev = [
+    "pytest>=8.3.0",
+    "ruff>=0.8.0",
+]
+
+[tool.uv]
+package = false
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+
+[tool.ruff.lint]
+# E/W pycodestyle, F pyflakes, I isort, UP pyupgrade, B bugbear, SIM simplify.
+select = ["E", "F", "I", "UP", "B", "SIM"]
+
+[tool.ruff.lint.per-file-ignores]
+# __init__.py re-exports are intentional.
+"__init__.py" = ["F401"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

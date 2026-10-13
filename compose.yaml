@@ -1,5 +1,5 @@
-# Godot runs headless in a container; nothing is installed on the host.
-# Compose builds the image (see Dockerfile) on first use. Bump GODOT_VERSION to upgrade.
+# Monorepo services: headless Godot for the game in game/, FastAPI backend in backend/.
+# Compose builds both images on first use.
 services:
   godot:
     build:
@@ -12,11 +12,18 @@ services:
     environment:
       - GODOT_VERSION=${GODOT_VERSION:-4.7.2}
     volumes:
-      - .:/project
+      - ./game:/project
       # Persist editor settings and the debug keystore between runs.
       - godot-config:/root/.config/godot
       - android-keys:/root/.android
       - ./docker/android-setup.sh:/usr/local/bin/android-setup:ro
+
+  backend:
+    build: ./backend
+    ports:
+      - "8000:8000"
+    environment:
+      - DEBUG=${BACKEND_DEBUG:-true}
 
 volumes:
   godot-config:
