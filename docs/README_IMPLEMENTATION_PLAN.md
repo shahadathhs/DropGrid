@@ -69,6 +69,23 @@ Use the accompanying README files as the product specification while building th
 - Use Google Play's current requirements for signing, target API level, testing, and release.
 - Do not pay for a developer account until the prototype is worth publishing.
 
+### Phase 9 — Sync backend
+- Scaffold `backend/` with FastAPI, SQLAlchemy, and Alembic (SQLite in dev, PostgreSQL in production).
+- Implement `/v1` auth (register, login, refresh; bcrypt + JWT), players, the `max()` stats merge on `POST /v1/sync`, the top-50 leaderboard, and account deletion.
+- Cover auth, the merge rule, and leaderboard ordering with backend tests.
+- Add `make backend-install|run|test` targets and a compose service for local dev.
+- Deploy one instance (Fly.io/Railway or similar) behind HTTPS.
+
+**Checkpoint:** `curl` proves register → sync → leaderboard against a deployed instance.
+
+### Phase 10 — Sync client
+- Add the `sync` autoload (tokens, outbox, retry/backoff); gameplay code stays network-free.
+- Add sign-in/registration, profile, and leaderboard screens using `ui-prototype/` as the visual reference.
+- Wire sync triggers: after sign-in, after game over, on app background, on app start.
+- Verify guest paths make zero network calls and every failure path fails silently.
+
+**Checkpoint:** on a real device, online and offline: register, play, see stats on a second device, appear on the leaderboard, delete the account — with no crash, dialog, or blocked gameplay at any point without network.
+
 ## 3. One-shot implementation strategy
 
 An AI coding assistant may be asked to scaffold and implement the full game, but it must:
@@ -99,7 +116,7 @@ If a one-shot implementation becomes too tangled, fix it in small phases instead
 - [ ] Touch controls work on a real Android device.
 - [ ] UI works on more than one aspect ratio.
 - [ ] Audio mute works.
-- [ ] No network access or third-party service is required.
+- [ ] No network access is required for the core game (sync features are optional and fail silently offline).
 - [ ] No unimplemented buttons or fake settings remain.
 
 ## 5. First task for the coding assistant

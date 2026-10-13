@@ -12,12 +12,13 @@ The first release should feel complete and intentional rather than like a tutori
 ## 2. Target platform
 
 - **Primary platform:** Android phones.
+- **Secondary platforms:** Desktop (Windows/macOS/Linux) via the same Godot project, unlocked by the account backend; not a version-1 requirement.
 - **Engine:** Godot 4.x.
 - **Language:** GDScript.
 - **Orientation:** Portrait.
-- **Connectivity:** Offline-first; the core game must work without an internet connection.
-- **Initial business model:** Free, with no ads, purchases, accounts, analytics SDKs, or backend.
-- **Save data:** Local device storage only.
+- **Connectivity:** Offline-first; the core game must work without an internet connection. Accounts and cross-device sync are optional additions on top.
+- **Initial business model:** Free, with no ads or purchases.
+- **Save data:** Local device storage as the source of truth; optional server sync for account holders.
 
 Design and test for different phone aspect ratios and screen sizes. Avoid assuming one exact resolution.
 
@@ -45,12 +46,26 @@ Include:
 - Settings for sound and haptics only if haptics can be implemented reliably.
 
 Do not include in version 1:
-- Multiplayer or online leaderboards.
-- User accounts or cloud saves.
+- Multiplayer.
 - Ads or in-app purchases.
 - Daily missions, achievements, skins shop, or battle pass.
-- Backend services.
 - Complex unlock systems.
+
+Version 1 remains fully offline. A following release adds optional accounts and sync:
+
+**Sync release includes:**
+- Optional account (email + password) with username.
+- Background sync of best score, total lines cleared, and games played after signing in.
+- Global leaderboard (top 50 by best score) and a personal profile screen.
+- Cross-device progress: sign in on another device and the stats appear.
+- Desktop builds as a secondary platform, unlocked by having one shared backend.
+
+**Sync release principles:**
+- Guest play is a complete, first-class experience with zero network calls.
+- Local save stays the source of truth for gameplay; sync never blocks or breaks a session.
+- One small FastAPI backend service and one SQL database — no ads, analytics, or third-party SDKs.
+
+**Still excluded:** multiplayer, ads, in-app purchases, daily missions, achievements, battle pass, passwordless/OTP sign-in, XP/seasons/rating systems.
 
 ## 5. Definition of done
 

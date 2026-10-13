@@ -1,5 +1,7 @@
 # Visual Design — Theme, Color, UI, and Layout
 
+> **Reference implementation:** the Next.js mockup in [`ui-prototype/`](../ui-prototype/) renders these screens (menu, hub, levels, profile, game, pause, settings) with the exact color tokens below. Use it as the visual reference when building Godot UI.
+
 ## 1. Art direction
 
 Use a **modern, minimalist arcade** style: dark, calm, crisp, and slightly premium. The board should be the visual focus. Use color to distinguish pieces, not to decorate every empty area.

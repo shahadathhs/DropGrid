@@ -76,6 +76,17 @@ Save locally:
 
 Use Godot's user data directory and a simple, version-tolerant save format. Handle missing or malformed save data safely. The game must still start if no save file exists.
 
+## 6b. Accounts and sync (optional, sync release)
+
+Optional account features layered on top of local persistence:
+
+- Sign in / register with email and password; or keep playing as a guest.
+- After each game ends, stats (best score, total lines, games played) sync to the player's account in the background.
+- The server keeps the max of each stat, so offline play and multiple devices converge without conflicts.
+- New screens: sign-in/registration form, profile with synced stats and sign-out, global leaderboard (top 50). The `ui-prototype/` screens are the visual reference.
+- Sync runs after sign-in, after game over, on app background, and on app start.
+- Every account feature fails silently offline: no dialogs, no blocked gameplay.
+
 ## 7. Accessibility and usability
 
 - Provide sufficiently large touch targets.
@@ -98,3 +109,9 @@ Test at least:
 - Best-score save and reload.
 - Fast repeated touch input.
 - App backgrounding and returning, especially while paused.
+
+When the sync features are implemented, also test:
+- Register, sign out, sign in on a second device — stats appear.
+- Play offline with an account, then sync on reconnect — server takes the max.
+- Airplane mode during game over — no crash, no dialog, stats stay local.
+- Expired access token mid-sync — transparent refresh, no lost submission.
