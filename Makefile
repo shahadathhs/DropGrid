@@ -7,7 +7,7 @@ UI      := ui-prototype
 BACKEND := backend
 
 .DEFAULT_GOAL := help
-.PHONY: help import check test apk install run-device run run-game \
+.PHONY: help setup import check test apk install run-device run run-game \
         backend-install backend-run backend-test backend-lint backend-migrate \
         ui-install ui-dev ui-build shell clean
 
@@ -45,6 +45,9 @@ run-device: install ## Install and launch on the phone
 	adb shell monkey -p $$(grep -m1 'package/unique_name' game/export_presets.cfg | cut -d'"' -f2) 1
 
 # ── Backend (uv, backend/) ────────────────────────────────────────────
+
+setup: backend-install backend-migrate ## One-time local setup: backend deps + dev database (SQLite, backend/dropgrid.db)
+	@echo "Setup done. Next: make backend-run  (and make ui-install for the prototype)"
 
 backend-install: ## Install backend dependencies (uv)
 	cd $(BACKEND) && uv sync
