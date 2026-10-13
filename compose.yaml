@@ -1,0 +1,18 @@
+# Godot runs headless in a container; nothing is installed on the host.
+# Compose pulls the image on first use. Bump GODOT_VERSION to upgrade.
+services:
+  godot:
+    image: barichello/godot-ci:${GODOT_VERSION:-4.7.2}
+    working_dir: /project
+    environment:
+      - GODOT_VERSION=${GODOT_VERSION:-4.7.2}
+    volumes:
+      - .:/project
+      # Persist editor settings and the debug keystore between runs.
+      - godot-config:/root/.config/godot
+      - android-keys:/root/.android
+      - ./docker/android-setup.sh:/usr/local/bin/android-setup:ro
+
+volumes:
+  godot-config:
+  android-keys:

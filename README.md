@@ -15,3 +15,15 @@ Planning. The specification lives in [docs/](docs/); no game code yet.
 - [Gameplay and features](docs/README_GAMEPLAY_FEATURES.md): loop, controls, scoring, persistence
 - [Visual design](docs/README_VISUAL_DESIGN.md): theme, colors, layout, sound
 - [Implementation plan](docs/README_IMPLEMENTATION_PLAN.md): build phases and verification checklist
+
+## Development (Docker, no local Godot)
+
+Godot runs headless in a container via `docker compose`; the image is pulled automatically on first use.
+
+```sh
+make help      # list targets
+make check     # import and parse-check the project
+make test      # run unit tests
+make apk       # export build/afterdrop-debug.apk
+make install   # adb install to a USB-connected phone (brew install --cask android-platform-tools)
+```

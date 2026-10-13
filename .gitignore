@@ -1,0 +1,5 @@
+build/
+.godot/
+*.apk
+*.zip
+.DS_Store
