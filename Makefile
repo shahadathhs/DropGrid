@@ -49,7 +49,7 @@ run-device: install ## Install and launch on the phone
 backend-install: ## Install backend dependencies (uv)
 	cd $(BACKEND) && uv sync
 
-backend-run: ## Serve the backend at http://localhost:8000 (uvicorn --reload)
+backend-run: backend-migrate ## Migrate the dev database, then serve at http://localhost:8000 (uvicorn --reload)
 	cd $(BACKEND) && uv run uvicorn main:app --reload --port 8000
 
 backend-migrate: ## Apply database migrations to DATABASE_URL (alembic upgrade head)
