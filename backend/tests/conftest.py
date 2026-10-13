@@ -17,7 +17,11 @@ from typing import Any
 _DB_DIR = tempfile.mkdtemp(prefix="dropgrid-test-")
 atexit.register(shutil.rmtree, _DB_DIR, ignore_errors=True)
 
-os.environ["DATABASE_URL"] = f"sqlite+aiosqlite:///{_DB_DIR}/test.db"
+# Tests truncate the players table, so they only ever use TEST_DATABASE_URL (never
+# DATABASE_URL, which may point at dev or production data). Default: a throwaway SQLite file.
+os.environ["DATABASE_URL"] = os.environ.get(
+    "TEST_DATABASE_URL", f"sqlite+aiosqlite:///{_DB_DIR}/test.db"
+)
 os.environ["JWT_SECRET"] = "test-secret-" + "x" * 32  # HMAC key >= 32 bytes
 os.environ["RATE_LIMIT_ENABLED"] = "false"  # rate-limit tests opt in explicitly
 

@@ -7,6 +7,7 @@ from sqlalchemy.engine import Connection
 from sqlalchemy.ext.asyncio import async_engine_from_config
 
 from core.config import settings
+from core.db_url import resolve_database_url
 from models import player  # noqa: F401  (registers the players table on Base.metadata)
 from models.base import Base
 
@@ -15,8 +16,10 @@ from models.base import Base
 config = context.config
 
 # The URL always comes from core/config.py (DATABASE_URL env or .env), never the ini.
+# The same resolution as the app (core/db_url.py) so migrations and the app agree.
+_async_url, _engine_kwargs = resolve_database_url(settings.database_url)
 # "%" must be escaped because ConfigParser interpolates it.
-config.set_main_option("sqlalchemy.url", settings.database_url.replace("%", "%%"))
+config.set_main_option("sqlalchemy.url", _async_url.replace("%", "%%"))
 
 # Interpret the config file for Python logging.
 # This line sets up loggers basically.
@@ -72,6 +75,7 @@ async def run_async_migrations() -> None:
         config.get_section(config.config_ini_section, {}),
         prefix="sqlalchemy.",
         poolclass=pool.NullPool,
+        **_engine_kwargs,
     )
 
     async with connectable.connect() as connection:

@@ -15,8 +15,9 @@ class Settings(BaseSettings):
     debug: bool = True
     api_prefix: str = "/v1"
 
-    # Database — SQLite in development, PostgreSQL in production
-    # (postgresql+asyncpg://...).
+    # Database. Default is local SQLite. For Postgres (local Docker Compose or Neon),
+    # set DATABASE_URL to the provider's URL as-is, e.g.
+    # postgresql://user:pass@host/db?sslmode=require. core/db_url.py converts it.
     database_url: str = "sqlite+aiosqlite:///./dropgrid.db"
 
     # Auth

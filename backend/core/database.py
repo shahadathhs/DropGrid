@@ -7,11 +7,15 @@ from sqlalchemy.ext.asyncio import (
 )
 
 from core.config import settings
+from core.db_url import resolve_database_url
+
+_async_url, _engine_kwargs = resolve_database_url(settings.database_url)
 
 engine = create_async_engine(
-    settings.database_url,
+    _async_url,
     echo=settings.debug,
     pool_pre_ping=True,
+    **_engine_kwargs,
 )
 
 async_session_factory = async_sessionmaker(
