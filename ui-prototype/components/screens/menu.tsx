@@ -5,7 +5,7 @@ import { useApp } from '@/lib/app'
 import { Brand, Btn, Eyebrow, Screen } from '@/components/ui'
 
 export function MenuScreen() {
-  const { go, reset, signedIn, stats } = useApp()
+  const { go, reset, signedIn, stats, startRun } = useApp()
 
   return (
     <Screen className="screen-menu">
@@ -29,7 +29,13 @@ export function MenuScreen() {
         </p>
       </div>
       <div className="menu-actions">
-        <Btn icon={Play} onClick={() => reset('game')}>
+        <Btn
+          icon={Play}
+          onClick={() => {
+            startRun()
+            reset('game')
+          }}
+        >
           Play
         </Btn>
         {signedIn ? (
@@ -44,6 +50,11 @@ export function MenuScreen() {
         <Btn variant="secondary" icon={Trophy} onClick={() => go('leaderboard')}>
           Leaderboard
         </Btn>
+        {!signedIn && (
+          <Btn variant="ghost" onClick={() => reset('hub')}>
+            Continue as guest
+          </Btn>
+        )}
       </div>
       <div className="best-note">
         <span>Personal best</span>

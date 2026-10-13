@@ -1149,3 +1149,130 @@ p {
     display: none;
   }
 }
+
+/* ── Restored: stat grid, auth intro, level card, level path ───────── */
+.stat-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
+  margin: 4px 0 16px;
+}
+.auth-intro {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding-bottom: 32px;
+}
+.auth-intro > p:last-of-type {
+  color: var(--muted);
+  line-height: 1.55;
+  font-size: 13px;
+  margin-top: 12px;
+}
+.level-card {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--r-lg);
+  padding: 14px 16px;
+  margin-bottom: 12px;
+}
+.level-card strong {
+  display: block;
+  font-size: 28px;
+  letter-spacing: -0.03em;
+}
+.level-card p {
+  color: var(--muted);
+  font-size: 12px;
+}
+.level-ring {
+  width: 52px;
+  height: 52px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  border: 3px solid var(--accent);
+  color: var(--accent);
+  font-size: 15px;
+  font-weight: 700;
+}
+.levels-heading {
+  margin: 12px 0 20px;
+}
+.levels-heading h2 {
+  font-size: 32px;
+  line-height: 1.05;
+  letter-spacing: -0.04em;
+  font-weight: 800;
+}
+.levels-heading h2 em {
+  color: var(--accent);
+  font-style: normal;
+}
+.levels-heading > p:last-of-type {
+  color: var(--muted);
+  line-height: 1.55;
+  font-size: 13px;
+  margin-top: 10px;
+}
+.level-tree {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  overflow-y: auto;
+  min-height: 0;
+}
+.level-node {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  text-align: left;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--r-md);
+  padding: 12px 14px;
+  color: var(--muted);
+  flex-shrink: 0;
+}
+.level-node:not(:disabled):hover {
+  border-color: var(--line-strong);
+}
+.level-node.current {
+  border-color: var(--accent);
+}
+.node-icon {
+  width: 34px;
+  height: 34px;
+  display: grid;
+  place-items: center;
+  border-radius: var(--r-sm);
+  background: var(--surface-3);
+  color: var(--accent);
+  font-size: 13px;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+.level-node.done .node-icon {
+  color: var(--mint);
+}
+.level-node.locked .node-icon {
+  color: var(--faint);
+}
+.node-copy {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+.node-copy b {
+  color: var(--ink);
+  font-size: 12.5px;
+  font-weight: 600;
+}
+.node-copy small {
+  font-size: 11px;
+}

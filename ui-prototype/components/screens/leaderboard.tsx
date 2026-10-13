@@ -31,6 +31,15 @@ const SAMPLE: Row[] = SAMPLE_NAMES.map((name, i) => ({
   score: Math.round(52000 * Math.pow(0.975, i)),
 }))
 
+/**
+ * Rank of a best score on the top-50 list, or null when it is not in the top 50.
+ * A tie ranks below the equal scores already on the list, matching the sort above.
+ */
+export function leaderboardRank(bestScore: number): number | null {
+  const rank = SAMPLE.filter((row) => row.score >= bestScore).length + 1
+  return rank <= 50 ? rank : null
+}
+
 export function LeaderboardScreen({ offline = false }: { offline?: boolean }) {
   const { reset, signedIn, username, stats } = useApp()
 

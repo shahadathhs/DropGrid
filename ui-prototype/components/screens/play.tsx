@@ -1,20 +1,17 @@
 'use client'
 
 import { ChevronDown, ChevronLeft, ChevronRight, Pause, Play, RotateCw } from 'lucide-react'
-import { useApp } from '@/lib/app'
+import { LINES_PER_LEVEL, fallIntervalSeconds, levelForLines, useApp } from '@/lib/app'
 import { Btn, Eyebrow, IconBtn, Screen, Stat } from '@/components/ui'
 import { Board, NextPiece } from '@/components/game'
 
-// Illustrative in-progress run. The spec uses 10 lines per level.
-const RUN = { score: 12840, lines: 36 }
-const LINES_PER_LEVEL = 10
-
-const level = Math.floor(RUN.lines / LINES_PER_LEVEL) + 1
-const linesIntoLevel = RUN.lines % LINES_PER_LEVEL
-const linesToNext = LINES_PER_LEVEL - linesIntoLevel
-
+// Live values for the run in progress come from app state. The board art is static,
+// so the run only changes through the app state (it starts at zero).
 export function GameScreen() {
-  const { go, stats } = useApp()
+  const { go, stats, run } = useApp()
+  const level = levelForLines(run.lines)
+  const linesIntoLevel = run.lines % LINES_PER_LEVEL
+  const linesToNext = LINES_PER_LEVEL - linesIntoLevel
 
   return (
     <Screen className="screen-game">
@@ -22,11 +19,11 @@ export function GameScreen() {
         <IconBtn label="Pause game" icon={Pause} onClick={() => go('paused')} />
         <div className="live-score">
           <span>Score</span>
-          <strong>{RUN.score.toLocaleString()}</strong>
+          <strong>{run.score.toLocaleString()}</strong>
         </div>
         <div className="mini-best">
           <span>Best</span>
-          <strong>{stats.bestScore.toLocaleString()}</strong>
+          <strong>{Math.max(stats.bestScore, run.score).toLocaleString()}</strong>
         </div>
       </header>
       <div className="game-meta">
@@ -44,9 +41,10 @@ export function GameScreen() {
           {linesToNext} lines to level {String(level + 1).padStart(2, '0')}
         </span>
       </div>
-      <div className="stat-row two">
-        <Stat label="Lines" value={String(RUN.lines)} />
+      <div className="stat-row">
+        <Stat label="Lines" value={String(run.lines)} />
         <Stat label="Level" value={String(level)} />
+        <Stat label="Drop" value={`${fallIntervalSeconds(level).toFixed(2)}s`} />
       </div>
       <div className="controls">
         <button aria-label="Move left">
@@ -67,10 +65,11 @@ export function GameScreen() {
 }
 
 export function PausedScreen() {
-  const { back, stats, reset, finishRun } = useApp()
+  const { back, stats, run, reset, finishRun } = useApp()
+  const level = levelForLines(run.lines)
 
   const endRun = () => {
-    finishRun({ score: RUN.score, lines: RUN.lines, level })
+    finishRun()
     reset('game-over')
   }
 
@@ -80,11 +79,11 @@ export function PausedScreen() {
         <IconBtn label="Resume game" icon={Play} onClick={back} />
         <div className="live-score">
           <span>Score</span>
-          <strong>{RUN.score.toLocaleString()}</strong>
+          <strong>{run.score.toLocaleString()}</strong>
         </div>
         <div className="mini-best">
           <span>Best</span>
-          <strong>{stats.bestScore.toLocaleString()}</strong>
+          <strong>{Math.max(stats.bestScore, run.score).toLocaleString()}</strong>
         </div>
       </header>
       <div className="game-meta">
@@ -113,7 +112,7 @@ export function PausedScreen() {
 }
 
 export function GameOverScreen() {
-  const { lastRun, stats, reset } = useApp()
+  const { lastRun, stats, reset, go, startRun } = useApp()
 
   return (
     <Screen className="screen-modal">
@@ -154,13 +153,22 @@ export function GameOverScreen() {
         </div>
       </div>
       <div className="stack">
-        <Btn icon={Play} onClick={() => reset('game')}>
+        <Btn
+          icon={Play}
+          onClick={() => {
+            startRun()
+            reset('game')
+          }}
+        >
           Play again
         </Btn>
         <Btn variant="secondary" onClick={() => reset('hub')}>
           Home
         </Btn>
       </div>
+      <Btn variant="text" className="quiet" onClick={() => go('levels')}>
+        View level path
+      </Btn>
     </Screen>
   )
 }

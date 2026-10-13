@@ -3,15 +3,20 @@
 import { AppProvider, useApp } from '@/lib/app'
 import type { ScreenId } from '@/lib/app'
 import { MenuScreen } from '@/components/screens/menu'
-import { AccountScreen } from '@/components/screens/account'
-import { HubScreen, ProfileScreen, SettingsScreen } from '@/components/screens/hub'
+import { AccountScreen, EmailScreen, OtpScreen, ProfileSetupScreen, SignInScreen } from '@/components/screens/auth'
+import { HubScreen, LevelsScreen, ProfileScreen, SettingsScreen } from '@/components/screens/hub'
 import { LeaderboardScreen } from '@/components/screens/leaderboard'
 import { GameOverScreen, GameScreen, PausedScreen } from '@/components/screens/play'
 
 const SCREENS: Record<ScreenId, () => React.JSX.Element> = {
   menu: MenuScreen,
   account: AccountScreen,
+  'sign-in': SignInScreen,
+  email: EmailScreen,
+  otp: OtpScreen,
+  'profile-setup': ProfileSetupScreen,
   hub: HubScreen,
+  levels: LevelsScreen,
   leaderboard: () => <LeaderboardScreen />,
   'leaderboard-offline': () => <LeaderboardScreen offline />,
   profile: ProfileScreen,
@@ -24,7 +29,12 @@ const SCREENS: Record<ScreenId, () => React.JSX.Element> = {
 const SWITCHER: Array<[ScreenId, string]> = [
   ['menu', 'Menu'],
   ['account', 'Account'],
+  ['sign-in', 'Sign in'],
+  ['email', 'Email'],
+  ['otp', 'Password'],
+  ['profile-setup', 'Username'],
   ['hub', 'Home'],
+  ['levels', 'Levels'],
   ['leaderboard', 'Leaderboard'],
   ['leaderboard-offline', 'Leaderboard error'],
   ['profile', 'Profile'],
