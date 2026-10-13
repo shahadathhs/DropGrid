@@ -14,7 +14,7 @@ docker/         Container helper scripts (Godot image entrypoint, Android setup)
 
 ## Status
 
-Playable prototype. Board logic, touch UI, sound, and local saves are in; Android device validation (Phase 7 of the [implementation plan](docs/README_IMPLEMENTATION_PLAN.md)) is pending. Next up: the sync release — optional accounts and a leaderboard on a FastAPI backend (Phases 9–10).
+Playable prototype with the sync release built: optional email/password accounts, background stat sync, profile, and a top-50 leaderboard, backed by the FastAPI service in `backend/` (Phases 9–10 of the [implementation plan](docs/README_IMPLEMENTATION_PLAN.md)). Still open: Android device validation (Phase 7), release preparation (Phase 8), and deploying the backend behind HTTPS. Guest play makes no network calls.
 
 ## Docs
 

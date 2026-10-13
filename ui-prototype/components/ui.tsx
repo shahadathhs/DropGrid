@@ -57,25 +57,11 @@ export function Screen({ children, className = '' }: { children: ReactNode; clas
   return <section className={`screen screen-pad ${className}`}>{children}</section>
 }
 
-export function Stat({ label, value, accent = false }: { label: string; value: string; accent?: boolean }) {
+export function Stat({ label, value }: { label: string; value: string }) {
   return (
     <div className="stat">
       <span>{label}</span>
-      <strong style={accent ? { color: 'var(--mint)' } : undefined}>{value}</strong>
-    </div>
-  )
-}
-
-export function Progress({ value, label }: { value: string; label: string }) {
-  return (
-    <div className="progress">
-      <div className="progress-label">
-        <span>{label}</span>
-        <b>{value}</b>
-      </div>
-      <div className="progress-track">
-        <i style={{ width: value }} />
-      </div>
+      <strong>{value}</strong>
     </div>
   )
 }

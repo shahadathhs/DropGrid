@@ -1,14 +1,20 @@
 'use client'
 
-import { ChevronDown, ChevronLeft, ChevronRight, Pause, Play, RotateCw, Trophy } from 'lucide-react'
+import { ChevronDown, ChevronLeft, ChevronRight, Pause, Play, RotateCw } from 'lucide-react'
 import { useApp } from '@/lib/app'
 import { Btn, Eyebrow, IconBtn, Screen, Stat } from '@/components/ui'
 import { Board, NextPiece } from '@/components/game'
 
-const RUN = { score: 12840, lines: 36, level: 4, linesToNext: 6 }
+// Illustrative in-progress run. The spec uses 10 lines per level.
+const RUN = { score: 12840, lines: 36 }
+const LINES_PER_LEVEL = 10
+
+const level = Math.floor(RUN.lines / LINES_PER_LEVEL) + 1
+const linesIntoLevel = RUN.lines % LINES_PER_LEVEL
+const linesToNext = LINES_PER_LEVEL - linesIntoLevel
 
 export function GameScreen() {
-  const { go, best } = useApp()
+  const { go, stats } = useApp()
 
   return (
     <Screen className="screen-game">
@@ -20,11 +26,11 @@ export function GameScreen() {
         </div>
         <div className="mini-best">
           <span>Best</span>
-          <strong>{best.toLocaleString()}</strong>
+          <strong>{stats.bestScore.toLocaleString()}</strong>
         </div>
       </header>
       <div className="game-meta">
-        <span className="level-pill">Level {String(RUN.level).padStart(2, '0')}</span>
+        <span className="level-pill">Level {String(level).padStart(2, '0')}</span>
         <span className="next-label">
           Next <NextPiece />
         </span>
@@ -32,14 +38,15 @@ export function GameScreen() {
       <Board />
       <div className="progress-line">
         <span className="track">
-          <i style={{ width: '40%' }} />
+          <i style={{ width: `${(linesIntoLevel / LINES_PER_LEVEL) * 100}%` }} />
         </span>
-        <span>{RUN.linesToNext} / 10 lines to level 05</span>
+        <span>
+          {linesToNext} lines to level {String(level + 1).padStart(2, '0')}
+        </span>
       </div>
-      <div className="stat-row compact">
+      <div className="stat-row two">
         <Stat label="Lines" value={String(RUN.lines)} />
-        <Stat label="Level" value={String(RUN.level)} />
-        <Stat label="Drop" value="1.2×" />
+        <Stat label="Level" value={String(level)} />
       </div>
       <div className="controls">
         <button aria-label="Move left">
@@ -60,10 +67,10 @@ export function GameScreen() {
 }
 
 export function PausedScreen() {
-  const { back, go, best, reset, update } = useApp()
+  const { back, stats, reset, finishRun } = useApp()
 
   const endRun = () => {
-    update({ lastRun: { score: RUN.score, lines: RUN.lines, level: RUN.level, newBest: RUN.score > best } })
+    finishRun({ score: RUN.score, lines: RUN.lines, level })
     reset('game-over')
   }
 
@@ -77,11 +84,11 @@ export function PausedScreen() {
         </div>
         <div className="mini-best">
           <span>Best</span>
-          <strong>{best.toLocaleString()}</strong>
+          <strong>{stats.bestScore.toLocaleString()}</strong>
         </div>
       </header>
       <div className="game-meta">
-        <span className="level-pill">Level {String(RUN.level).padStart(2, '0')}</span>
+        <span className="level-pill">Level {String(level).padStart(2, '0')}</span>
       </div>
       <Board />
       <div className="pause-panel">
@@ -106,7 +113,7 @@ export function PausedScreen() {
 }
 
 export function GameOverScreen() {
-  const { lastRun, best, reset, go } = useApp()
+  const { lastRun, stats, reset } = useApp()
 
   return (
     <Screen className="screen-modal">
@@ -142,7 +149,7 @@ export function GameOverScreen() {
             Level <b>{lastRun.level}</b>
           </span>
           <span>
-            Best <b>{best.toLocaleString()}</b>
+            Best <b>{stats.bestScore.toLocaleString()}</b>
           </span>
         </div>
       </div>
@@ -154,9 +161,6 @@ export function GameOverScreen() {
           Home
         </Btn>
       </div>
-      <Btn variant="text" className="quiet" onClick={() => go('levels')}>
-        View level path
-      </Btn>
     </Screen>
   )
 }

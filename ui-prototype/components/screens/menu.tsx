@@ -1,11 +1,11 @@
 'use client'
 
-import { Play, CircleUserRound } from 'lucide-react'
+import { Play, CircleUserRound, Trophy, UserRound } from 'lucide-react'
 import { useApp } from '@/lib/app'
 import { Brand, Btn, Eyebrow, Screen } from '@/components/ui'
 
 export function MenuScreen() {
-  const { go, best, reset } = useApp()
+  const { go, reset, signedIn, stats } = useApp()
 
   return (
     <Screen className="screen-menu">
@@ -32,21 +32,22 @@ export function MenuScreen() {
         <Btn icon={Play} onClick={() => reset('game')}>
           Play
         </Btn>
-        <Btn variant="secondary" icon={CircleUserRound} onClick={() => go('account')}>
-          Sign in
-        </Btn>
-        <Btn
-          variant="ghost"
-          onClick={() => {
-            reset('hub')
-          }}
-        >
-          Continue as guest
+        {signedIn ? (
+          <Btn variant="secondary" icon={UserRound} onClick={() => go('profile')}>
+            Profile
+          </Btn>
+        ) : (
+          <Btn variant="secondary" icon={CircleUserRound} onClick={() => go('account')}>
+            Sign in
+          </Btn>
+        )}
+        <Btn variant="secondary" icon={Trophy} onClick={() => go('leaderboard')}>
+          Leaderboard
         </Btn>
       </div>
       <div className="best-note">
         <span>Personal best</span>
-        <strong>{best.toLocaleString()}</strong>
+        <strong>{stats.bestScore.toLocaleString()}</strong>
       </div>
       <p className="version">DropGrid · v1.0.0</p>
     </Screen>
