@@ -17,6 +17,7 @@ func setup(controller: GameController) -> void:
 	rows = game.board.rows
 	game.board_changed.connect(queue_redraw)
 	game.piece_locked.connect(_on_piece_locked)
+	resized.connect(queue_redraw) # containers set our size after setup
 	queue_redraw()
 
 

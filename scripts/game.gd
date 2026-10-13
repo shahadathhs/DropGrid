@@ -12,6 +12,7 @@ const MENU_SCENE := "res://scenes/main_menu.tscn"
 @onready var _game_over_overlay: Control = %GameOverOverlay
 
 var game: GameController
+var _window_had_focus := false
 
 
 func _ready() -> void:
@@ -34,8 +35,13 @@ func _process(delta: float) -> void:
 
 func _notification(what: int) -> void:
 	# Backgrounding the app (e.g. a phone call, switching apps) should pause
-	# the game rather than let it keep falling unseen.
-	if what == NOTIFICATION_APPLICATION_FOCUS_OUT or what == NOTIFICATION_APPLICATION_PAUSED:
+	# the game rather than let it keep falling unseen. On Android the window
+	# can briefly start out unfocused during launch, so treat focus loss as
+	# backgrounding only after the window has actually held focus once.
+	if what == NOTIFICATION_APPLICATION_FOCUS_IN:
+		_window_had_focus = true
+	elif what == NOTIFICATION_APPLICATION_PAUSED \
+			or (what == NOTIFICATION_APPLICATION_FOCUS_OUT and _window_had_focus):
 		if is_instance_valid(game) and game.state == GameController.State.PLAYING:
 			game.set_paused(true)
 
