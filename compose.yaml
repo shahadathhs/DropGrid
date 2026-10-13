@@ -1,8 +1,12 @@
 # Godot runs headless in a container; nothing is installed on the host.
-# Compose pulls the image on first use. Bump GODOT_VERSION to upgrade.
+# Compose builds the image (see Dockerfile) on first use. Bump GODOT_VERSION to upgrade.
 services:
   godot:
-    image: barichello/godot-ci:${GODOT_VERSION:-4.7.2}
+    build:
+      context: .
+      args:
+        GODOT_VERSION: ${GODOT_VERSION:-4.7.2}
+    image: afterdrop-godot:${GODOT_VERSION:-4.7.2}
     platform: linux/amd64
     working_dir: /project
     environment:

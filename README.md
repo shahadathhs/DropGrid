@@ -6,7 +6,7 @@ A polished, lightweight 2D falling-block puzzle game for Android, built with **G
 
 ## Status
 
-Planning. The specification lives in [docs/](docs/); no game code yet.
+Playable prototype. Board logic, touch UI, sound, and local saves are in; Android device validation (Phase 7 of the [implementation plan](docs/README_IMPLEMENTATION_PLAN.md)) is pending.
 
 ## Docs
 

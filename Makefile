@@ -1,10 +1,11 @@
 # All Godot work runs in Docker via compose; only `install` needs adb on the host.
+# `run` targets use a local Godot (brew install --cask godot) to play on this PC.
 GODOT   := docker compose run --rm godot
 APK     := build/afterdrop-debug.apk
 PRESET  := Android
 
 .DEFAULT_GOAL := help
-.PHONY: help import check test apk install run-device shell clean
+.PHONY: help import check test apk install run-device run run-game shell clean
 
 help: ## Show this help
 	@grep -E '^[a-z-]+:.*##' $(MAKEFILE_LIST) | awk -F':.*## ' '{printf "  %-12s %s\n", $$1, $$2}'
@@ -28,6 +29,12 @@ install: ## Install the APK on a USB-connected phone (needs adb on the host)
 
 run-device: install ## Install and launch on the phone
 	adb shell monkey -p $$(grep -m1 'package/unique_name' export_presets.cfg | cut -d'"' -f2) 1
+
+run: ## Play the game on this PC (needs godot: brew install --cask godot)
+	godot --path .
+
+run-game: ## Run straight into the game scene, for debugging gameplay
+	godot --path . res://scenes/game.tscn
 
 shell: ## Open a shell in the Godot container
 	$(GODOT) bash
