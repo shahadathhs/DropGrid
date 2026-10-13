@@ -6,7 +6,7 @@ services:
       context: .
       args:
         GODOT_VERSION: ${GODOT_VERSION:-4.7.2}
-    image: afterdrop-godot:${GODOT_VERSION:-4.7.2}
+    image: dropgrid-godot:${GODOT_VERSION:-4.7.2}
     platform: linux/amd64
     working_dir: /project
     environment:

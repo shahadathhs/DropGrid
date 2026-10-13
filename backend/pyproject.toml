@@ -1,8 +1,8 @@
 [project]
-name = "afterdrop-backend"
+name = "dropgrid-backend"
 version = "0.1.0"
-description = "after-drop — optional accounts, stats sync, and leaderboard backend"
-authors = [{ name = "after-drop" }]
+description = "dropgrid — optional accounts, stats sync, and leaderboard backend"
+authors = [{ name = "dropgrid" }]
 requires-python = ">=3.12"
 dependencies = [
     "fastapi>=0.115.6",

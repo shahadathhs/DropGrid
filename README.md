@@ -1,8 +1,6 @@
-# After Drop
+# DropGrid
 
 A polished, lightweight 2D falling-block puzzle game built with **Godot 4.x** and **GDScript**. Portrait, offline-first, no ads or purchases. Optional accounts and a leaderboard run on a small FastAPI backend (Phases 9–10).
-
-> Working title: Dropgrid (temporary).
 
 ## Repository layout
 
@@ -34,7 +32,7 @@ Headless Godot runs in Docker via `docker compose`; the backend uses [uv](https:
 make help          # list targets
 make check         # import and parse-check the game
 make test          # run game unit tests
-make apk           # export game/build/afterdrop-debug.apk
+make apk           # export game/build/dropgrid-debug.apk
 make install       # adb install to a USB-connected phone (brew install --cask android-platform-tools)
 make backend-run   # serve the backend at http://localhost:8000 (docs at /docs)
 make ui-dev        # serve the UI prototype at http://localhost:3000

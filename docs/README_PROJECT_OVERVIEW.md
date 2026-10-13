@@ -1,7 +1,6 @@
 # Project Overview — Falling-Block Puzzle
 
-> **Working title:** Dropgrid  
-> The title is temporary and can be changed after checking name availability.
+> **Title:** DropGrid
 
 ## 1. Project goal
 

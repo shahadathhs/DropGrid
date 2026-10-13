@@ -1,7 +1,7 @@
 # Monorepo: game/ (Godot), backend/ (FastAPI), ui-prototype/ (Next.js reference).
 # Headless Godot work runs in Docker; backend uses uv; UI uses pnpm.
 GODOT   := docker compose run --rm godot
-APK     := game/build/afterdrop-debug.apk
+APK     := game/build/dropgrid-debug.apk
 PRESET  := Android
 UI      := ui-prototype
 BACKEND := backend
@@ -27,7 +27,7 @@ test: ## Run game unit tests (GUT, game/tests/)
 
 apk: import ## Export a debug APK to game/build/
 	@mkdir -p game/build
-	$(GODOT) bash -c 'android-setup && godot --headless --path . --export-debug "$(PRESET)" build/afterdrop-debug.apk'
+	$(GODOT) bash -c 'android-setup && godot --headless --path . --export-debug "$(PRESET)" build/dropgrid-debug.apk'
 	@echo "Built $(APK)"
 
 # ── Game: on this PC / phone ──────────────────────────────────────────

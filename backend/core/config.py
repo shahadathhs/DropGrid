@@ -11,13 +11,13 @@ class Settings(BaseSettings):
     )
 
     # App
-    app_name: str = "afterdrop"
+    app_name: str = "dropgrid"
     debug: bool = True
     api_prefix: str = "/v1"
 
     # Database — SQLite in development, PostgreSQL in production
     # (postgresql+asyncpg://...).
-    database_url: str = "sqlite+aiosqlite:///./afterdrop.db"
+    database_url: str = "sqlite+aiosqlite:///./dropgrid.db"
 
     # Auth
     jwt_secret: str = "change-me"

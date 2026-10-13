@@ -37,7 +37,7 @@ theme_override_constants/separation = 56
 layout_mode = 2
 theme_override_colors/font_color = Color(0.953, 0.965, 0.988, 1)
 theme_override_font_sizes/font_size = 72
-text = "After Drop"
+text = "DropGrid"
 horizontal_alignment = 1
 
 [node name="BestLabel" type="Label" parent="Center/Column"]
