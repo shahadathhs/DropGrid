@@ -18,13 +18,36 @@ services:
       - android-keys:/root/.android
       - ./docker/android-setup.sh:/usr/local/bin/android-setup:ro
 
+  # Local Postgres for development. Production uses Neon: set DATABASE_URL to the
+  # Neon URL in backend/.env (see backend/.env.example) and skip this service.
+  db:
+    image: postgres:16-alpine
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_USER=dropgrid
+      - POSTGRES_PASSWORD=dropgrid
+      - POSTGRES_DB=dropgrid
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U dropgrid -d dropgrid"]
+      interval: 2s
+      timeout: 3s
+      retries: 15
+
   backend:
     build: ./backend
     ports:
       - "8000:8000"
+    depends_on:
+      db:
+        condition: service_healthy
     environment:
       - DEBUG=${BACKEND_DEBUG:-true}
+      - DATABASE_URL=${DATABASE_URL:-postgresql://dropgrid:dropgrid@db:5432/dropgrid}
 
 volumes:
   godot-config:
   android-keys:
+  pgdata:

@@ -7,7 +7,7 @@ UI      := ui-prototype
 BACKEND := backend
 
 .DEFAULT_GOAL := help
-.PHONY: help setup import check test apk install run-device run run-game \
+.PHONY: help setup check-tools backend-env godot-install db-up db-down import check test apk install run-device run run-game \
         backend-install backend-run backend-test backend-lint backend-migrate \
         ui-install ui-dev ui-build shell clean
 
@@ -46,8 +46,41 @@ run-device: install ## Install and launch on the phone
 
 # ── Backend (uv, backend/) ────────────────────────────────────────────
 
-setup: backend-install backend-migrate ## One-time local setup: backend deps + dev database (SQLite, backend/dropgrid.db)
-	@echo "Setup done. Next: make backend-run  (and make ui-install for the prototype)"
+setup: check-tools backend-env db-up backend-install backend-migrate ui-install godot-install ## One-time local setup: tools, database, backend, UI prototype, Godot
+	@echo ""
+	@echo "Setup complete. Start the pieces you need:"
+	@echo "  make backend-run   API at http://localhost:8000 (docs at /docs)"
+	@echo "  make ui-dev        prototype at http://localhost:3000"
+	@echo "  make run           the game on this Mac"
+
+check-tools: ## Verify docker, uv, and pnpm are installed and Docker is running
+	@command -v docker >/dev/null || { echo "Missing: docker. Install Docker Desktop: https://www.docker.com/products/docker-desktop"; exit 1; }
+	@docker info >/dev/null 2>&1 || { echo "Docker is installed but not running. Start Docker Desktop, then run make setup again."; exit 1; }
+	@command -v uv >/dev/null || { echo "Missing: uv. Install with: brew install uv"; exit 1; }
+	@command -v pnpm >/dev/null || { echo "Missing: pnpm. Install with: brew install pnpm (or: corepack enable)"; exit 1; }
+	@echo "Tools OK: docker (running), uv, pnpm"
+
+backend-env: ## Create backend/.env for local Postgres if it does not exist (never overwrites)
+	@if [ -f $(BACKEND)/.env ]; then \
+		echo "$(BACKEND)/.env already exists, keeping it"; \
+	else \
+		{ grep -v '^JWT_SECRET=' $(BACKEND)/.env.example; echo "JWT_SECRET=$$(openssl rand -hex 32)"; } > $(BACKEND)/.env; \
+		echo "Created $(BACKEND)/.env for local Postgres. For Neon, replace DATABASE_URL in it."; \
+	fi
+
+db-up: ## Start local Postgres in Docker and wait until it accepts connections
+	docker compose up -d --wait db
+
+db-down: ## Stop local Postgres (data is kept in the pgdata volume)
+	docker compose stop db
+
+godot-install: ## Install Godot 4.7 with Homebrew if it is not already installed (macOS)
+	@if command -v godot >/dev/null 2>&1; then \
+		echo "Godot already installed: $$(godot --version)"; \
+	else \
+		command -v brew >/dev/null || { echo "Homebrew is needed to install Godot: https://brew.sh"; exit 1; }; \
+		brew install --cask godot; \
+	fi
 
 backend-install: ## Install backend dependencies (uv)
 	cd $(BACKEND) && uv sync
