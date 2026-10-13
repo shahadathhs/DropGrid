@@ -1,5 +1,17 @@
-build/
+# Godot
 .godot/
+android/
+*.translation
+export_credentials.cfg
+
+# Build output
+build/
 *.apk
+*.apk.idsig
+*.aab
+
+# This project's own inputs/artifacts, not part of the game
 *.zip
+
+# OS
 .DS_Store
