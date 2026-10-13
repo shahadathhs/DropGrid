@@ -1,6 +1,8 @@
-[gd_scene load_steps=2 format=3]
+[gd_scene format=3]
 
 [ext_resource type="Script" path="res://scripts/game_over_overlay.gd" id="1_gameover"]
+[ext_resource type="Script" path="res://scripts/brand_mark.gd" id="2_mark"]
+[ext_resource type="Texture2D" path="res://assets/icons/play.svg" id="3_play"]
 
 [node name="GameOverOverlay" type="Control"]
 layout_mode = 3
@@ -12,67 +14,178 @@ grow_vertical = 2
 mouse_filter = 1
 script = ExtResource("1_gameover")
 
-[node name="Dim" type="ColorRect" parent="."]
+[node name="Background" type="Panel" parent="."]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-color = Color(0.043, 0.063, 0.125, 0.9)
+mouse_filter = 2
+theme_type_variation = &"ScreenBackground"
 
-[node name="Center" type="CenterContainer" parent="."]
+[node name="Margin" type="MarginContainer" parent="."]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+mouse_filter = 2
+theme_override_constants/margin_left = 16
+theme_override_constants/margin_top = 24
+theme_override_constants/margin_right = 16
+theme_override_constants/margin_bottom = 24
 
-[node name="Column" type="VBoxContainer" parent="Center"]
+[node name="Column" type="VBoxContainer" parent="Margin"]
 layout_mode = 2
-theme_override_constants/separation = 24
+mouse_filter = 2
+alignment = 1
+theme_override_constants/separation = 12
 
-[node name="Title" type="Label" parent="Center/Column"]
-layout_mode = 2
-theme_override_colors/font_color = Color(1, 0.443, 0.522, 1)
-theme_override_font_sizes/font_size = 56
-text = "Game Over"
-horizontal_alignment = 1
-
-[node name="ScoreLabel" type="Label" parent="Center/Column"]
-unique_name_in_owner = true
-layout_mode = 2
-theme_override_colors/font_color = Color(0.953, 0.965, 0.988, 1)
-theme_override_font_sizes/font_size = 36
-text = "Score: 0"
-horizontal_alignment = 1
-
-[node name="BestLabel" type="Label" parent="Center/Column"]
-unique_name_in_owner = true
-layout_mode = 2
-theme_override_colors/font_color = Color(0.604, 0.659, 0.745, 1)
-theme_override_font_sizes/font_size = 28
-text = "Best: 0"
-horizontal_alignment = 1
-
-[node name="Spacer" type="Control" parent="Center/Column"]
-custom_minimum_size = Vector2(0, 24)
-layout_mode = 2
-
-[node name="PlayAgainButton" type="Button" parent="Center/Column"]
-custom_minimum_size = Vector2(320, 100)
+[node name="Mark" type="Control" parent="Margin/Column"]
+custom_minimum_size = Vector2(66, 66)
 layout_mode = 2
 size_flags_horizontal = 4
-theme_override_font_sizes/font_size = 32
-text = "Play Again"
+mouse_filter = 2
+script = ExtResource("2_mark")
+style = 1
 
-[node name="MenuButton" type="Button" parent="Center/Column"]
-custom_minimum_size = Vector2(320, 88)
+[node name="Eyebrow" type="Label" parent="Margin/Column"]
+unique_name_in_owner = true
 layout_mode = 2
-size_flags_horizontal = 4
-theme_override_font_sizes/font_size = 28
-text = "Main Menu"
+theme_type_variation = &"Eyebrow"
+horizontal_alignment = 1
+text = "Run over"
 
-[connection signal="pressed" from="Center/Column/PlayAgainButton" to="." method="_on_play_again_pressed"]
-[connection signal="pressed" from="Center/Column/MenuButton" to="." method="_on_menu_pressed"]
+[node name="Heading" type="Label" parent="Margin/Column"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"Heading"
+horizontal_alignment = 1
+text = "Nice run."
+
+[node name="HeadingAccent" type="Label" parent="Margin/Column"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"HeadingAccent"
+horizontal_alignment = 1
+text = "One more?"
+
+[node name="ScoreCard" type="PanelContainer" parent="Margin/Column"]
+layout_mode = 2
+mouse_filter = 2
+theme_type_variation = &"StrongCard"
+
+[node name="CardItems" type="VBoxContainer" parent="Margin/Column/ScoreCard"]
+layout_mode = 2
+mouse_filter = 2
+theme_override_constants/separation = 8
+
+[node name="FinalCaption" type="Label" parent="Margin/Column/ScoreCard/CardItems"]
+layout_mode = 2
+theme_type_variation = &"Caption"
+text = "FINAL SCORE"
+
+[node name="ScoreLabel" type="Label" parent="Margin/Column/ScoreCard/CardItems"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"BigValue"
+text = "0"
+
+[node name="Stats" type="HBoxContainer" parent="Margin/Column/ScoreCard/CardItems"]
+layout_mode = 2
+mouse_filter = 2
+theme_override_constants/separation = 8
+
+[node name="LinesStat" type="VBoxContainer" parent="Margin/Column/ScoreCard/CardItems/Stats"]
+layout_mode = 2
+size_flags_horizontal = 3
+mouse_filter = 2
+
+[node name="LinesCaption" type="Label" parent="Margin/Column/ScoreCard/CardItems/Stats/LinesStat"]
+layout_mode = 2
+theme_type_variation = &"Caption"
+text = "LINES"
+
+[node name="LinesLabel" type="Label" parent="Margin/Column/ScoreCard/CardItems/Stats/LinesStat"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"Value"
+text = "0"
+
+[node name="LevelStat" type="VBoxContainer" parent="Margin/Column/ScoreCard/CardItems/Stats"]
+layout_mode = 2
+size_flags_horizontal = 3
+mouse_filter = 2
+
+[node name="LevelCaption" type="Label" parent="Margin/Column/ScoreCard/CardItems/Stats/LevelStat"]
+layout_mode = 2
+theme_type_variation = &"Caption"
+text = "LEVEL"
+
+[node name="LevelLabel" type="Label" parent="Margin/Column/ScoreCard/CardItems/Stats/LevelStat"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"Value"
+text = "1"
+
+[node name="BestStat" type="VBoxContainer" parent="Margin/Column/ScoreCard/CardItems/Stats"]
+layout_mode = 2
+size_flags_horizontal = 3
+mouse_filter = 2
+
+[node name="BestCaption" type="Label" parent="Margin/Column/ScoreCard/CardItems/Stats/BestStat"]
+layout_mode = 2
+theme_type_variation = &"Caption"
+text = "BEST"
+
+[node name="BestLabel" type="Label" parent="Margin/Column/ScoreCard/CardItems/Stats/BestStat"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"Value"
+text = "0"
+
+[node name="PlayAgainButton" type="Button" parent="Margin/Column"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 69)
+layout_mode = 2
+theme_type_variation = &"PrimaryButton"
+text = ""
+
+[node name="Content" type="HBoxContainer" parent="Margin/Column/PlayAgainButton"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+alignment = 1
+theme_override_constants/separation = 12
+
+[node name="Icon" type="TextureRect" parent="Margin/Column/PlayAgainButton/Content"]
+custom_minimum_size = Vector2(26, 26)
+layout_mode = 2
+size_flags_vertical = 4
+mouse_filter = 2
+modulate = Color(0.039, 0.059, 0.118, 1)
+texture = ExtResource("3_play")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Label" type="Label" parent="Margin/Column/PlayAgainButton/Content"]
+layout_mode = 2
+size_flags_vertical = 4
+theme_type_variation = &"PrimaryLabel"
+text = "Play again"
+
+[node name="MenuButton" type="Button" parent="Margin/Column"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 69)
+layout_mode = 2
+theme_type_variation = &"SecondaryButton"
+text = "Home"
+
+[connection signal="pressed" from="Margin/Column/PlayAgainButton" to="." method="_on_play_again_pressed"]
+[connection signal="pressed" from="Margin/Column/MenuButton" to="." method="_on_menu_pressed"]

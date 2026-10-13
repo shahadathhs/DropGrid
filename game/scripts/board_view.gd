@@ -44,12 +44,22 @@ func _draw() -> void:
 	var origin := (size - board_px) * 0.5
 
 	draw_rect(Rect2(origin, board_px), Palette.BOARD_BG)
+	_draw_empty_cells(origin, cell)
 	_draw_grid(origin, cell)
 	_draw_locked_cells(origin, cell)
 	if game.state == GameController.State.PLAYING and game.has_active:
 		_draw_ghost(origin, cell)
 		_draw_active(origin, cell)
 	draw_rect(Rect2(origin, board_px), Palette.GRID, false, 2.0)
+
+
+## Empty cells get a slightly lighter square with a small gap, like the prototype's board cells.
+func _draw_empty_cells(origin: Vector2, cell: float) -> void:
+	var inset := cell * 0.06
+	for y in rows:
+		for x in cols:
+			var pos := origin + Vector2(x, y) * cell
+			draw_rect(Rect2(pos + Vector2(inset, inset), Vector2(cell - inset * 2, cell - inset * 2)), Palette.BOARD_CELL)
 
 
 func _draw_grid(origin: Vector2, cell: float) -> void:

@@ -1,6 +1,8 @@
-[gd_scene load_steps=2 format=3]
+[gd_scene format=3]
 
 [ext_resource type="Script" path="res://scripts/settings_overlay.gd" id="1_settings"]
+[ext_resource type="Texture2D" path="res://assets/icons/arrow_left.svg" id="2_back"]
+[ext_resource type="Texture2D" path="res://assets/icons/volume.svg" id="3_volume"]
 
 [node name="SettingsOverlay" type="Control"]
 layout_mode = 3
@@ -12,62 +14,159 @@ grow_vertical = 2
 mouse_filter = 1
 script = ExtResource("1_settings")
 
-[node name="Dim" type="ColorRect" parent="."]
+[node name="Background" type="Panel" parent="."]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-color = Color(0.043, 0.063, 0.125, 0.85)
+mouse_filter = 2
+theme_type_variation = &"ScreenBackground"
 
-[node name="Center" type="CenterContainer" parent="."]
+[node name="Margin" type="MarginContainer" parent="."]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+mouse_filter = 2
+theme_override_constants/margin_left = 16
+theme_override_constants/margin_top = 24
+theme_override_constants/margin_right = 16
+theme_override_constants/margin_bottom = 24
 
-[node name="Panel" type="PanelContainer" parent="Center"]
-custom_minimum_size = Vector2(520, 0)
+[node name="Column" type="VBoxContainer" parent="Margin"]
 layout_mode = 2
+mouse_filter = 2
+theme_override_constants/separation = 18
 
-[node name="Margin" type="MarginContainer" parent="Center/Panel"]
+[node name="TopBar" type="HBoxContainer" parent="Margin/Column"]
+custom_minimum_size = Vector2(0, 57)
 layout_mode = 2
-theme_override_constants/margin_left = 40
-theme_override_constants/margin_top = 40
-theme_override_constants/margin_right = 40
-theme_override_constants/margin_bottom = 40
+mouse_filter = 2
 
-[node name="Column" type="VBoxContainer" parent="Center/Panel/Margin"]
+[node name="CloseButton" type="Button" parent="Margin/Column/TopBar"]
+custom_minimum_size = Vector2(57, 57)
 layout_mode = 2
-theme_override_constants/separation = 32
+theme_type_variation = &"IconButton"
+tooltip_text = "Go back"
 
-[node name="Title" type="Label" parent="Center/Panel/Margin/Column"]
+[node name="IconCenter" type="CenterContainer" parent="Margin/Column/TopBar/CloseButton"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="Icon" type="TextureRect" parent="Margin/Column/TopBar/CloseButton/IconCenter"]
+custom_minimum_size = Vector2(26, 26)
 layout_mode = 2
-theme_override_colors/font_color = Color(0.953, 0.965, 0.988, 1)
-theme_override_font_sizes/font_size = 40
-text = "Settings"
+mouse_filter = 2
+texture = ExtResource("2_back")
+expand_mode = 1
+stretch_mode = 5
 
-[node name="SoundRow" type="HBoxContainer" parent="Center/Panel/Margin/Column"]
-layout_mode = 2
-
-[node name="SoundLabel" type="Label" parent="Center/Panel/Margin/Column/SoundRow"]
+[node name="Title" type="Label" parent="Margin/Column/TopBar"]
 layout_mode = 2
 size_flags_horizontal = 3
-theme_override_colors/font_color = Color(0.953, 0.965, 0.988, 1)
-theme_override_font_sizes/font_size = 28
-text = "Sound"
+theme_type_variation = &"Title"
+horizontal_alignment = 1
+vertical_alignment = 1
+text = "Settings"
 
-[node name="SoundToggle" type="CheckButton" parent="Center/Panel/Margin/Column/SoundRow"]
+[node name="TopSpacer" type="Control" parent="Margin/Column/TopBar"]
+custom_minimum_size = Vector2(57, 0)
+layout_mode = 2
+mouse_filter = 2
+
+[node name="SettingsList" type="VBoxContainer" parent="Margin/Column"]
+layout_mode = 2
+mouse_filter = 2
+theme_override_constants/separation = 12
+
+[node name="SoundToggle" type="Button" parent="Margin/Column/SettingsList"]
 unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 96)
 layout_mode = 2
+theme_type_variation = &"CardButton"
+toggle_mode = true
+text = ""
+alignment = 0
 
-[node name="CloseButton" type="Button" parent="Center/Panel/Margin/Column"]
-custom_minimum_size = Vector2(0, 88)
+[node name="Row" type="MarginContainer" parent="Margin/Column/SettingsList/SoundToggle"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+theme_override_constants/margin_left = 18
+theme_override_constants/margin_top = 12
+theme_override_constants/margin_right = 18
+theme_override_constants/margin_bottom = 12
+
+[node name="Items" type="HBoxContainer" parent="Margin/Column/SettingsList/SoundToggle/Row"]
 layout_mode = 2
-theme_override_font_sizes/font_size = 28
-text = "Close"
+mouse_filter = 2
+theme_override_constants/separation = 15
 
-[connection signal="pressed" from="Center/Panel/Margin/Column/CloseButton" to="." method="_on_close_pressed"]
+[node name="IconTile" type="PanelContainer" parent="Margin/Column/SettingsList/SoundToggle/Row/Items"]
+custom_minimum_size = Vector2(57, 57)
+layout_mode = 2
+size_flags_vertical = 4
+mouse_filter = 2
+theme_type_variation = &"SettingIcon"
+
+[node name="SoundIcon" type="TextureRect" parent="Margin/Column/SettingsList/SoundToggle/Row/Items/IconTile"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(28, 28)
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+mouse_filter = 2
+texture = ExtResource("3_volume")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Text" type="VBoxContainer" parent="Margin/Column/SettingsList/SoundToggle/Row/Items"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 4
+mouse_filter = 2
+theme_override_constants/separation = 2
+
+[node name="Name" type="Label" parent="Margin/Column/SettingsList/SoundToggle/Row/Items/Text"]
+layout_mode = 2
+theme_type_variation = &"Title"
+text = "Sound effects"
+
+[node name="Hint" type="Label" parent="Margin/Column/SettingsList/SoundToggle/Row/Items/Text"]
+layout_mode = 2
+theme_type_variation = &"Muted"
+text = "Movement, clears, and feedback"
+
+[node name="ToggleTrack" type="Panel" parent="Margin/Column/SettingsList/SoundToggle/Row/Items"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(63, 37)
+layout_mode = 2
+size_flags_vertical = 4
+mouse_filter = 2
+theme_type_variation = &"ToggleOff"
+
+[node name="ToggleKnob" type="Panel" parent="Margin/Column/SettingsList/SoundToggle/Row/Items/ToggleTrack"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(29, 29)
+layout_mode = 0
+offset_left = 4.0
+offset_top = 4.0
+offset_right = 33.0
+offset_bottom = 33.0
+mouse_filter = 2
+theme_type_variation = &"ToggleKnobOff"
+
+[connection signal="pressed" from="Margin/Column/TopBar/CloseButton" to="." method="_on_close_pressed"]

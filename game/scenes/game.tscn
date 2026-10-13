@@ -1,4 +1,4 @@
-[gd_scene load_steps=7 format=3]
+[gd_scene format=3]
 
 [ext_resource type="Script" path="res://scripts/game.gd" id="1_game"]
 [ext_resource type="Script" path="res://scripts/board_view.gd" id="2_board"]
@@ -6,6 +6,12 @@
 [ext_resource type="Script" path="res://scripts/touch_controls.gd" id="4_touch"]
 [ext_resource type="PackedScene" path="res://scenes/pause_overlay.tscn" id="5_pause"]
 [ext_resource type="PackedScene" path="res://scenes/game_over_overlay.tscn" id="6_gameover"]
+[ext_resource type="Script" path="res://scripts/next_preview.gd" id="7_next"]
+[ext_resource type="Texture2D" path="res://assets/icons/pause.svg" id="8_pause"]
+[ext_resource type="Texture2D" path="res://assets/icons/chevron_left.svg" id="9_left"]
+[ext_resource type="Texture2D" path="res://assets/icons/rotate_cw.svg" id="10_rotate"]
+[ext_resource type="Texture2D" path="res://assets/icons/chevron_right.svg" id="11_right"]
+[ext_resource type="Texture2D" path="res://assets/icons/chevron_down.svg" id="12_down"]
 
 [node name="Game" type="Control"]
 layout_mode = 3
@@ -16,167 +22,291 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_game")
 
-[node name="Background" type="ColorRect" parent="."]
+[node name="Background" type="Panel" parent="."]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-color = Color(0.043, 0.063, 0.125, 1)
+mouse_filter = 2
+theme_type_variation = &"ScreenBackground"
 
-[node name="Root" type="VBoxContainer" parent="."]
+[node name="Margin" type="MarginContainer" parent="."]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_constants/separation = 8
+mouse_filter = 2
+theme_override_constants/margin_left = 16
+theme_override_constants/margin_top = 24
+theme_override_constants/margin_right = 16
+theme_override_constants/margin_bottom = 24
 
-[node name="TopBar" type="HBoxContainer" parent="Root"]
-custom_minimum_size = Vector2(0, 112)
+[node name="Column" type="VBoxContainer" parent="Margin"]
 layout_mode = 2
-size_flags_vertical = 0
-theme_override_constants/separation = 16
+mouse_filter = 2
+theme_override_constants/separation = 0
 
-[node name="Margin" type="MarginContainer" parent="Root/TopBar"]
+[node name="Header" type="HBoxContainer" parent="Margin/Column"]
+custom_minimum_size = Vector2(0, 57)
+layout_mode = 2
+mouse_filter = 2
+
+[node name="PauseButton" type="Button" parent="Margin/Column/Header"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(57, 57)
+layout_mode = 2
+theme_type_variation = &"IconButton"
+tooltip_text = "Pause game"
+
+[node name="IconCenter" type="CenterContainer" parent="Margin/Column/Header/PauseButton"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="Icon" type="TextureRect" parent="Margin/Column/Header/PauseButton/IconCenter"]
+custom_minimum_size = Vector2(26, 26)
+layout_mode = 2
+mouse_filter = 2
+texture = ExtResource("8_pause")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="LeftSpacer" type="Control" parent="Margin/Column/Header"]
 layout_mode = 2
 size_flags_horizontal = 3
-theme_override_constants/margin_left = 24
-theme_override_constants/margin_top = 16
-theme_override_constants/margin_right = 24
-theme_override_constants/margin_bottom = 8
+mouse_filter = 2
 
-[node name="Row" type="HBoxContainer" parent="Root/TopBar/Margin"]
+[node name="ScoreColumn" type="VBoxContainer" parent="Margin/Column/Header"]
 layout_mode = 2
+mouse_filter = 2
+alignment = 1
 
-[node name="PauseButton" type="Button" parent="Root/TopBar/Margin/Row"]
-unique_name_in_owner = true
-custom_minimum_size = Vector2(88, 88)
+[node name="ScoreCaption" type="Label" parent="Margin/Column/Header/ScoreColumn"]
 layout_mode = 2
-theme_override_font_sizes/font_size = 28
-text = "||"
+theme_type_variation = &"Caption"
+horizontal_alignment = 1
+text = "SCORE"
 
-[node name="Spacer" type="Control" parent="Root/TopBar/Margin/Row"]
-layout_mode = 2
-size_flags_horizontal = 3
-
-[node name="ScoreColumn" type="VBoxContainer" parent="Root/TopBar/Margin/Row"]
-layout_mode = 2
-alignment = 2
-
-[node name="ScoreLabel" type="Label" parent="Root/TopBar/Margin/Row/ScoreColumn"]
+[node name="ScoreLabel" type="Label" parent="Margin/Column/Header/ScoreColumn"]
 unique_name_in_owner = true
 layout_mode = 2
-theme_override_colors/font_color = Color(0.953, 0.965, 0.988, 1)
-theme_override_font_sizes/font_size = 44
+theme_type_variation = &"LiveScore"
+horizontal_alignment = 1
 text = "0"
-horizontal_alignment = 2
 
-[node name="BestLabel" type="Label" parent="Root/TopBar/Margin/Row/ScoreColumn"]
+[node name="RightSpacer" type="Control" parent="Margin/Column/Header"]
+layout_mode = 2
+size_flags_horizontal = 3
+mouse_filter = 2
+
+[node name="BestColumn" type="VBoxContainer" parent="Margin/Column/Header"]
+layout_mode = 2
+mouse_filter = 2
+alignment = 1
+
+[node name="BestCaption" type="Label" parent="Margin/Column/Header/BestColumn"]
+layout_mode = 2
+theme_type_variation = &"Caption"
+horizontal_alignment = 2
+text = "BEST"
+
+[node name="BestLabel" type="Label" parent="Margin/Column/Header/BestColumn"]
 unique_name_in_owner = true
 layout_mode = 2
-theme_override_colors/font_color = Color(0.604, 0.659, 0.745, 1)
-theme_override_font_sizes/font_size = 24
-text = "Best 0"
+theme_type_variation = &"MiniValue"
 horizontal_alignment = 2
+text = "0"
 
-[node name="BoardView" type="Control" parent="Root"]
+[node name="MetaMargin" type="MarginContainer" parent="Margin/Column"]
+layout_mode = 2
+mouse_filter = 2
+theme_override_constants/margin_top = 18
+theme_override_constants/margin_bottom = 12
+
+[node name="Meta" type="HBoxContainer" parent="Margin/Column/MetaMargin"]
+layout_mode = 2
+mouse_filter = 2
+theme_override_constants/separation = 12
+
+[node name="LevelPill" type="PanelContainer" parent="Margin/Column/MetaMargin/Meta"]
+layout_mode = 2
+size_flags_vertical = 4
+mouse_filter = 2
+theme_type_variation = &"LevelPill"
+
+[node name="LevelPillLabel" type="Label" parent="Margin/Column/MetaMargin/Meta/LevelPill"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"Pill"
+text = "Level 01"
+
+[node name="MetaSpacer" type="Control" parent="Margin/Column/MetaMargin/Meta"]
+layout_mode = 2
+size_flags_horizontal = 3
+mouse_filter = 2
+
+[node name="NextCaption" type="Label" parent="Margin/Column/MetaMargin/Meta"]
+layout_mode = 2
+size_flags_vertical = 4
+theme_type_variation = &"Caption"
+text = "NEXT"
+
+[node name="NextPreview" type="Control" parent="Margin/Column/MetaMargin/Meta"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(54, 36)
+layout_mode = 2
+size_flags_vertical = 4
+mouse_filter = 2
+script = ExtResource("7_next")
+
+[node name="BoardView" type="Control" parent="Margin/Column"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_vertical = 3
 script = ExtResource("2_board")
 
-[node name="StatsBar" type="HBoxContainer" parent="Root"]
-custom_minimum_size = Vector2(0, 72)
+[node name="Progress" type="VBoxContainer" parent="Margin/Column"]
 layout_mode = 2
-size_flags_vertical = 0
+mouse_filter = 2
+theme_override_constants/separation = 9
 
-[node name="Margin" type="MarginContainer" parent="Root/StatsBar"]
+[node name="ProgressTop" type="Control" parent="Margin/Column/Progress"]
+custom_minimum_size = Vector2(0, 14)
+layout_mode = 2
+mouse_filter = 2
+
+[node name="ProgressBar" type="ProgressBar" parent="Margin/Column/Progress"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 6)
+layout_mode = 2
+max_value = 10.0
+show_percentage = false
+
+[node name="ProgressLabel" type="Label" parent="Margin/Column/Progress"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"Caption"
+horizontal_alignment = 1
+text = "10 lines to level 02"
+
+[node name="StatRowMargin" type="MarginContainer" parent="Margin/Column"]
+layout_mode = 2
+mouse_filter = 2
+theme_override_constants/margin_top = 0
+theme_override_constants/margin_bottom = 0
+
+[node name="StatRow" type="HBoxContainer" parent="Margin/Column/StatRowMargin"]
+layout_mode = 2
+mouse_filter = 2
+theme_override_constants/separation = 9
+
+[node name="StatLines" type="PanelContainer" parent="Margin/Column/StatRowMargin/StatRow"]
 layout_mode = 2
 size_flags_horizontal = 3
-theme_override_constants/margin_left = 32
-theme_override_constants/margin_right = 32
+theme_type_variation = &"StatCard"
 
-[node name="Row" type="HBoxContainer" parent="Root/StatsBar/Margin"]
+[node name="LinesColumn" type="VBoxContainer" parent="Margin/Column/StatRowMargin/StatRow/StatLines"]
 layout_mode = 2
+theme_override_constants/separation = 2
 
-[node name="LinesLabel" type="Label" parent="Root/StatsBar/Margin/Row"]
+[node name="LinesCaption" type="Label" parent="Margin/Column/StatRowMargin/StatRow/StatLines/LinesColumn"]
+layout_mode = 2
+theme_type_variation = &"Caption"
+text = "LINES"
+
+[node name="LinesLabel" type="Label" parent="Margin/Column/StatRowMargin/StatRow/StatLines/LinesColumn"]
 unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"Value"
+text = "0"
+
+[node name="StatLevel" type="PanelContainer" parent="Margin/Column/StatRowMargin/StatRow"]
 layout_mode = 2
 size_flags_horizontal = 3
-theme_override_colors/font_color = Color(0.604, 0.659, 0.745, 1)
-theme_override_font_sizes/font_size = 26
-text = "Lines 0"
+theme_type_variation = &"StatCard"
 
-[node name="LevelLabel" type="Label" parent="Root/StatsBar/Margin/Row"]
+[node name="LevelColumn" type="VBoxContainer" parent="Margin/Column/StatRowMargin/StatRow/StatLevel"]
+layout_mode = 2
+theme_override_constants/separation = 2
+
+[node name="LevelCaption" type="Label" parent="Margin/Column/StatRowMargin/StatRow/StatLevel/LevelColumn"]
+layout_mode = 2
+theme_type_variation = &"Caption"
+text = "LEVEL"
+
+[node name="LevelLabel" type="Label" parent="Margin/Column/StatRowMargin/StatRow/StatLevel/LevelColumn"]
 unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"Value"
+text = "1"
+
+[node name="ControlsMargin" type="MarginContainer" parent="Margin/Column"]
+layout_mode = 2
+mouse_filter = 2
+theme_override_constants/margin_top = 18
+theme_override_constants/margin_bottom = 0
+
+[node name="Controls" type="HBoxContainer" parent="Margin/Column/ControlsMargin"]
+custom_minimum_size = Vector2(0, 78)
+layout_mode = 2
+mouse_filter = 2
+theme_override_constants/separation = 13
+
+[node name="LeftButton" type="Button" parent="Margin/Column/ControlsMargin/Controls"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 78)
 layout_mode = 2
 size_flags_horizontal = 3
-theme_override_colors/font_color = Color(0.604, 0.659, 0.745, 1)
-theme_override_font_sizes/font_size = 26
-horizontal_alignment = 2
-text = "Level 1"
+theme_type_variation = &"ControlButton"
+icon = ExtResource("9_left")
+expand_icon = true
+tooltip_text = "Move left"
 
-[node name="ControlsBar" type="HBoxContainer" parent="Root"]
-custom_minimum_size = Vector2(0, 176)
-layout_mode = 2
-size_flags_vertical = 0
-alignment = 1
-theme_override_constants/separation = 20
-
-[node name="Margin" type="MarginContainer" parent="Root/ControlsBar"]
+[node name="RotateButton" type="Button" parent="Margin/Column/ControlsMargin/Controls"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 78)
 layout_mode = 2
 size_flags_horizontal = 3
-size_flags_vertical = 3
-theme_override_constants/margin_left = 24
-theme_override_constants/margin_top = 16
-theme_override_constants/margin_right = 24
-theme_override_constants/margin_bottom = 32
+theme_type_variation = &"ControlButton"
+icon = ExtResource("10_rotate")
+expand_icon = true
+tooltip_text = "Rotate"
 
-[node name="Row" type="HBoxContainer" parent="Root/ControlsBar/Margin"]
-layout_mode = 2
-size_flags_vertical = 3
-alignment = 1
-theme_override_constants/separation = 16
-
-[node name="LeftButton" type="Button" parent="Root/ControlsBar/Margin/Row"]
+[node name="RightButton" type="Button" parent="Margin/Column/ControlsMargin/Controls"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(120, 120)
+custom_minimum_size = Vector2(0, 78)
 layout_mode = 2
-theme_override_font_sizes/font_size = 36
-text = "<"
+size_flags_horizontal = 3
+theme_type_variation = &"ControlButton"
+icon = ExtResource("11_right")
+expand_icon = true
+tooltip_text = "Move right"
 
-[node name="RightButton" type="Button" parent="Root/ControlsBar/Margin/Row"]
+[node name="SoftDropButton" type="Button" parent="Margin/Column/ControlsMargin/Controls"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(120, 120)
+custom_minimum_size = Vector2(0, 78)
 layout_mode = 2
-theme_override_font_sizes/font_size = 36
-text = ">"
+size_flags_horizontal = 3
+theme_type_variation = &"ControlButton"
+icon = ExtResource("12_down")
+expand_icon = true
+tooltip_text = "Soft drop"
 
-[node name="RotateButton" type="Button" parent="Root/ControlsBar/Margin/Row"]
+[node name="HardDropButton" type="Button" parent="Margin/Column/ControlsMargin/Controls"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(120, 120)
+custom_minimum_size = Vector2(0, 78)
 layout_mode = 2
-theme_override_font_sizes/font_size = 32
-text = "Rot"
-
-[node name="SoftDropButton" type="Button" parent="Root/ControlsBar/Margin/Row"]
-unique_name_in_owner = true
-custom_minimum_size = Vector2(120, 120)
-layout_mode = 2
-theme_override_font_sizes/font_size = 28
-text = "Soft"
-
-[node name="HardDropButton" type="Button" parent="Root/ControlsBar/Margin/Row"]
-unique_name_in_owner = true
-custom_minimum_size = Vector2(120, 120)
-layout_mode = 2
-modulate = Color(1, 0.788, 0.42, 1)
-theme_override_colors/font_color = Color(0.043, 0.063, 0.125, 1)
-theme_override_font_sizes/font_size = 24
-text = "HARD"
+size_flags_horizontal = 3
+theme_type_variation = &"DropButton"
+text = "Hard"
 
 [node name="Hud" type="Node" parent="."]
 unique_name_in_owner = true

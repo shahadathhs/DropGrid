@@ -20,7 +20,7 @@ func _ready() -> void:
 
 	_pause_button.pressed.connect(func(): game.set_paused(true))
 	_pause_overlay.resume_pressed.connect(func(): game.set_paused(false))
-	_pause_overlay.restart_pressed.connect(_restart)
+	_pause_overlay.end_run_pressed.connect(_end_run)
 	_pause_overlay.menu_pressed.connect(_go_to_menu)
 	_game_over_overlay.play_again_pressed.connect(_restart)
 	_game_over_overlay.menu_pressed.connect(_go_to_menu)
@@ -53,10 +53,18 @@ func _on_pause_changed(is_paused: bool) -> void:
 
 func _on_game_over(final_score: int) -> void:
 	Sfx.play("game_over")
-	var improved := Save.offer_score(final_score)
-	_game_over_overlay.show_results(final_score, Save.best_score, improved)
+	var improved := Save.record_run(final_score, game.lines)
+	Sync.push_stats() # no-op for guests; never blocks the game over screen
+	_game_over_overlay.show_results(final_score, Save.best_score, improved, game.lines, game.level)
 	_game_over_overlay.show()
 	_pause_button.disabled = true
+
+
+## "End run" in the pause panel: record the run and show the game over screen.
+## The controller stays paused, so the board stops moving while the results show.
+func _end_run() -> void:
+	_pause_overlay.hide()
+	_on_game_over(game.score)
 
 
 func _restart() -> void:

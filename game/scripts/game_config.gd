@@ -25,3 +25,15 @@ const MOVE_REPEAT_INTERVAL := 0.05
 const ROTATION_KICKS: Array[Vector2i] = [
 	Vector2i(0, 0), Vector2i(-1, 0), Vector2i(1, 0), Vector2i(-2, 0), Vector2i(2, 0),
 ]
+
+# Sync server (sync release). Android emulators reach the host machine at
+# 10.0.2.2, so use http://10.0.2.2:8000/v1 there. A physical phone needs the
+# computer's LAN IP, for example http://192.168.1.20:8000/v1.
+const API_BASE_URL := "http://localhost:8000/v1"
+const USERNAME_MIN_LENGTH := 3
+const USERNAME_MAX_LENGTH := 20
+const PASSWORD_MIN_LENGTH := 8
+
+# Retry delays for failed stat pushes: 5s, 10s, 20s, ... up to 5 minutes.
+const BACKOFF_BASE_SECONDS := 5.0
+const BACKOFF_MAX_SECONDS := 300.0

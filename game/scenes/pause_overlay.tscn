@@ -1,6 +1,8 @@
-[gd_scene load_steps=2 format=3]
+[gd_scene format=3]
 
 [ext_resource type="Script" path="res://scripts/pause_overlay.gd" id="1_pause"]
+[ext_resource type="Texture2D" path="res://assets/icons/pause.svg" id="2_pause"]
+[ext_resource type="Texture2D" path="res://assets/icons/play.svg" id="3_play"]
 
 [node name="PauseOverlay" type="Control"]
 layout_mode = 3
@@ -12,55 +14,132 @@ grow_vertical = 2
 mouse_filter = 1
 script = ExtResource("1_pause")
 
-[node name="Dim" type="ColorRect" parent="."]
+[node name="Dim" type="Panel" parent="."]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-color = Color(0.043, 0.063, 0.125, 0.85)
+mouse_filter = 2
+theme_type_variation = &"DimLayer"
 
-[node name="Center" type="CenterContainer" parent="."]
+[node name="Margin" type="MarginContainer" parent="."]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+mouse_filter = 2
+theme_override_constants/margin_left = 16
+theme_override_constants/margin_top = 24
+theme_override_constants/margin_right = 16
+theme_override_constants/margin_bottom = 24
 
-[node name="Column" type="VBoxContainer" parent="Center"]
+[node name="Column" type="VBoxContainer" parent="Margin"]
 layout_mode = 2
-theme_override_constants/separation = 32
+mouse_filter = 2
+alignment = 1
 
-[node name="Title" type="Label" parent="Center/Column"]
+[node name="Card" type="PanelContainer" parent="Margin/Column"]
 layout_mode = 2
-theme_override_colors/font_color = Color(1, 0.788, 0.42, 1)
-theme_override_font_sizes/font_size = 56
-text = "Paused"
-horizontal_alignment = 1
+mouse_filter = 1
+theme_type_variation = &"PausePanel"
 
-[node name="ResumeButton" type="Button" parent="Center/Column"]
-custom_minimum_size = Vector2(320, 100)
+[node name="Items" type="VBoxContainer" parent="Margin/Column/Card"]
+layout_mode = 2
+alignment = 1
+theme_override_constants/separation = 6
+
+[node name="PanelMark" type="PanelContainer" parent="Margin/Column/Card/Items"]
+custom_minimum_size = Vector2(63, 63)
 layout_mode = 2
 size_flags_horizontal = 4
-theme_override_font_sizes/font_size = 32
+mouse_filter = 2
+theme_type_variation = &"IconTile"
+
+[node name="PauseIcon" type="TextureRect" parent="Margin/Column/Card/Items/PanelMark"]
+custom_minimum_size = Vector2(28, 28)
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+mouse_filter = 2
+texture = ExtResource("2_pause")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Eyebrow" type="Label" parent="Margin/Column/Card/Items"]
+layout_mode = 2
+theme_type_variation = &"Eyebrow"
+horizontal_alignment = 1
+text = "Game paused"
+
+[node name="Heading" type="Label" parent="Margin/Column/Card/Items"]
+layout_mode = 2
+theme_type_variation = &"Heading"
+horizontal_alignment = 1
+text = "Take a breath."
+
+[node name="Hint" type="Label" parent="Margin/Column/Card/Items"]
+layout_mode = 2
+theme_type_variation = &"Muted"
+horizontal_alignment = 1
+text = "Your board is waiting for you."
+
+[node name="HintSpacer" type="Control" parent="Margin/Column/Card/Items"]
+custom_minimum_size = Vector2(0, 18)
+layout_mode = 2
+mouse_filter = 2
+
+[node name="ResumeButton" type="Button" parent="Margin/Column/Card/Items"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 69)
+layout_mode = 2
+theme_type_variation = &"PrimaryButton"
+text = ""
+
+[node name="Content" type="HBoxContainer" parent="Margin/Column/Card/Items/ResumeButton"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+alignment = 1
+theme_override_constants/separation = 12
+
+[node name="Icon" type="TextureRect" parent="Margin/Column/Card/Items/ResumeButton/Content"]
+custom_minimum_size = Vector2(26, 26)
+layout_mode = 2
+size_flags_vertical = 4
+mouse_filter = 2
+modulate = Color(0.039, 0.059, 0.118, 1)
+texture = ExtResource("3_play")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Label" type="Label" parent="Margin/Column/Card/Items/ResumeButton/Content"]
+layout_mode = 2
+size_flags_vertical = 4
+theme_type_variation = &"PrimaryLabel"
 text = "Resume"
 
-[node name="RestartButton" type="Button" parent="Center/Column"]
-custom_minimum_size = Vector2(320, 88)
+[node name="EndRunButton" type="Button" parent="Margin/Column/Card/Items"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 60)
 layout_mode = 2
-size_flags_horizontal = 4
-theme_override_font_sizes/font_size = 28
-text = "Restart"
+theme_type_variation = &"TextButton"
+text = "End run"
 
-[node name="MenuButton" type="Button" parent="Center/Column"]
-custom_minimum_size = Vector2(320, 88)
+[node name="MenuButton" type="Button" parent="Margin/Column/Card/Items"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 56)
 layout_mode = 2
-size_flags_horizontal = 4
-theme_override_font_sizes/font_size = 28
-text = "Main Menu"
+theme_type_variation = &"QuietButton"
+text = "Quit to home"
 
-[connection signal="pressed" from="Center/Column/ResumeButton" to="." method="_on_resume_pressed"]
-[connection signal="pressed" from="Center/Column/RestartButton" to="." method="_on_restart_pressed"]
-[connection signal="pressed" from="Center/Column/MenuButton" to="." method="_on_menu_pressed"]
+[connection signal="pressed" from="Margin/Column/Card/Items/ResumeButton" to="." method="_on_resume_pressed"]
+[connection signal="pressed" from="Margin/Column/Card/Items/EndRunButton" to="." method="_on_end_run_pressed"]
+[connection signal="pressed" from="Margin/Column/Card/Items/MenuButton" to="." method="_on_menu_pressed"]

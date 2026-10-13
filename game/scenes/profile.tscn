@@ -1,0 +1,330 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/profile_screen.gd" id="1_profile"]
+[ext_resource type="PackedScene" path="res://scenes/settings_overlay.tscn" id="2_settings"]
+[ext_resource type="Texture2D" path="res://assets/icons/arrow_left.svg" id="3_back"]
+[ext_resource type="Texture2D" path="res://assets/icons/settings.svg" id="4_gear"]
+
+[node name="ProfileScreen" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_profile")
+
+[node name="Background" type="Panel" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+theme_type_variation = &"ScreenBackground"
+
+[node name="Margin" type="MarginContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 16
+theme_override_constants/margin_top = 24
+theme_override_constants/margin_right = 16
+theme_override_constants/margin_bottom = 24
+
+[node name="Column" type="VBoxContainer" parent="Margin"]
+layout_mode = 2
+theme_override_constants/separation = 0
+
+[node name="TopBar" type="HBoxContainer" parent="Margin/Column"]
+custom_minimum_size = Vector2(0, 57)
+layout_mode = 2
+
+[node name="BackButton" type="Button" parent="Margin/Column/TopBar"]
+custom_minimum_size = Vector2(57, 57)
+layout_mode = 2
+theme_type_variation = &"IconButton"
+tooltip_text = "Go back"
+
+[node name="IconCenter" type="CenterContainer" parent="Margin/Column/TopBar/BackButton"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="Icon" type="TextureRect" parent="Margin/Column/TopBar/BackButton/IconCenter"]
+custom_minimum_size = Vector2(26, 26)
+layout_mode = 2
+mouse_filter = 2
+texture = ExtResource("3_back")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Title" type="Label" parent="Margin/Column/TopBar"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_type_variation = &"Title"
+horizontal_alignment = 1
+vertical_alignment = 1
+text = "Profile"
+
+[node name="SettingsButton" type="Button" parent="Margin/Column/TopBar"]
+custom_minimum_size = Vector2(57, 57)
+layout_mode = 2
+theme_type_variation = &"IconButton"
+tooltip_text = "Settings"
+
+[node name="IconCenter" type="CenterContainer" parent="Margin/Column/TopBar/SettingsButton"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="Icon" type="TextureRect" parent="Margin/Column/TopBar/SettingsButton/IconCenter"]
+custom_minimum_size = Vector2(26, 26)
+layout_mode = 2
+mouse_filter = 2
+texture = ExtResource("4_gear")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="IdentityTop" type="Control" parent="Margin/Column"]
+custom_minimum_size = Vector2(0, 27)
+layout_mode = 2
+mouse_filter = 2
+
+[node name="Identity" type="VBoxContainer" parent="Margin/Column"]
+layout_mode = 2
+alignment = 1
+theme_override_constants/separation = 10
+
+[node name="AvatarCircle" type="PanelContainer" parent="Margin/Column/Identity"]
+custom_minimum_size = Vector2(84, 84)
+layout_mode = 2
+size_flags_horizontal = 4
+mouse_filter = 2
+theme_type_variation = &"AvatarCircle"
+
+[node name="AvatarLabel" type="Label" parent="Margin/Column/Identity/AvatarCircle"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"Avatar"
+horizontal_alignment = 1
+vertical_alignment = 1
+text = "G"
+
+[node name="UsernameLabel" type="Label" parent="Margin/Column/Identity"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"Best"
+horizontal_alignment = 1
+clip_text = true
+text = "Guest player"
+
+[node name="SubtitleLabel" type="Label" parent="Margin/Column/Identity"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"Muted"
+horizontal_alignment = 1
+autowrap_mode = 3
+text = "Guest, saved on this device"
+
+[node name="StatRowMargin" type="MarginContainer" parent="Margin/Column"]
+layout_mode = 2
+theme_override_constants/margin_top = 27
+theme_override_constants/margin_bottom = 18
+
+[node name="StatRow" type="HBoxContainer" parent="Margin/Column/StatRowMargin"]
+layout_mode = 2
+theme_override_constants/separation = 9
+
+[node name="BestStat" type="PanelContainer" parent="Margin/Column/StatRowMargin/StatRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_type_variation = &"StatCard"
+
+[node name="BestColumn" type="VBoxContainer" parent="Margin/Column/StatRowMargin/StatRow/BestStat"]
+layout_mode = 2
+theme_override_constants/separation = 2
+
+[node name="BestCaption" type="Label" parent="Margin/Column/StatRowMargin/StatRow/BestStat/BestColumn"]
+layout_mode = 2
+theme_type_variation = &"Caption"
+text = "BEST SCORE"
+
+[node name="BestValue" type="Label" parent="Margin/Column/StatRowMargin/StatRow/BestStat/BestColumn"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"Value"
+text = "0"
+
+[node name="LinesStat" type="PanelContainer" parent="Margin/Column/StatRowMargin/StatRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_type_variation = &"StatCard"
+
+[node name="LinesColumn" type="VBoxContainer" parent="Margin/Column/StatRowMargin/StatRow/LinesStat"]
+layout_mode = 2
+theme_override_constants/separation = 2
+
+[node name="LinesCaption" type="Label" parent="Margin/Column/StatRowMargin/StatRow/LinesStat/LinesColumn"]
+layout_mode = 2
+theme_type_variation = &"Caption"
+text = "TOTAL LINES"
+
+[node name="LinesValue" type="Label" parent="Margin/Column/StatRowMargin/StatRow/LinesStat/LinesColumn"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"Value"
+text = "0"
+
+[node name="GamesStat" type="PanelContainer" parent="Margin/Column/StatRowMargin/StatRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_type_variation = &"StatCard"
+
+[node name="GamesColumn" type="VBoxContainer" parent="Margin/Column/StatRowMargin/StatRow/GamesStat"]
+layout_mode = 2
+theme_override_constants/separation = 2
+
+[node name="GamesCaption" type="Label" parent="Margin/Column/StatRowMargin/StatRow/GamesStat/GamesColumn"]
+layout_mode = 2
+theme_type_variation = &"Caption"
+text = "GAMES"
+
+[node name="GamesValue" type="Label" parent="Margin/Column/StatRowMargin/StatRow/GamesStat/GamesColumn"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"Value"
+text = "0"
+
+[node name="BottomSpacer" type="Control" parent="Margin/Column"]
+layout_mode = 2
+size_flags_vertical = 3
+mouse_filter = 2
+
+[node name="RenameCaption" type="Label" parent="Margin/Column"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"Muted"
+text = "Change username"
+
+[node name="RenameRow" type="HBoxContainer" parent="Margin/Column"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_constants/separation = 9
+
+[node name="NameField" type="LineEdit" parent="Margin/Column/RenameRow"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 69)
+layout_mode = 2
+size_flags_horizontal = 3
+placeholder_text = "New username"
+
+[node name="RenameButton" type="Button" parent="Margin/Column/RenameRow"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(150, 69)
+layout_mode = 2
+theme_type_variation = &"SecondaryButton"
+text = "Save"
+
+[node name="StatusLabel" type="Label" parent="Margin/Column"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"FormError"
+autowrap_mode = 3
+
+[node name="ActionsTop" type="Control" parent="Margin/Column"]
+custom_minimum_size = Vector2(0, 18)
+layout_mode = 2
+mouse_filter = 2
+
+[node name="Actions" type="VBoxContainer" parent="Margin/Column"]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="CreateProfileButton" type="Button" parent="Margin/Column/Actions"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 69)
+layout_mode = 2
+theme_type_variation = &"SecondaryButton"
+text = "Create a profile"
+
+[node name="SignOutButton" type="Button" parent="Margin/Column/Actions"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 69)
+layout_mode = 2
+theme_type_variation = &"SecondaryButton"
+text = "Sign out"
+
+[node name="DeleteButton" type="Button" parent="Margin/Column/Actions"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 60)
+layout_mode = 2
+theme_type_variation = &"DangerTextButton"
+text = "Delete account"
+
+[node name="ConfirmBox" type="PanelContainer" parent="Margin/Column/Actions"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+theme_type_variation = &"StrongCard"
+
+[node name="ConfirmItems" type="VBoxContainer" parent="Margin/Column/Actions/ConfirmBox"]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="ConfirmTitle" type="Label" parent="Margin/Column/Actions/ConfirmBox/ConfirmItems"]
+layout_mode = 2
+theme_type_variation = &"Title"
+text = "Delete your account?"
+
+[node name="ConfirmText" type="Label" parent="Margin/Column/Actions/ConfirmBox/ConfirmItems"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"Muted"
+autowrap_mode = 3
+text = "Your synced stats and leaderboard entry will be removed. This cannot be undone. Stats on this device stay."
+
+[node name="ConfirmDeleteButton" type="Button" parent="Margin/Column/Actions/ConfirmBox/ConfirmItems"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 69)
+layout_mode = 2
+theme_type_variation = &"DangerButton"
+text = "Delete account"
+
+[node name="CancelDeleteButton" type="Button" parent="Margin/Column/Actions/ConfirmBox/ConfirmItems"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 60)
+layout_mode = 2
+theme_type_variation = &"TextButton"
+text = "Cancel"
+
+[node name="SettingsOverlay" parent="." instance=ExtResource("2_settings")]
+unique_name_in_owner = true
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[connection signal="pressed" from="Margin/Column/TopBar/BackButton" to="." method="_on_back_pressed"]
+[connection signal="pressed" from="Margin/Column/TopBar/SettingsButton" to="." method="_on_settings_pressed"]
+[connection signal="pressed" from="Margin/Column/RenameRow/RenameButton" to="." method="_on_rename_pressed"]
+[connection signal="pressed" from="Margin/Column/Actions/CreateProfileButton" to="." method="_on_create_profile_pressed"]
+[connection signal="pressed" from="Margin/Column/Actions/SignOutButton" to="." method="_on_sign_out_pressed"]
+[connection signal="pressed" from="Margin/Column/Actions/DeleteButton" to="." method="_on_delete_pressed"]
+[connection signal="pressed" from="Margin/Column/Actions/ConfirmBox/ConfirmItems/ConfirmDeleteButton" to="." method="_on_confirm_delete_pressed"]
+[connection signal="pressed" from="Margin/Column/Actions/ConfirmBox/ConfirmItems/CancelDeleteButton" to="." method="_on_cancel_delete_pressed"]
