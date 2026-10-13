@@ -27,3 +27,12 @@ make test      # run unit tests
 make apk       # export build/afterdrop-debug.apk
 make install   # adb install to a USB-connected phone (brew install --cask android-platform-tools)
 ```
+
+## UI prototype
+
+A clickable Next.js mockup of the game's screens lives in [ui-prototype/](ui-prototype/) (v0 export; design reference only, not part of the game build).
+
+```sh
+make ui-install   # once (needs pnpm)
+make ui-dev       # serve at http://localhost:3000
+```

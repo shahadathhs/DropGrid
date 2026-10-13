@@ -1,11 +1,13 @@
 # All Godot work runs in Docker via compose; only `install` needs adb on the host.
 # `run` targets use a local Godot (brew install --cask godot) to play on this PC.
+# `ui-*` targets manage the Next.js UI prototype in ui-prototype/ (needs pnpm).
 GODOT   := docker compose run --rm godot
 APK     := build/afterdrop-debug.apk
 PRESET  := Android
+UI      := ui-prototype
 
 .DEFAULT_GOAL := help
-.PHONY: help import check test apk install run-device run run-game shell clean
+.PHONY: help import check test apk install run-device run run-game ui-install ui-dev ui-build shell clean
 
 help: ## Show this help
 	@grep -E '^[a-z-]+:.*##' $(MAKEFILE_LIST) | awk -F':.*## ' '{printf "  %-12s %s\n", $$1, $$2}'
@@ -35,6 +37,15 @@ run: ## Play the game on this PC (needs godot: brew install --cask godot)
 
 run-game: ## Run straight into the game scene, for debugging gameplay
 	godot --path . res://scenes/game.tscn
+
+ui-install: ## Install UI prototype dependencies (pnpm)
+	cd $(UI) && pnpm install
+
+ui-dev: ## Serve the UI prototype at http://localhost:3000
+	cd $(UI) && pnpm dev
+
+ui-build: ## Production-build the UI prototype
+	cd $(UI) && pnpm build
 
 shell: ## Open a shell in the Godot container
 	$(GODOT) bash
