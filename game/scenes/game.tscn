@@ -248,6 +248,26 @@ layout_mode = 2
 theme_type_variation = &"Value"
 text = "1"
 
+[node name="StatDrop" type="PanelContainer" parent="Margin/Column/StatRowMargin/StatRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_type_variation = &"StatCard"
+
+[node name="DropColumn" type="VBoxContainer" parent="Margin/Column/StatRowMargin/StatRow/StatDrop"]
+layout_mode = 2
+theme_override_constants/separation = 2
+
+[node name="DropCaption" type="Label" parent="Margin/Column/StatRowMargin/StatRow/StatDrop/DropColumn"]
+layout_mode = 2
+theme_type_variation = &"Caption"
+text = "DROP"
+
+[node name="DropLabel" type="Label" parent="Margin/Column/StatRowMargin/StatRow/StatDrop/DropColumn"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"Value"
+text = "0.80s"
+
 [node name="ControlsMargin" type="MarginContainer" parent="Margin/Column"]
 layout_mode = 2
 mouse_filter = 2

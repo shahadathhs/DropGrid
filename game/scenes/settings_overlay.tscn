@@ -3,6 +3,7 @@
 [ext_resource type="Script" path="res://scripts/settings_overlay.gd" id="1_settings"]
 [ext_resource type="Texture2D" path="res://assets/icons/arrow_left.svg" id="2_back"]
 [ext_resource type="Texture2D" path="res://assets/icons/volume.svg" id="3_volume"]
+[ext_resource type="Texture2D" path="res://assets/icons/vibrate.svg" id="4_vibrate"]
 
 [node name="SettingsOverlay" type="Control"]
 layout_mode = 3
@@ -159,6 +160,87 @@ mouse_filter = 2
 theme_type_variation = &"ToggleOff"
 
 [node name="ToggleKnob" type="Panel" parent="Margin/Column/SettingsList/SoundToggle/Row/Items/ToggleTrack"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(29, 29)
+layout_mode = 0
+offset_left = 4.0
+offset_top = 4.0
+offset_right = 33.0
+offset_bottom = 33.0
+mouse_filter = 2
+theme_type_variation = &"ToggleKnobOff"
+
+[node name="HapticsToggle" type="Button" parent="Margin/Column/SettingsList"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 96)
+layout_mode = 2
+theme_type_variation = &"CardButton"
+toggle_mode = true
+text = ""
+alignment = 0
+
+[node name="Row" type="MarginContainer" parent="Margin/Column/SettingsList/HapticsToggle"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+theme_override_constants/margin_left = 18
+theme_override_constants/margin_top = 12
+theme_override_constants/margin_right = 18
+theme_override_constants/margin_bottom = 12
+
+[node name="Items" type="HBoxContainer" parent="Margin/Column/SettingsList/HapticsToggle/Row"]
+layout_mode = 2
+mouse_filter = 2
+theme_override_constants/separation = 15
+
+[node name="IconTile" type="PanelContainer" parent="Margin/Column/SettingsList/HapticsToggle/Row/Items"]
+custom_minimum_size = Vector2(57, 57)
+layout_mode = 2
+size_flags_vertical = 4
+mouse_filter = 2
+theme_type_variation = &"SettingIcon"
+
+[node name="HapticsIcon" type="TextureRect" parent="Margin/Column/SettingsList/HapticsToggle/Row/Items/IconTile"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(28, 28)
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+mouse_filter = 2
+texture = ExtResource("4_vibrate")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Text" type="VBoxContainer" parent="Margin/Column/SettingsList/HapticsToggle/Row/Items"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 4
+mouse_filter = 2
+theme_override_constants/separation = 2
+
+[node name="Name" type="Label" parent="Margin/Column/SettingsList/HapticsToggle/Row/Items/Text"]
+layout_mode = 2
+theme_type_variation = &"Title"
+text = "Haptics"
+
+[node name="Hint" type="Label" parent="Margin/Column/SettingsList/HapticsToggle/Row/Items/Text"]
+layout_mode = 2
+theme_type_variation = &"Muted"
+text = "Short vibration on line clears and game over"
+
+[node name="HapticsTrack" type="Panel" parent="Margin/Column/SettingsList/HapticsToggle/Row/Items"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(63, 37)
+layout_mode = 2
+size_flags_vertical = 4
+mouse_filter = 2
+theme_type_variation = &"ToggleOff"
+
+[node name="HapticsKnob" type="Panel" parent="Margin/Column/SettingsList/HapticsToggle/Row/Items/HapticsTrack"]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(29, 29)
 layout_mode = 0

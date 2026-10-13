@@ -2,6 +2,7 @@ extends Control
 ## Game over screen. It shows the results that game.gd passes in and reports the two buttons.
 
 signal play_again_pressed
+signal levels_pressed
 signal menu_pressed
 
 @onready var _eyebrow: Label = %Eyebrow
@@ -31,6 +32,10 @@ func show_results(final_score: int, best_score: int, improved: bool, lines: int 
 
 func _on_play_again_pressed() -> void:
 	play_again_pressed.emit()
+
+
+func _on_levels_pressed() -> void:
+	levels_pressed.emit()
 
 
 func _on_menu_pressed() -> void:

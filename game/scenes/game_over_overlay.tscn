@@ -180,6 +180,13 @@ size_flags_vertical = 4
 theme_type_variation = &"PrimaryLabel"
 text = "Play again"
 
+[node name="LevelsButton" type="Button" parent="Margin/Column"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 69)
+layout_mode = 2
+theme_type_variation = &"SecondaryButton"
+text = "View level path"
+
 [node name="MenuButton" type="Button" parent="Margin/Column"]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(0, 69)
@@ -188,4 +195,5 @@ theme_type_variation = &"SecondaryButton"
 text = "Home"
 
 [connection signal="pressed" from="Margin/Column/PlayAgainButton" to="." method="_on_play_again_pressed"]
+[connection signal="pressed" from="Margin/Column/LevelsButton" to="." method="_on_levels_pressed"]
 [connection signal="pressed" from="Margin/Column/MenuButton" to="." method="_on_menu_pressed"]

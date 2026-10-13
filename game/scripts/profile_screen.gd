@@ -16,6 +16,7 @@ const SIGN_IN_SCENE := "res://scenes/sign_in.tscn"
 @onready var _best_value: Label = %BestValue
 @onready var _lines_value: Label = %LinesValue
 @onready var _games_value: Label = %GamesValue
+@onready var _level_value: Label = %LevelValue
 @onready var _name_field: LineEdit = %NameField
 @onready var _rename_button: Button = %RenameButton
 @onready var _status_label: Label = %StatusLabel
@@ -56,6 +57,7 @@ func _refresh_labels() -> void:
 	_best_value.text = UiFormat.thousands(Save.best_score)
 	_lines_value.text = UiFormat.thousands(Save.total_lines)
 	_games_value.text = UiFormat.thousands(Save.games_played)
+	_level_value.text = str(GameController.level_for_lines(Save.total_lines))
 
 
 ## Guests get "Create a profile". Signed-in players get rename, sign out, and delete.

@@ -99,3 +99,19 @@ func test_apply_merged_stats_writes_the_values() -> void:
 	assert_eq(_manager.best_score, 900)
 	assert_eq(_manager.total_lines, 44)
 	assert_eq(_manager.games_played, 7)
+
+
+func test_haptics_defaults_to_on_for_a_v1_file() -> void:
+	_write_text('{"version": 1, "best_score": 10}')
+	_manager.load_data()
+	assert_true(_manager.haptics, "haptics is on unless the file says otherwise")
+
+
+func test_haptics_setting_round_trips_through_the_save() -> void:
+	_manager.set_haptics(false)
+	var reloaded := SaveManager.new()
+	reloaded.save_path = TEST_PATH
+	reloaded.load_data()
+	assert_false(reloaded.haptics)
+	var parsed: Dictionary = JSON.parse_string(FileAccess.get_file_as_string(TEST_PATH))
+	assert_false(bool(parsed["haptics"]))

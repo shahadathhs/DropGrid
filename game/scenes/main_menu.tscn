@@ -7,6 +7,7 @@
 [ext_resource type="Texture2D" path="res://assets/icons/play.svg" id="5_play"]
 [ext_resource type="Texture2D" path="res://assets/icons/user.svg" id="6_user"]
 [ext_resource type="Texture2D" path="res://assets/icons/trophy.svg" id="7_trophy"]
+[ext_resource type="Texture2D" path="res://assets/icons/sparkles.svg" id="8_sparkles"]
 
 [node name="MainMenu" type="Control"]
 layout_mode = 3
@@ -185,6 +186,13 @@ size_flags_vertical = 4
 theme_type_variation = &"SecondaryLabel"
 text = "Sign in"
 
+[node name="ContinueGuestButton" type="Button" parent="Margin/Column/Actions"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 63)
+layout_mode = 2
+theme_type_variation = &"GhostButton"
+text = "Continue as guest"
+
 [node name="LeaderboardButton" type="Button" parent="Margin/Column/Actions"]
 custom_minimum_size = Vector2(0, 63)
 layout_mode = 2
@@ -217,6 +225,39 @@ layout_mode = 2
 size_flags_vertical = 4
 theme_type_variation = &"GhostLabel"
 text = "Leaderboard"
+
+[node name="LevelsButton" type="Button" parent="Margin/Column/Actions"]
+custom_minimum_size = Vector2(0, 63)
+layout_mode = 2
+theme_type_variation = &"GhostButton"
+text = ""
+
+[node name="Content" type="HBoxContainer" parent="Margin/Column/Actions/LevelsButton"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+alignment = 1
+theme_override_constants/separation = 12
+
+[node name="Icon" type="TextureRect" parent="Margin/Column/Actions/LevelsButton/Content"]
+custom_minimum_size = Vector2(26, 26)
+layout_mode = 2
+size_flags_vertical = 4
+mouse_filter = 2
+modulate = Color(0.576, 0.631, 0.729, 1)
+texture = ExtResource("8_sparkles")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Label" type="Label" parent="Margin/Column/Actions/LevelsButton/Content"]
+layout_mode = 2
+size_flags_vertical = 4
+theme_type_variation = &"GhostLabel"
+text = "Levels"
 
 [node name="BestNote" type="VBoxContainer" parent="Margin/Column"]
 layout_mode = 2
@@ -254,4 +295,6 @@ grow_vertical = 2
 [connection signal="pressed" from="Margin/Column/TopBar/SettingsButton" to="." method="_on_settings_pressed"]
 [connection signal="pressed" from="Margin/Column/Actions/PlayButton" to="." method="_on_play_pressed"]
 [connection signal="pressed" from="Margin/Column/Actions/AccountButton" to="." method="_on_account_pressed"]
+[connection signal="pressed" from="Margin/Column/Actions/ContinueGuestButton" to="." method="_on_continue_guest_pressed"]
 [connection signal="pressed" from="Margin/Column/Actions/LeaderboardButton" to="." method="_on_leaderboard_pressed"]
+[connection signal="pressed" from="Margin/Column/Actions/LevelsButton" to="." method="_on_levels_pressed"]

@@ -8,6 +8,8 @@ var best_score: int:
 	get: return _manager.best_score
 var sound_enabled: bool:
 	get: return _manager.sound_enabled
+var haptics: bool:
+	get: return _manager.haptics
 var total_lines: int:
 	get: return _manager.total_lines
 var games_played: int:
@@ -40,3 +42,7 @@ func mark_synced(revision: int) -> void:
 
 func set_sound_enabled(enabled: bool) -> void:
 	_manager.set_sound_enabled(enabled)
+
+
+func set_haptics(enabled: bool) -> void:
+	_manager.set_haptics(enabled)

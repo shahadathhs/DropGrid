@@ -1,10 +1,10 @@
 class_name SaveManager
 extends RefCounted
-## Loads and saves local stats, the sync flag, and the sound setting under user://.
+## Loads and saves local stats, the sync flag, and the sound and haptics settings under user://.
 ## A small autoload (Save.gd) wraps this with a single shared instance; see autoload below.
 
 const SAVE_PATH := "user://save.json"
-## Version 2 added total_lines, games_played, and pending_sync. Version 1 files still load.
+## Version 2 added total_lines, games_played, pending_sync, and haptics. Version 1 files still load.
 const CURRENT_VERSION := 2
 
 ## Where this instance reads and writes. Tests point it at a temp file.
@@ -12,6 +12,7 @@ var save_path := SAVE_PATH
 
 var best_score := 0
 var sound_enabled := true
+var haptics := true
 var total_lines := 0
 var games_played := 0
 ## True when local stats changed since the last successful sync.
@@ -45,6 +46,7 @@ func load_data() -> void:
 func apply_data(data: Dictionary) -> void:
 	best_score = int(data.get("best_score", 0))
 	sound_enabled = bool(data.get("sound_enabled", true))
+	haptics = bool(data.get("haptics", true))
 	total_lines = int(data.get("total_lines", 0))
 	games_played = int(data.get("games_played", 0))
 	pending_sync = bool(data.get("pending_sync", false))
@@ -55,6 +57,7 @@ func to_dictionary() -> Dictionary:
 		"version": CURRENT_VERSION,
 		"best_score": best_score,
 		"sound_enabled": sound_enabled,
+		"haptics": haptics,
 		"total_lines": total_lines,
 		"games_played": games_played,
 		"pending_sync": pending_sync,
@@ -109,4 +112,9 @@ func mark_synced(revision: int) -> void:
 
 func set_sound_enabled(enabled: bool) -> void:
 	sound_enabled = enabled
+	save_data()
+
+
+func set_haptics(enabled: bool) -> void:
+	haptics = enabled
 	save_data()

@@ -47,8 +47,15 @@ static func fall_interval(for_level: int) -> float:
 	return maxf(GameConfig.MIN_FALL_INTERVAL, interval)
 
 
+## Points for clearing `count` lines at once: the table in GameConfig, times the level.
 static func points_for_lines(count: int, for_level: int) -> int:
 	return GameConfig.LINE_POINTS[clampi(count, 0, GameConfig.LINE_POINTS.size() - 1)] * for_level
+
+
+## The one level rule: level 1 for the first 10 lines, then up one level every 10 lines.
+static func level_for_lines(total_lines: int) -> int:
+	@warning_ignore("integer_division")
+	return total_lines / GameConfig.LINES_PER_LEVEL + 1
 
 
 ## Advance the fall timer. Does nothing unless the game is being played.
@@ -181,8 +188,7 @@ func _lock_active() -> void:
 		lines_cleared.emit(cleared, points)
 		score_changed.emit(score)
 		lines_changed.emit(lines)
-		@warning_ignore("integer_division")
-		var new_level := lines / GameConfig.LINES_PER_LEVEL + 1
+		var new_level := level_for_lines(lines)
 		if new_level != level:
 			level = new_level
 			level_changed.emit(level)
