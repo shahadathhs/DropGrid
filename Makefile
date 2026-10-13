@@ -12,8 +12,8 @@ help: ## Show this help
 import: ## Import assets and build the .godot cache
 	$(GODOT) godot --headless --path . --import
 
-check: import ## Load the project headless; fails on script parse errors
-	$(GODOT) godot --headless --path . --quit
+check: import ## Parse-check every GDScript file; fails on errors
+	$(GODOT) bash -c 'set -e; for f in $$(find scripts -name "*.gd"); do godot --headless --path . --check-only --script res://$$f; done; echo "All scripts OK"'
 
 test: ## Run unit tests (GUT, tests/ dir; add addons/gut first)
 	$(GODOT) godot --headless --path . -s addons/gut/gut_cmdln.gd -gdir=res://tests -gexit

@@ -3,6 +3,7 @@
 services:
   godot:
     image: barichello/godot-ci:${GODOT_VERSION:-4.7.2}
+    platform: linux/amd64
     working_dir: /project
     environment:
       - GODOT_VERSION=${GODOT_VERSION:-4.7.2}
