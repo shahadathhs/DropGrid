@@ -1,18 +1,24 @@
-from pydantic import BaseModel, EmailStr, Field
+from pydantic import BaseModel, Field
+
+from core.validation import NewPassword, NormalizedEmail, Username
 
 
 class RegisterIn(BaseModel):
-    email: EmailStr
-    password: str = Field(min_length=8, max_length=100)
-    username: str = Field(min_length=3, max_length=20, pattern=r"^\w+$")
+    email: NormalizedEmail
+    password: NewPassword
+    username: Username
 
 
 class LoginIn(BaseModel):
-    email: EmailStr
-    password: str
+    email: NormalizedEmail
+    password: str = Field(min_length=1, max_length=128)
 
 
-class TokensOut(BaseModel):
+class RefreshIn(BaseModel):
+    refresh_token: str = Field(min_length=1)
+
+
+class TokenPair(BaseModel):
     access_token: str
     refresh_token: str
     token_type: str = "bearer"

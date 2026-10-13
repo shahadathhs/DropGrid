@@ -10,8 +10,15 @@ class UnauthorizedException(HTTPException):
         )
 
 
-class NotImplementedException(HTTPException):
-    """Marks scaffolding for a planned endpoint as not implemented yet."""
-
+class ConflictException(HTTPException):
     def __init__(self, detail: str):
-        super().__init__(status_code=status.HTTP_501_NOT_IMPLEMENTED, detail=detail)
+        super().__init__(status_code=status.HTTP_409_CONFLICT, detail=detail)
+
+
+class RateLimitedException(HTTPException):
+    def __init__(self, retry_after: int):
+        super().__init__(
+            status_code=status.HTTP_429_TOO_MANY_REQUESTS,
+            detail="Too many requests, try again later",
+            headers={"Retry-After": str(retry_after)},
+        )

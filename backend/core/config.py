@@ -25,6 +25,11 @@ class Settings(BaseSettings):
     access_token_expire_minutes: int = 30
     refresh_token_expire_days: int = 30
 
+    # Rate limiting: per client IP, per auth endpoint, sliding 60 s window.
+    # Set RATE_LIMIT_ENABLED=false in tests (or any local harness) to bypass.
+    rate_limit_enabled: bool = True
+    rate_limit_per_minute: int = 10
+
     # CORS origins (comma-separated). The Next.js prototype dev server.
     cors_origins: str = "http://localhost:3000"
 

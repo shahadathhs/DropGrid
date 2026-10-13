@@ -8,7 +8,7 @@ BACKEND := backend
 
 .DEFAULT_GOAL := help
 .PHONY: help import check test apk install run-device run run-game \
-        backend-install backend-run backend-test backend-lint \
+        backend-install backend-run backend-test backend-lint backend-migrate \
         ui-install ui-dev ui-build shell clean
 
 help: ## Show this help
@@ -51,6 +51,9 @@ backend-install: ## Install backend dependencies (uv)
 
 backend-run: ## Serve the backend at http://localhost:8000 (uvicorn --reload)
 	cd $(BACKEND) && uv run uvicorn main:app --reload --port 8000
+
+backend-migrate: ## Apply database migrations to DATABASE_URL (alembic upgrade head)
+	cd $(BACKEND) && uv run alembic upgrade head
 
 backend-test: ## Run backend tests (pytest)
 	cd $(BACKEND) && uv run pytest

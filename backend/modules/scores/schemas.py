@@ -1,18 +1,15 @@
-from pydantic import BaseModel
+from typing import Annotated
+
+from pydantic import BaseModel, Field
+
+# Stats are monotonic counters; the cap keeps values inside a 32-bit-safe range.
+Stat = Annotated[int, Field(ge=0, le=2_000_000_000)]
 
 
 class SyncIn(BaseModel):
-    best_score: int
-    total_lines: int
-    games_played: int
-
-
-class SyncOut(BaseModel):
-    """Merged server state, written back to the client's local save."""
-
-    best_score: int
-    total_lines: int
-    games_played: int
+    best_score: Stat
+    total_lines: Stat
+    games_played: Stat
 
 
 class LeaderboardEntry(BaseModel):

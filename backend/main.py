@@ -34,7 +34,7 @@ async def health() -> dict[str, str]:
 
 # ── Routers ───────────────────────────────────────────────────────────
 # All game-facing routes mount under /v1 (see docs/README_ARCHITECTURE.md
-# section 9 for the full API contract). Phase 9 fills in the handlers.
+# section 9 for the full API contract).
 app.include_router(auth_router, prefix=settings.api_prefix)
 app.include_router(players_router, prefix=settings.api_prefix)
 app.include_router(scores_router, prefix=settings.api_prefix)
