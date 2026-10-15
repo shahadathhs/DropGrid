@@ -20,7 +20,7 @@ The loop should be predictable and fair. Avoid introducing extra mechanics unles
 - Define each piece as a set of local cell coordinates plus its color/type.
 - Keep the logical board separate from the visual rendering.
 - Pieces must not overlap occupied cells or leave the board.
-- Rotation must handle wall/floor collisions safely. Basic rotation is sufficient for version 1; implement wall kicks only if needed for a reliable feel.
+- Rotation must handle wall/floor collisions safely. Basic rotation is sufficient for MVP1; implement wall kicks only if needed for a reliable feel.
 - A landing/ghost preview is optional, but useful if it can be implemented clearly.
 - Use a predictable piece-generation approach. A shuffled bag system is preferable to long streaks of the same piece.
 
@@ -51,18 +51,29 @@ Use a familiar, transparent scoring model. Suggested initial values:
 These values are configurable; do not bury them throughout the code.
 
 - Track score, total lines cleared, and current level.
-- Increase level at a defined line-clear threshold, such as every 10 lines.
+- Increase level every 10 lines cleared in the current game.
 - Increase falling speed gradually with level.
 - Set a minimum fall interval so the game remains playable.
 - Show the player how the level is progressing.
 
-Do not add combo, back-to-back, or complex bonus systems in version 1 unless the core implementation is already stable.
+Do not add combo, back-to-back, or complex bonus systems in MVP1 unless the core implementation is already stable.
+
+### Start level and unlocks
+
+- The levels screen is a start-level picker. The player chooses a start level from 1 to 10.
+- Level N unlocks when lifetime lines cleared (`total_lines`, summed over all games) reach 10 × (N − 1). Level 1 is always open.
+- Locked levels cannot be pressed. Each card shows the level's drop interval, or "Unlocks at N lines" while locked. The newest unlocked level is highlighted.
+- In a run, `level = max(start_level, lines_this_game / 10 + 1)`. Starting at level 5 keeps level 5 until 50 lines are cleared in that game.
+- Scoring is unchanged (points × level), so starting higher scores more. Fall speed follows the level.
+- Play on the main menu always starts at level 1. Play Again after game over repeats the run's start level.
+- `total_lines` already syncs, so unlocks carry over when the player signs in on a new phone.
+- Levels above 10 are not offered: the fall speed is near its floor.
 
 ## 5. Pause and game-over
 
 - Pause freezes automatic falling and ignores gameplay input.
 - Resume restores the previous state without resetting the board.
-- Restart starts a fresh game and resets current score/lines/level.
+- Restart (Play Again on the game-over screen) starts a fresh game and resets current score/lines/level.
 - Game over occurs when a new piece cannot spawn safely.
 - Best score is updated when a game ends or when the current score exceeds it, using a single clear rule.
 - Returning to the menu must not leave timers or input handlers running in the background.
@@ -76,23 +87,29 @@ Save locally:
 
 Use Godot's user data directory and a simple, version-tolerant save format. Handle missing or malformed save data safely. The game must still start if no save file exists.
 
-## 6b. Accounts and sync (optional, sync release)
+## 6b. Accounts and sync (optional, part of MVP1)
 
-Optional account features layered on top of local persistence:
+Optional account features layered on top of local persistence. Guests never touch the network.
 
-- Sign in / register with email and password; or keep playing as a guest.
+- Sign in / register with email, password, and username; or keep playing as a guest.
+- Username: 3 to 20 characters, letters, digits, and underscore. Names that match the blocklist (reserved names, slurs, and profanity) are rejected on register and rename, because the leaderboard shows usernames publicly. Matching: terms of 5 or more letters match anywhere in the name; shorter terms match only as a whole name or a whole part split at `_`. Simple digit swaps (such as 0 for o) are normalised first.
 - After each game ends, stats (best score, total lines, games played) sync to the player's account in the background.
 - The server keeps the max of each stat, so offline play and multiple devices converge without conflicts.
-- New screens: sign-in/registration form, profile with synced stats and sign-out, global leaderboard (top 50).
+- The server rejects a sync (HTTP 422) whose stats are not plausible: games played is 0 while lines or score is above 0, or best score is above what the submitted total lines could produce. The client treats this as a failed sync and stays silent. Scores are otherwise trusted; there is no real anti-cheat.
+- Screens: sign-in/registration form, profile with synced stats, rename, sign-out and delete account, global leaderboard (top 50).
 - Sync runs after sign-in, after game over, on app background, and on app start.
 - Every account feature fails silently offline: no dialogs, no blocked gameplay.
+- A build with no server URL set (project setting `dropgrid/network/api_base_url`) hides the account and leaderboard entries and "Continue as guest", and Sync makes no requests.
+- "Continue as guest" shows only when online features are on and the player is signed out. It plays exactly like Play.
+- There is no password reset in MVP1. Losing an account loses only the synced copy; local stats stay. State this in the privacy and help text.
+- Account deletion works in the app (profile screen) and on a web page served by the backend (`/account/delete`).
 
 ## 7. Accessibility and usability
 
 - Provide sufficiently large touch targets.
 - Maintain contrast between pieces, board, and UI.
 - Do not rely on color alone to explain controls or state.
-- Make pause and restart actions easy to find.
+- Make pause and Play Again easy to find.
 - Avoid requiring precise swipe gestures for essential actions.
 
 ## 8. Testing cases
@@ -107,11 +124,22 @@ Test at least:
 - Pause and resume while a piece is falling.
 - Restart after game over.
 - Best-score save and reload.
+- Start level: level 1 always open; level N locked until lifetime lines reach 10 × (N − 1); a locked level cannot start a game.
+- Start at level 5: the fall interval and score multiplier match level 5, and the level stays 5 until 50 lines are cleared in that game.
+- Play from the main menu after a higher-level run: starts at level 1. Play Again: repeats the run's start level.
 - Fast repeated touch input.
 - App backgrounding and returning, especially while paused.
 
-When the sync features are implemented, also test:
+Sync cases (run against the deployed backend):
 - Register, sign out, sign in on a second device — stats appear.
 - Play offline with an account, then sync on reconnect — server takes the max.
 - Airplane mode during game over — no crash, no dialog, stats stay local.
 - Expired access token mid-sync — transparent refresh, no lost submission.
+- Register with a blocked username — rejected with a clear message; username shorter than 3 or longer than 20 — rejected.
+- Sync with games played 0 but lines or score above 0 — rejected with 422, local stats untouched.
+- Sign in on a second device — total lines and unlocked levels appear.
+
+Offline-build cases:
+- A build with an empty server URL: no Sign in, Leaderboard, or Continue as guest entries, and no network requests (check with airplane mode and with the empty setting).
+- Debug build on a phone: haptics vibrate and sync works over the LAN (needs the INTERNET and VIBRATE permissions in the export).
+- Release build: the server URL is HTTPS, never `http://`.

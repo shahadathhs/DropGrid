@@ -1,6 +1,6 @@
 # DropGrid
 
-A polished, lightweight 2D falling-block puzzle game built with **Godot 4.x** and **GDScript**. Portrait, offline-first, no ads or purchases. Optional accounts and a leaderboard run on a small FastAPI backend (Phases 9–10).
+A polished, lightweight 2D falling-block puzzle game built with **Godot 4.x** and **GDScript**. Portrait, offline-first, no ads or purchases. Optional accounts and a leaderboard run on a small FastAPI backend.
 
 ## Repository layout
 
@@ -13,7 +13,7 @@ docker/         Container helper scripts (Godot image entrypoint, Android setup)
 
 ## Status
 
-Playable prototype with the sync release built: optional email/password accounts, background stat sync, profile, and a top-50 leaderboard, backed by the FastAPI service in `backend/` (Phases 9–10 of the [implementation plan](docs/README_IMPLEMENTATION_PLAN.md)). Still open: Android device validation (Phase 7), release preparation (Phase 8), and deploying the backend behind HTTPS. Guest play makes no network calls.
+Working toward MVP1, the first Google Play release: the offline game, a start-level picker, optional accounts with a leaderboard, and a visual redesign. The code for the game, the picker, sync, and the backend is built. The backend is not deployed, the redesign is in progress, and nothing has been validated on a phone yet. Phases and status are in [docs/MVP1_PLAN.md](docs/MVP1_PLAN.md) and the [implementation plan](docs/README_IMPLEMENTATION_PLAN.md). Guest play makes no network calls.
 
 ## Docs
 
@@ -21,7 +21,8 @@ Playable prototype with the sync release built: optional email/password accounts
 - [Architecture](docs/README_ARCHITECTURE.md): structure, responsibilities, state model
 - [Gameplay and features](docs/README_GAMEPLAY_FEATURES.md): loop, controls, scoring, persistence
 - [Visual design](docs/README_VISUAL_DESIGN.md): theme, colors, layout, sound
-- [Implementation plan](docs/README_IMPLEMENTATION_PLAN.md): build phases and verification checklist
+- [Implementation plan](docs/README_IMPLEMENTATION_PLAN.md): MVP1 phases and verification checklist
+- [Deploying the backend](docs/DEPLOY.md): Neon + Fly.io steps
 
 ## Development
 

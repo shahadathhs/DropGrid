@@ -4,87 +4,51 @@
 
 Use the accompanying README files as the product specification while building the game in Godot 4.x. The developer is new to Godot, so the project should remain understandable enough to learn from—not merely compile after a one-shot generation.
 
-## 2. Build order
+## 2. Build order (MVP1)
 
-### Phase 1 — Project skeleton
-- Create the Godot project with portrait orientation.
-- Create a simple main menu and game scene.
-- Confirm the project runs in the editor.
-- Use temporary shapes if final art is not ready.
+Each phase ends with `make test` and `make backend-test` passing. Status below is what the code shows today. The backend is **not deployed** yet.
 
-**Checkpoint:** The app opens and Play enters the game scene.
+### Original phases 1–6, 9, 10 — code done
+- 1 Project skeleton, 2 Logical board and pieces, 3 Falling and locking, 4 Line clears and scoring, 5 Touch UI and game states, 6 Persistence and polish: implemented and covered by unit tests.
+- 9 Sync backend (FastAPI, auth, `max()` merge, leaderboard, deletion) and 10 Sync client (`Sync` autoload, sign-in, profile, leaderboard screens): implemented and tested. Deployment from Phase 9 moved to Phase C.
+- Phase 7 (Android validation) and Phase 8 (release preparation) moved to Phases E and F.
 
-### Phase 2 — Logical board and pieces
-- Implement the logical grid and piece definitions.
-- Render the board and active piece.
-- Implement left/right movement and collision checks.
-- Implement rotation and collision checks.
+### Phase A — Docs: done
+Every doc describes the code as it is now.
 
-**Checkpoint:** The active piece moves and rotates without crossing walls or occupied cells.
+### Phase B — Functional alignment: done in code, not device-verified
+- Start-level picker works: the levels screen starts real games; level N unlocks at 10 × (N − 1) lifetime lines; in-run level is `max(start, lines / 10 + 1)`.
+- Server URL is a project setting with a `.release` override; an empty URL hides online features.
+- Android export has INTERNET and VIBRATE.
+- DevicePreview is guarded to desktop debug runs.
+- Still to verify: a debug APK on a phone syncs over LAN and vibrates (Phase E).
 
-### Phase 3 — Falling and locking
-- Add timed falling.
-- Lock pieces when downward movement is blocked.
-- Spawn the next piece.
-- Detect blocked spawn/game over.
+**Checkpoint:** levels start real games; debug APK on a phone syncs over LAN and vibrates.
 
-**Checkpoint:** A complete basic game loop works.
+### Phase C — Backend live: code done, deploy not done
+- Done in code: username blocklist, sync plausibility check, `/privacy` and `/account/delete` pages, production secret guard, `backend/fly.toml`, [DEPLOY.md](DEPLOY.md).
+- Not done: create the Neon database and the Fly app, set secrets, deploy, set the release API URL in `game/project.godot`, run the smoke test against production (register, sync, leaderboard, delete).
+- Keep exactly one instance (in-memory rate limits).
 
-### Phase 4 — Line clears and scoring
-- Detect full rows.
-- Clear them and shift rows correctly.
-- Update score, total lines, and level.
-- Increase fall speed within defined limits.
+**Checkpoint:** production smoke test passes; privacy and deletion pages reachable over HTTPS.
 
-**Checkpoint:** Several consecutive line clears do not corrupt the board.
+### Phase D — Redesign: in progress (analysis only)
+- Implement MasterPrompt phases 1–5 on the MVP1 screen set. No redesign code yet.
+- Then rewrite `README_VISUAL_DESIGN.md` from the result.
 
-### Phase 5 — Touch UI and game states
-- Add touch controls.
-- Add pause/resume and restart.
-- Add game-over screen and menu navigation.
-- Ensure timers and inputs stop in paused/game-over states.
+**Checkpoint:** the MasterPrompt acceptance checklist passes. C can run in parallel with D.
 
-**Checkpoint:** The game can be played entirely with touch on a phone.
+### Phase E — Device validation: not started
+- Android export, debug APK, real-device checks: touch, aspect ratios, performance, background/resume, safe areas.
+- Run the sync test cases in `README_GAMEPLAY_FEATURES.md` against production, online and in airplane mode.
 
-### Phase 6 — Persistence and polish
-- Save/load best score and sound setting.
-- Add short sound effects and subtle animations.
-- Improve typography, spacing, feedback, and transitions.
-- Add a mute option.
+**Checkpoint:** full test pass on at least two real phones with different aspect ratios.
 
-**Checkpoint:** The game feels coherent rather than like a raw prototype.
+### Phase F — Release: not started
+- App icon, screenshots from the redesigned build, store text, data safety form, signing, target API level, package ID and versioning.
+- Use Google Play's current requirements. Do not pay for a developer account until the build is worth publishing.
 
-### Phase 7 — Android validation
-- Configure the Android export template and export settings.
-- Build a debug APK and install it on a real Android device.
-- Check touch behavior, aspect ratios, performance, background/resume behavior, and safe areas.
-- Fix crashes and high-priority usability problems before store preparation.
-
-**Checkpoint:** A real device test passes from launch through multiple games.
-
-### Phase 8 — Release preparation
-- Create the app icon and store screenshots.
-- Write a concise store description and privacy information appropriate to the actual app.
-- Verify package ID, versioning, orientation, and permissions.
-- Use Google Play's current requirements for signing, target API level, testing, and release.
-- Do not pay for a developer account until the prototype is worth publishing.
-
-### Phase 9 — Sync backend
-- Scaffold `backend/` with FastAPI, SQLAlchemy, and Alembic (SQLite in dev, PostgreSQL in production).
-- Implement `/v1` auth (register, login, refresh; bcrypt + JWT), players, the `max()` stats merge on `POST /v1/sync`, the top-50 leaderboard, and account deletion.
-- Cover auth, the merge rule, and leaderboard ordering with backend tests.
-- Add `make backend-install|run|test` targets and a compose service for local dev.
-- Deploy one instance (Fly.io/Railway or similar) behind HTTPS.
-
-**Checkpoint:** `curl` proves register → sync → leaderboard against a deployed instance.
-
-### Phase 10 — Sync client
-- Add the `sync` autoload (tokens, outbox, retry/backoff); gameplay code stays network-free.
-- Add sign-in/registration, profile, and leaderboard screens following `docs/README_VISUAL_DESIGN.md`.
-- Wire sync triggers: after sign-in, after game over, on app background, on app start.
-- Verify guest paths make zero network calls and every failure path fails silently.
-
-**Checkpoint:** on a real device, online and offline: register, play, see stats on a second device, appear on the leaderboard, delete the account — with no crash, dialog, or blocked gameplay at any point without network.
+**Checkpoint:** an internal testing track build installed from Play.
 
 ## 3. One-shot implementation strategy
 
@@ -103,7 +67,8 @@ If a one-shot implementation becomes too tangled, fix it in small phases instead
 ## 4. Verification checklist
 
 - [ ] Project opens without parse errors.
-- [ ] Main menu Play button works.
+- [ ] Main menu Play button works (starts at level 1).
+- [ ] Start-level picker: locked levels cannot start a game; an unlocked level starts at that level.
 - [ ] Piece movement and rotation work.
 - [ ] Board boundaries and collision rules hold.
 - [ ] Timed falling and locking work.
@@ -115,8 +80,13 @@ If a one-shot implementation becomes too tangled, fix it in small phases instead
 - [ ] Best score persists across app restarts.
 - [ ] Touch controls work on a real Android device.
 - [ ] UI works on more than one aspect ratio.
+- [ ] Docs describe the shipped app with no contradictions.
 - [ ] Audio mute works.
 - [ ] No network access is required for the core game (sync features are optional and fail silently offline).
+- [ ] A build with an empty server URL hides online features and makes no requests.
+- [ ] Release build points at an HTTPS URL.
+- [ ] Account deletion works in the app and on the web page.
+- [ ] Haptics vibrate and sync works on a real phone (INTERNET and VIBRATE permissions).
 - [ ] No unimplemented buttons or fake settings remain.
 
 ## 5. First task for the coding assistant

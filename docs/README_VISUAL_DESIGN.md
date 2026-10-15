@@ -1,5 +1,7 @@
 # Visual Design — Theme, Color, UI, and Layout
 
+> This file describes the current look. It will be replaced by the redesign ([MasterPrompt.md](../MasterPrompt.md)) in Phase D of the implementation plan.
+
 > The Godot theme (`game/scripts/game_theme.gd`) implements the exact color tokens below, and `game/scenes/` mirrors these layouts.
 
 ## 1. Art direction
@@ -59,26 +61,31 @@ Use `Control` containers and anchors appropriately instead of hardcoding every e
 
 ## 5. Main menu
 
-Keep it simple:
-- Game title / logo treatment.
-- One obvious primary **Play** button.
+- Game title / logo treatment (brand mark and wordmark) and a settings button in the top bar.
+- One obvious primary **Play** button (starts at level 1).
 - Best score.
-- Settings button for sound and other supported options.
-- Small, unobtrusive version number only if useful.
+- A **Levels** button that opens the start-level picker.
+- When online features are on: account (Sign in / Profile), **Leaderboard**, and **Continue as guest** while signed out. When the build has no server URL, these three are hidden.
+- Settings (sound and haptics) open as an overlay.
 
-Avoid adding a tutorial carousel, shop, profile, or several secondary modes to the first version.
+Avoid adding a tutorial carousel, shop, or several secondary modes.
+
+## 5b. Levels screen (start-level picker)
+
+- Title "Start level", a summary of lifetime lines cleared, and a back button.
+- One card per level, 1 to 10. Unlocked cards start a game at that level and show the drop interval. The newest unlocked level is highlighted. Locked cards cannot be pressed and show "Unlocks at N lines".
 
 ## 6. Game-over and pause screens
 
 **Pause overlay**
 - Dim the gameplay behind the overlay.
-- Show Resume and Restart.
+- Show Resume, End run (shows the game-over results), and Menu.
 - Keep the board state intact while paused.
 
 **Game-over overlay**
 - Show “Game Over”, final score, and best score.
 - Primary action: Play Again.
-- Secondary action: Main Menu.
+- Secondary actions: Levels (back to the picker) and Main Menu.
 - Make the best-score improvement clear without a large disruptive animation.
 
 ## 7. Motion and feedback

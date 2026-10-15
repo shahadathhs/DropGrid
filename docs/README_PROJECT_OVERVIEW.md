@@ -11,11 +11,11 @@ The first release should feel complete and intentional rather than like a tutori
 ## 2. Target platform
 
 - **Primary platform:** Android phones.
-- **Secondary platforms:** Desktop (Windows/macOS/Linux) via the same Godot project, unlocked by the account backend; not a version-1 requirement.
+- **Secondary platforms:** Desktop (Windows/macOS/Linux) via the same Godot project. Used for development and the debug phone-size simulator; not an MVP1 release target.
 - **Engine:** Godot 4.x.
 - **Language:** GDScript.
 - **Orientation:** Portrait.
-- **Connectivity:** Offline-first; the core game must work without an internet connection. Accounts and cross-device sync are optional additions on top.
+- **Connectivity:** Offline-first; the core game must work without an internet connection. Accounts and cross-device sync are optional and make no difference to guests.
 - **Initial business model:** Free, with no ads or purchases.
 - **Save data:** Local device storage as the source of truth; optional server sync for account holders.
 
@@ -30,9 +30,16 @@ Design and test for different phone aspect ratios and screen sizes. Avoid assumi
 5. **Small and dependable:** Keep the first release self-contained and avoid unnecessary dependencies.
 6. **Maintainable:** Separate board rules, piece logic, game flow, input, UI, and local persistence.
 
-## 4. First-release scope
+## 4. MVP1 scope
 
-Include:
+MVP1 is the first public Google Play release. It contains:
+
+1. **The core game, fully offline.** Menu, play, pause, game over, restart. Local best score, sound, haptics.
+2. **A start-level picker.** Players can start a game at any level they have unlocked (levels 1 to 10). Level N unlocks when lifetime lines cleared reach 10 × (N − 1). This is a simple lines threshold, not a complex unlock system.
+3. **Optional accounts and a global leaderboard.** Email + password with a username, background sync of best score, total lines, and games played, a profile screen, and a top-50 leaderboard. Signing in on another device brings the stats and unlocked levels across. Runs on one small FastAPI backend with one SQL database.
+4. **The visual redesign** from [MasterPrompt.md](../MasterPrompt.md).
+
+Included in the core game:
 - Main menu.
 - Playable game screen.
 - Falling pieces, movement, rotation, collision, locking, and line clearing.
@@ -41,34 +48,22 @@ Include:
 - Game-over screen and restart.
 - Locally saved best score.
 - Touch-friendly Android controls.
-- Basic sound effects with a mute option.
-- Settings for sound and haptics only if haptics can be implemented reliably.
+- Sound effects and haptics, each with an on/off setting.
 
-Do not include in version 1:
-- Multiplayer.
-- Ads or in-app purchases.
-- Daily missions, achievements, skins shop, or battle pass.
-- Complex unlock systems.
-
-Version 1 remains fully offline. A following release adds optional accounts and sync:
-
-**Sync release includes:**
-- Optional account (email + password) with username.
-- Background sync of best score, total lines cleared, and games played after signing in.
-- Global leaderboard (top 50 by best score) and a personal profile screen.
-- Cross-device progress: sign in on another device and the stats appear.
-- Desktop builds as a secondary platform, unlocked by having one shared backend.
-
-**Sync release principles:**
+**Principles for accounts and sync:**
 - Guest play is a complete, first-class experience with zero network calls.
 - Local save stays the source of truth for gameplay; sync never blocks or breaks a session.
-- One small FastAPI backend service and one SQL database — no ads, analytics, or third-party SDKs.
+- A build with no server URL set hides every online feature and makes no requests.
+- No ads, analytics, or third-party SDKs.
+- There is no password reset in MVP1. Losing an account loses only the synced copy; local stats stay.
 
-**Still excluded:** multiplayer, ads, in-app purchases, daily missions, achievements, battle pass, passwordless/OTP sign-in, XP/seasons/rating systems.
+**Not in MVP1 / excluded:** hold piece, timers or other game modes, multiplayer and other social features, ads, in-app purchases, daily missions, achievements, skins or themes, battle pass, password reset, passwordless/OTP sign-in, XP/seasons/rating systems, real anti-cheat.
+
+The path to release is in [README_IMPLEMENTATION_PLAN.md](README_IMPLEMENTATION_PLAN.md). Backend deployment is described in [DEPLOY.md](DEPLOY.md).
 
 ## 5. Definition of done
 
-The game is ready for a first external test when:
+MVP1 is ready for release when:
 - A complete game can be played from menu to game over and restarted.
 - Pieces cannot move or rotate through occupied cells or board boundaries.
 - Line clearing and score updates work consistently.
@@ -77,3 +72,8 @@ The game is ready for a first external test when:
 - Touch controls work on a real Android device.
 - UI remains usable on more than one screen aspect ratio.
 - No debug controls, placeholder text, or obvious unfinished screens remain.
+- A guest can play every feature except the leaderboard and profile with no network calls (verify with airplane mode).
+- A signed-in player's stats and unlocked levels appear on a second phone.
+- Account deletion works in-app and from the web page.
+- No fake buttons, placeholder text, or settings that do nothing.
+- Docs describe the shipped app with no contradictions.

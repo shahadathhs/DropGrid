@@ -17,16 +17,16 @@ Not in MVP1: hold piece, timers or other modes, password reset, social features,
 
 | # | Topic | Docs say | Code does | Resolution |
 |---|---|---|---|---|
-| 1 | Release scope | Overview: "Version 1 remains fully offline", accounts in a later release | Accounts, sync, profile, leaderboard fully built | Docs change: MVP1 includes accounts (section 1) |
-| 2 | Levels screen | Overview excludes "complex unlock systems"; no doc mentions it | `levels.tscn` shows 12 nodes; every node starts a normal level-1 game (a fake button) | Make it real (section 4.1); docs describe it |
-| 3 | Dev database | Architecture: SQLite in dev | Postgres in Docker locally, Neon in production; SQLite still works as a fallback | Docs change |
-| 4 | Project tree | Lists `piece_view.gd`, `resources/piece_definitions.gd` | Neither exists; there are 4 autoloads (`Save`, `Sfx`, `Sync`, `DevicePreview`) and about 25 scripts | Rewrite tree from the real files |
-| 5 | Phase status | Implementation plan lists Phases 9–10 like finished work | Backend never deployed; Phase 7 (device) and 8 (release) not done | Replace phase list with section 5 |
-| 6 | Android permissions | Haptics and sync are in scope | `export_presets.cfg` has neither INTERNET nor VIBRATE enabled; both fail silently on a phone | Enable both |
-| 7 | Server URL | Production behind HTTPS | `API_BASE_URL` hardcoded to `http://localhost:8000/v1` | Per-build URL (section 4.2) |
-| 8 | DevicePreview | Not documented | Desktop-only autoload, F9/F10 size cycling | Document as a dev tool; confirm it is inert in Android builds |
-| 9 | Main menu | Title, Play, Settings, best score | Also Levels, Leaderboard, Sign in/Profile, "Continue as guest" | Redesign decides the final menu; docs follow the result |
-| 10 | Visual spec | `README_VISUAL_DESIGN.md` describes the old dark palette | Same, but MasterPrompt replaces it | Rewritten in Phase D, not before |
+| 1 | Release scope | Overview: "Version 1 remains fully offline", accounts in a later release | Accounts, sync, profile, leaderboard fully built | Resolved in Phase A (docs follow section 1) |
+| 2 | Levels screen | Overview excludes "complex unlock systems"; no doc mentions it | `levels.tscn` shows 12 nodes; every node starts a normal level-1 game (a fake button) | Resolved in Phase B (levels screen is a real start-level picker) and Phase A (documented) |
+| 3 | Dev database | Architecture: SQLite in dev | Postgres in Docker locally, Neon in production; SQLite still works as a fallback | Resolved in Phase A (Postgres locally, Neon in production, SQLite fallback and tests) |
+| 4 | Project tree | Lists `piece_view.gd`, `resources/piece_definitions.gd` | Neither exists; there are 4 autoloads (`Save`, `Sfx`, `Sync`, `DevicePreview`) and about 25 scripts | Resolved in Phase A (tree rewritten from real files) |
+| 5 | Phase status | Implementation plan lists Phases 9–10 like finished work | Backend never deployed; Phase 7 (device) and 8 (release) not done | Resolved in Phase A (phase list replaced) |
+| 6 | Android permissions | Haptics and sync are in scope | `export_presets.cfg` has neither INTERNET nor VIBRATE enabled; both fail silently on a phone | Resolved in Phase B (both enabled) |
+| 7 | Server URL | Production behind HTTPS | `API_BASE_URL` hardcoded to `http://localhost:8000/v1` | Resolved in Phase B (project setting with `.release` override); production URL set in Phase C |
+| 8 | DevicePreview | Not documented | Desktop-only autoload, F9/F10 size cycling | Resolved in Phase A (documented) and Phase B (guarded to desktop debug; device check in Phase E) |
+| 9 | Main menu | Title, Play, Settings, best score | Also Levels, Leaderboard, Sign in/Profile, "Continue as guest" | Resolved in Phase A: docs describe the current menu; entries hide when online is off. Final menu comes from the redesign (Phase D) |
+| 10 | Visual spec | `README_VISUAL_DESIGN.md` describes the old dark palette | Same, but MasterPrompt replaces it | Flagged in Phase A (note at top of the file); rewrite stays in Phase D |
 
 ## 3. Decisions taken by default (change them here if you disagree)
 
@@ -36,6 +36,15 @@ Not in MVP1: hold piece, timers or other modes, password reset, social features,
 - **Play on the main menu** starts at level 1. The levels screen is the only way to start higher.
 - **No password reset in MVP1.** Losing an account loses only the synced copy; local stats stay. Write this as a known limitation in the privacy and help text.
 - **Scores stay trusted.** Add only a cheap server plausibility check (section 4.3). Real anti-cheat is out of scope.
+
+Implementation notes (decisions the code made):
+
+- The newest unlocked level is highlighted with the `CardButtonCurrent` style.
+- Level cards show the drop interval, or "Unlocks at N lines" when locked.
+- "Continue as guest" is hidden when online features are off (and after sign-in).
+- Blocklist matching: terms of 5 or more letters match anywhere in the normalised name; shorter terms match only as a whole token (split at `_`) or the whole name.
+- The sync check uses the submitted values and rejects `games_played == 0` with lines or score above 0 (422).
+- Web account deletion shares the login rate-limit bucket.
 
 ## 4. Work items
 
@@ -60,7 +69,7 @@ Not in MVP1: hold piece, timers or other modes, password reset, social features,
 - **Privacy policy page.** Required because the app collects email. State: email, username, three stats; no ads, no analytics, no third parties; how to delete.
 - Smoke test against production: register → sync → leaderboard → delete.
 
-### 4.4 Docs synced (Phase A)
+### 4.4 Docs synced (Phase A) — done
 - `README_PROJECT_OVERVIEW.md`: replace the v1 / sync-release split with the MVP1 scope from section 1. Move the "still excluded" list there.
 - `README_GAMEPLAY_FEATURES.md`: add start level and unlock rule; fold the sync section into the main spec.
 - `README_ARCHITECTURE.md`: real file tree, autoloads, Postgres/Neon, per-build API URL, DevicePreview.
