@@ -1,13 +1,10 @@
 extends Node
-## Updates the stats bar (lines, score, next piece, drop speed) and the level
-## pill from GameController signals. Reads values from GameController signals;
-## never computes scoring itself. The drop readout uses the same rule as the
-## controller: GameController.fall_interval(level).
+## Updates the HUD row (score, level, lines, next piece) from GameController signals.
+## Never computes scoring itself.
 
 @onready var _score_label: Label = %ScoreLabel
 @onready var _lines_label: Label = %LinesLabel
-@onready var _level_pill: Label = %LevelPillLabel
-@onready var _drop_label: Label = %DropLabel
+@onready var _level_label: Label = %LevelLabel
 @onready var _next_preview: Control = %NextPreview
 
 var game: GameController
@@ -34,9 +31,7 @@ func _on_lines_changed(lines: int) -> void:
 
 
 func _on_level_changed(level: int) -> void:
-	_level_pill.text = "Level %02d" % level
-	# Drop readout: seconds between automatic steps at this level.
-	_drop_label.text = "%.2fs" % GameController.fall_interval(level)
+	_level_label.text = str(level)
 
 
 func _on_piece_spawned() -> void:

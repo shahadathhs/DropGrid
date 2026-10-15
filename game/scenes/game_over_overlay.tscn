@@ -1,8 +1,6 @@
 [gd_scene format=3]
 
-[ext_resource type="Script" path="res://scripts/game_over_overlay.gd" id="1_gameover"]
-[ext_resource type="Script" path="res://scripts/brand_mark.gd" id="2_mark"]
-[ext_resource type="Texture2D" path="res://assets/icons/play.svg" id="3_play"]
+[ext_resource type="Script" path="res://scripts/game_over_overlay.gd" id="1_s"]
 
 [node name="GameOverOverlay" type="Control"]
 layout_mode = 3
@@ -12,7 +10,7 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 1
-script = ExtResource("1_gameover")
+script = ExtResource("1_s")
 
 [node name="Background" type="Panel" parent="."]
 layout_mode = 1
@@ -32,167 +30,146 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
-theme_override_constants/margin_left = 16
-theme_override_constants/margin_top = 24
-theme_override_constants/margin_right = 16
-theme_override_constants/margin_bottom = 24
+theme_override_constants/margin_left = 54
+theme_override_constants/margin_top = 72
+theme_override_constants/margin_right = 54
+theme_override_constants/margin_bottom = 72
 
 [node name="Column" type="VBoxContainer" parent="Margin"]
 layout_mode = 2
 mouse_filter = 2
-alignment = 1
 theme_override_constants/separation = 12
 
-[node name="Mark" type="Control" parent="Margin/Column"]
-custom_minimum_size = Vector2(66, 66)
+[node name="TopSpacer" type="Control" parent="Margin/Column"]
 layout_mode = 2
-size_flags_horizontal = 4
+size_flags_vertical = 3
 mouse_filter = 2
-script = ExtResource("2_mark")
-style = 1
-
-[node name="Eyebrow" type="Label" parent="Margin/Column"]
-unique_name_in_owner = true
-layout_mode = 2
-theme_type_variation = &"Eyebrow"
-horizontal_alignment = 1
-text = "Run over"
 
 [node name="Heading" type="Label" parent="Margin/Column"]
 unique_name_in_owner = true
 layout_mode = 2
-theme_type_variation = &"Heading"
+theme_type_variation = &"Display"
 horizontal_alignment = 1
-text = "Nice run."
+text = "GAME OVER"
 
-[node name="HeadingAccent" type="Label" parent="Margin/Column"]
+[node name="NoteLabel" type="Label" parent="Margin/Column"]
 unique_name_in_owner = true
 layout_mode = 2
-theme_type_variation = &"HeadingAccent"
+theme_type_variation = &"StatCaption"
 horizontal_alignment = 1
-text = "One more?"
+text = ""
 
-[node name="ScoreCard" type="PanelContainer" parent="Margin/Column"]
+[node name="Gap" type="Control" parent="Margin/Column"]
+custom_minimum_size = Vector2(0, 36)
 layout_mode = 2
 mouse_filter = 2
-theme_type_variation = &"StrongCard"
 
-[node name="CardItems" type="VBoxContainer" parent="Margin/Column/ScoreCard"]
+[node name="ScoreCaption" type="Label" parent="Margin/Column"]
 layout_mode = 2
-mouse_filter = 2
-theme_override_constants/separation = 8
+theme_type_variation = &"StatCaption"
+horizontal_alignment = 1
+text = "SCORE"
 
-[node name="FinalCaption" type="Label" parent="Margin/Column/ScoreCard/CardItems"]
-layout_mode = 2
-theme_type_variation = &"Caption"
-text = "FINAL SCORE"
-
-[node name="ScoreLabel" type="Label" parent="Margin/Column/ScoreCard/CardItems"]
+[node name="ScoreLabel" type="Label" parent="Margin/Column"]
 unique_name_in_owner = true
 layout_mode = 2
-theme_type_variation = &"BigValue"
+theme_type_variation = &"Score"
+horizontal_alignment = 1
 text = "0"
 
-[node name="Stats" type="HBoxContainer" parent="Margin/Column/ScoreCard/CardItems"]
+[node name="Gap2" type="Control" parent="Margin/Column"]
+custom_minimum_size = Vector2(0, 36)
 layout_mode = 2
 mouse_filter = 2
-theme_override_constants/separation = 8
 
-[node name="LinesStat" type="VBoxContainer" parent="Margin/Column/ScoreCard/CardItems/Stats"]
+[node name="Stats" type="HBoxContainer" parent="Margin/Column"]
+layout_mode = 2
+mouse_filter = 2
+theme_override_constants/separation = 12
+
+[node name="LinesStat" type="VBoxContainer" parent="Margin/Column/Stats"]
 layout_mode = 2
 size_flags_horizontal = 3
 mouse_filter = 2
+theme_override_constants/separation = 4
 
-[node name="LinesCaption" type="Label" parent="Margin/Column/ScoreCard/CardItems/Stats/LinesStat"]
+[node name="LinesCaption" type="Label" parent="Margin/Column/Stats/LinesStat"]
 layout_mode = 2
-theme_type_variation = &"Caption"
+theme_type_variation = &"StatCaption"
+horizontal_alignment = 1
 text = "LINES"
 
-[node name="LinesLabel" type="Label" parent="Margin/Column/ScoreCard/CardItems/Stats/LinesStat"]
+[node name="LinesLabel" type="Label" parent="Margin/Column/Stats/LinesStat"]
 unique_name_in_owner = true
 layout_mode = 2
-theme_type_variation = &"Value"
+theme_type_variation = &"StatValue"
+horizontal_alignment = 1
 text = "0"
 
-[node name="LevelStat" type="VBoxContainer" parent="Margin/Column/ScoreCard/CardItems/Stats"]
+[node name="LevelStat" type="VBoxContainer" parent="Margin/Column/Stats"]
 layout_mode = 2
 size_flags_horizontal = 3
 mouse_filter = 2
+theme_override_constants/separation = 4
 
-[node name="LevelCaption" type="Label" parent="Margin/Column/ScoreCard/CardItems/Stats/LevelStat"]
+[node name="LevelCaption" type="Label" parent="Margin/Column/Stats/LevelStat"]
 layout_mode = 2
-theme_type_variation = &"Caption"
+theme_type_variation = &"StatCaption"
+horizontal_alignment = 1
 text = "LEVEL"
 
-[node name="LevelLabel" type="Label" parent="Margin/Column/ScoreCard/CardItems/Stats/LevelStat"]
+[node name="LevelLabel" type="Label" parent="Margin/Column/Stats/LevelStat"]
 unique_name_in_owner = true
 layout_mode = 2
-theme_type_variation = &"Value"
-text = "1"
+theme_type_variation = &"StatValue"
+horizontal_alignment = 1
+text = "0"
 
-[node name="BestStat" type="VBoxContainer" parent="Margin/Column/ScoreCard/CardItems/Stats"]
+[node name="BestStat" type="VBoxContainer" parent="Margin/Column/Stats"]
 layout_mode = 2
 size_flags_horizontal = 3
 mouse_filter = 2
+theme_override_constants/separation = 4
 
-[node name="BestCaption" type="Label" parent="Margin/Column/ScoreCard/CardItems/Stats/BestStat"]
+[node name="BestCaption" type="Label" parent="Margin/Column/Stats/BestStat"]
 layout_mode = 2
-theme_type_variation = &"Caption"
+theme_type_variation = &"StatCaption"
+horizontal_alignment = 1
 text = "BEST"
 
-[node name="BestLabel" type="Label" parent="Margin/Column/ScoreCard/CardItems/Stats/BestStat"]
+[node name="BestLabel" type="Label" parent="Margin/Column/Stats/BestStat"]
 unique_name_in_owner = true
 layout_mode = 2
-theme_type_variation = &"Value"
+theme_type_variation = &"StatValue"
+horizontal_alignment = 1
 text = "0"
+
+[node name="BottomSpacer" type="Control" parent="Margin/Column"]
+layout_mode = 2
+size_flags_vertical = 3
+mouse_filter = 2
 
 [node name="PlayAgainButton" type="Button" parent="Margin/Column"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 69)
+custom_minimum_size = Vector2(0, 132)
 layout_mode = 2
 theme_type_variation = &"PrimaryButton"
-text = ""
-
-[node name="Content" type="HBoxContainer" parent="Margin/Column/PlayAgainButton"]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-mouse_filter = 2
-alignment = 1
-theme_override_constants/separation = 12
-
-[node name="Icon" type="TextureRect" parent="Margin/Column/PlayAgainButton/Content"]
-custom_minimum_size = Vector2(26, 26)
-layout_mode = 2
-size_flags_vertical = 4
-mouse_filter = 2
-modulate = Color(0.039, 0.059, 0.118, 1)
-texture = ExtResource("3_play")
-expand_mode = 1
-stretch_mode = 5
-
-[node name="Label" type="Label" parent="Margin/Column/PlayAgainButton/Content"]
-layout_mode = 2
-size_flags_vertical = 4
-theme_type_variation = &"PrimaryLabel"
+theme_override_font_sizes/font_size = 30
 text = "Play again"
 
 [node name="LevelsButton" type="Button" parent="Margin/Column"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 69)
+custom_minimum_size = Vector2(0, 108)
 layout_mode = 2
 theme_type_variation = &"SecondaryButton"
 text = "Start level"
 
 [node name="MenuButton" type="Button" parent="Margin/Column"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 69)
+custom_minimum_size = Vector2(0, 96)
 layout_mode = 2
-theme_type_variation = &"SecondaryButton"
-text = "Home"
+theme_type_variation = &"TextButton"
+text = "Menu"
 
 [connection signal="pressed" from="Margin/Column/PlayAgainButton" to="." method="_on_play_again_pressed"]
 [connection signal="pressed" from="Margin/Column/LevelsButton" to="." method="_on_levels_pressed"]

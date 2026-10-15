@@ -8,6 +8,7 @@ const LEVELS_SCENE := "res://scenes/levels.tscn"
 const HAPTIC_OS_NAMES: Array[String] = ["Android", "iOS"]
 const HAPTIC_DURATION_MS := 20
 
+@onready var _margin: MarginContainer = %Margin
 @onready var _board_view: Control = %BoardView
 @onready var _hud: Node = %Hud
 @onready var _touch_controls: Node = %TouchControls
@@ -21,7 +22,14 @@ var _start_level := 1
 var _window_had_focus := false
 
 
+## Design margin at the top and bottom of the screen, in design units.
+const EDGE_MARGIN := 24
+## Extra room kept between the controls and a system bar.
+const SAFE_AREA_PADDING := 12
+
+
 func _ready() -> void:
+	_apply_safe_area()
 	_start_level = StartLevel.take()
 	_start_new_game()
 
@@ -35,6 +43,21 @@ func _ready() -> void:
 
 	_pause_overlay.hide()
 	_game_over_overlay.hide()
+
+
+## Keeps the HUD and controls out of camera cutouts and gesture bars on phones.
+func _apply_safe_area() -> void:
+	if not OS.has_feature("mobile"):
+		return
+	var window_size := DisplayServer.window_get_size()
+	if window_size.x <= 0:
+		return
+	var safe := DisplayServer.get_display_safe_area()
+	var to_design := size.x / float(window_size.x)
+	var top := maxf(0.0, safe.position.y) * to_design
+	var bottom := maxf(0.0, window_size.y - safe.end.y) * to_design
+	_margin.add_theme_constant_override("margin_top", maxi(EDGE_MARGIN, int(top) + SAFE_AREA_PADDING))
+	_margin.add_theme_constant_override("margin_bottom", maxi(EDGE_MARGIN, int(bottom) + SAFE_AREA_PADDING))
 
 
 func _process(delta: float) -> void:

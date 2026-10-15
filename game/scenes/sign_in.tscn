@@ -1,7 +1,6 @@
 [gd_scene format=3]
 
 [ext_resource type="Script" path="res://scripts/sign_in_screen.gd" id="1_signin"]
-[ext_resource type="Texture2D" path="res://assets/icons/arrow_left.svg" id="2_back"]
 
 [node name="SignInScreen" type="Control"]
 layout_mode = 3
@@ -29,197 +28,126 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_constants/margin_left = 16
-theme_override_constants/margin_top = 24
-theme_override_constants/margin_right = 16
-theme_override_constants/margin_bottom = 24
+theme_override_constants/margin_left = 54
+theme_override_constants/margin_top = 36
+theme_override_constants/margin_right = 54
+theme_override_constants/margin_bottom = 36
 
 [node name="Column" type="VBoxContainer" parent="Margin"]
 layout_mode = 2
-theme_override_constants/separation = 18
+theme_override_constants/separation = 0
 
 [node name="TopBar" type="HBoxContainer" parent="Margin/Column"]
-custom_minimum_size = Vector2(0, 57)
 layout_mode = 2
 
 [node name="BackButton" type="Button" parent="Margin/Column/TopBar"]
-custom_minimum_size = Vector2(57, 57)
+custom_minimum_size = Vector2(0, 96)
 layout_mode = 2
-theme_type_variation = &"IconButton"
-tooltip_text = "Go back"
+theme_type_variation = &"BackButton"
+text = "Back"
+alignment = 0
 
-[node name="IconCenter" type="CenterContainer" parent="Margin/Column/TopBar/BackButton"]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-mouse_filter = 2
-
-[node name="Icon" type="TextureRect" parent="Margin/Column/TopBar/BackButton/IconCenter"]
-custom_minimum_size = Vector2(26, 26)
+[node name="Scroll" type="ScrollContainer" parent="Margin/Column"]
 layout_mode = 2
-mouse_filter = 2
-texture = ExtResource("2_back")
-expand_mode = 1
-stretch_mode = 5
+size_flags_vertical = 3
+horizontal_scroll_mode = 0
 
-[node name="Title" type="Label" parent="Margin/Column/TopBar"]
-unique_name_in_owner = true
+[node name="Content" type="VBoxContainer" parent="Margin/Column/Scroll"]
 layout_mode = 2
 size_flags_horizontal = 3
-theme_type_variation = &"Title"
-horizontal_alignment = 1
-vertical_alignment = 1
-text = "Sign in"
+theme_override_constants/separation = 12
 
-[node name="TopSpacer" type="Control" parent="Margin/Column/TopBar"]
-custom_minimum_size = Vector2(57, 0)
-layout_mode = 2
-mouse_filter = 2
-
-[node name="FormCopy" type="VBoxContainer" parent="Margin/Column"]
-layout_mode = 2
-theme_override_constants/separation = 6
-
-[node name="Eyebrow" type="Label" parent="Margin/Column/FormCopy"]
-layout_mode = 2
-theme_type_variation = &"Eyebrow"
-text = "Optional account"
-
-[node name="Heading" type="Label" parent="Margin/Column/FormCopy"]
+[node name="Title" type="Label" parent="Margin/Column/Scroll/Content"]
 unique_name_in_owner = true
 layout_mode = 2
 theme_type_variation = &"Heading"
-text = "Welcome"
+text = "Sign in"
 
-[node name="HeadingAccent" type="Label" parent="Margin/Column/FormCopy"]
-unique_name_in_owner = true
-layout_mode = 2
-theme_type_variation = &"HeadingAccent"
-text = "back."
-
-[node name="Subtitle" type="Label" parent="Margin/Column/FormCopy"]
+[node name="AccountNote" type="Label" parent="Margin/Column/Scroll/Content"]
 unique_name_in_owner = true
 layout_mode = 2
 theme_type_variation = &"Muted"
 autowrap_mode = 3
-text = "Sync your best score, lines, and games across devices. Guest play always stays free."
+text = "Accounts sync your best score and appear on the leaderboard."
 
-[node name="SegmentedBox" type="PanelContainer" parent="Margin/Column"]
+[node name="Gap" type="Control" parent="Margin/Column/Scroll/Content"]
+custom_minimum_size = Vector2(0, 36)
 layout_mode = 2
-theme_type_variation = &"SegmentedBox"
+mouse_filter = 2
 
-[node name="Tabs" type="HBoxContainer" parent="Margin/Column/SegmentedBox"]
+[node name="Form" type="VBoxContainer" parent="Margin/Column/Scroll/Content"]
 layout_mode = 2
-theme_override_constants/separation = 6
+theme_override_constants/separation = 24
 
-[node name="SignInTab" type="Button" parent="Margin/Column/SegmentedBox/Tabs"]
-unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 54)
+[node name="EmailBlock" type="VBoxContainer" parent="Margin/Column/Scroll/Content/Form"]
 layout_mode = 2
-size_flags_horizontal = 3
-theme_type_variation = &"SegmentButton"
-toggle_mode = true
-button_pressed = true
-text = "Sign in"
+theme_override_constants/separation = 8
 
-[node name="CreateTab" type="Button" parent="Margin/Column/SegmentedBox/Tabs"]
-unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 54)
+[node name="EmailCaption" type="Label" parent="Margin/Column/Scroll/Content/Form/EmailBlock"]
 layout_mode = 2
-size_flags_horizontal = 3
-theme_type_variation = &"SegmentButton"
-toggle_mode = true
-text = "Create account"
-
-[node name="Form" type="VBoxContainer" parent="Margin/Column"]
-layout_mode = 2
-theme_override_constants/separation = 12
-
-[node name="EmailBlock" type="VBoxContainer" parent="Margin/Column/Form"]
-layout_mode = 2
-theme_override_constants/separation = 7
-
-[node name="EmailCaption" type="Label" parent="Margin/Column/Form/EmailBlock"]
-layout_mode = 2
-theme_type_variation = &"Caption"
+theme_type_variation = &"StatCaption"
 text = "EMAIL"
 
-[node name="EmailField" type="LineEdit" parent="Margin/Column/Form/EmailBlock"]
+[node name="EmailField" type="LineEdit" parent="Margin/Column/Scroll/Content/Form/EmailBlock"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 69)
+custom_minimum_size = Vector2(0, 84)
 layout_mode = 2
-placeholder_text = "you@example.com"
 virtual_keyboard_type = 5
 
-[node name="PasswordBlock" type="VBoxContainer" parent="Margin/Column/Form"]
-layout_mode = 2
-theme_override_constants/separation = 7
-
-[node name="PasswordCaption" type="Label" parent="Margin/Column/Form/PasswordBlock"]
-layout_mode = 2
-theme_type_variation = &"Caption"
-text = "PASSWORD"
-
-[node name="PasswordField" type="LineEdit" parent="Margin/Column/Form/PasswordBlock"]
-unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 69)
-layout_mode = 2
-placeholder_text = "At least 8 characters"
-secret = true
-
-[node name="UsernameBlock" type="VBoxContainer" parent="Margin/Column/Form"]
+[node name="UsernameBlock" type="VBoxContainer" parent="Margin/Column/Scroll/Content/Form"]
 unique_name_in_owner = true
 visible = false
 layout_mode = 2
-theme_override_constants/separation = 7
+theme_override_constants/separation = 8
 
-[node name="UsernameCaption" type="Label" parent="Margin/Column/Form/UsernameBlock"]
+[node name="UsernameCaption" type="Label" parent="Margin/Column/Scroll/Content/Form/UsernameBlock"]
 layout_mode = 2
-theme_type_variation = &"Caption"
-text = "USERNAME"
+theme_type_variation = &"StatCaption"
+text = "USERNAME, 3 TO 20 CHARACTERS"
 
-[node name="UsernameField" type="LineEdit" parent="Margin/Column/Form/UsernameBlock"]
+[node name="UsernameField" type="LineEdit" parent="Margin/Column/Scroll/Content/Form/UsernameBlock"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 69)
+custom_minimum_size = Vector2(0, 84)
 layout_mode = 2
-placeholder_text = "3 to 20 characters"
 max_length = 20
 
-[node name="StatusPanel" type="PanelContainer" parent="Margin/Column/Form"]
+[node name="PasswordBlock" type="VBoxContainer" parent="Margin/Column/Scroll/Content/Form"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="PasswordCaption" type="Label" parent="Margin/Column/Scroll/Content/Form/PasswordBlock"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"StatCaption"
+text = "PASSWORD, 8 OR MORE CHARACTERS"
+
+[node name="PasswordField" type="LineEdit" parent="Margin/Column/Scroll/Content/Form/PasswordBlock"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 84)
+layout_mode = 2
+secret = true
+
+[node name="StatusLabel" type="Label" parent="Margin/Column/Scroll/Content/Form"]
 unique_name_in_owner = true
 visible = false
-layout_mode = 2
-theme_type_variation = &"FormErrorBox"
-
-[node name="StatusLabel" type="Label" parent="Margin/Column/Form/StatusPanel"]
-unique_name_in_owner = true
 layout_mode = 2
 theme_type_variation = &"FormError"
 autowrap_mode = 3
 
-[node name="SubmitButton" type="Button" parent="Margin/Column/Form"]
+[node name="SubmitButton" type="Button" parent="Margin/Column/Scroll/Content/Form"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 69)
+custom_minimum_size = Vector2(0, 96)
 layout_mode = 2
 theme_type_variation = &"PrimaryButton"
 text = "Sign in"
 
-[node name="BottomSpacer" type="Control" parent="Margin/Column"]
+[node name="ModeButton" type="Button" parent="Margin/Column/Scroll/Content/Form"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 84)
 layout_mode = 2
-size_flags_vertical = 3
-mouse_filter = 2
-
-[node name="LegalNote" type="Label" parent="Margin/Column"]
-layout_mode = 2
-theme_type_variation = &"Faint"
-horizontal_alignment = 1
-autowrap_mode = 3
-text = "Accounts are optional. Your local save is never blocked by sign-in."
+theme_type_variation = &"TextButton"
+text = "Create account"
 
 [connection signal="pressed" from="Margin/Column/TopBar/BackButton" to="." method="_on_back_pressed"]
-[connection signal="pressed" from="Margin/Column/SegmentedBox/Tabs/SignInTab" to="." method="_on_sign_in_tab_pressed"]
-[connection signal="pressed" from="Margin/Column/SegmentedBox/Tabs/CreateTab" to="." method="_on_create_tab_pressed"]
-[connection signal="pressed" from="Margin/Column/Form/SubmitButton" to="." method="_on_submit_pressed"]
+[connection signal="pressed" from="Margin/Column/Scroll/Content/Form/SubmitButton" to="." method="_on_submit_pressed"]
+[connection signal="pressed" from="Margin/Column/Scroll/Content/Form/ModeButton" to="." method="_on_mode_pressed"]

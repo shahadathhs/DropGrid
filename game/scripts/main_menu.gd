@@ -7,8 +7,6 @@ const LEADERBOARD_SCENE := "res://scenes/leaderboard.tscn"
 const LEVELS_SCENE := "res://scenes/levels.tscn"
 
 @onready var _best_label: Label = %BestLabel
-@onready var _account_label: Label = %AccountLabel
-@onready var _continue_guest_button: Button = %ContinueGuestButton
 @onready var _account_button: Button = %AccountButton
 @onready var _leaderboard_button: Button = %LeaderboardButton
 @onready var _settings_overlay: Control = %SettingsOverlay
@@ -17,9 +15,7 @@ const LEVELS_SCENE := "res://scenes/levels.tscn"
 func _ready() -> void:
 	_best_label.text = UiFormat.thousands(Save.best_score)
 	# Guests see Sign in; signed-in players see their Profile instead.
-	_account_label.text = "Profile" if Sync.is_signed_in() else "Sign in"
-	# "Continue as guest" only makes sense before sign-in; it plays exactly like Play.
-	_continue_guest_button.visible = Sync.is_online_enabled() and not Sync.is_signed_in()
+	_account_button.text = "Profile" if Sync.is_signed_in() else "Sign in"
 	# A build without an API URL is a plain offline game: no account or leaderboard entries.
 	_account_button.visible = Sync.is_online_enabled()
 	_leaderboard_button.visible = Sync.is_online_enabled()
@@ -29,10 +25,6 @@ func _ready() -> void:
 
 func _on_play_pressed() -> void:
 	get_tree().change_scene_to_file(GAME_SCENE)
-
-
-func _on_continue_guest_pressed() -> void:
-	_on_play_pressed()
 
 
 func _on_levels_pressed() -> void:
@@ -48,6 +40,6 @@ func _on_leaderboard_pressed() -> void:
 	get_tree().change_scene_to_file(LEADERBOARD_SCENE)
 
 
-## The gear icon in the top bar opens Settings as a full-screen layer.
+## Settings opens as a full-screen layer.
 func _on_settings_pressed() -> void:
 	_settings_overlay.show()

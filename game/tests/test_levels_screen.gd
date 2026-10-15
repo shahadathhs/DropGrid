@@ -46,7 +46,7 @@ func test_levels_scene_builds_one_card_per_start_level() -> void:
 	var screen: Control = load("res://scenes/levels.tscn").instantiate()
 	add_child_autofree(screen)
 	await get_tree().process_frame
-	var tree: VBoxContainer = screen.get_node("%LevelTree")
+	var tree: GridContainer = screen.get_node("%LevelTree")
 	assert_eq(tree.get_child_count(), GameConfig.MAX_START_LEVEL)
 	for card: Button in tree.get_children():
 		assert_eq(card.disabled, card.get_index() + 1 > LevelsScreen.highest_unlocked(Save.total_lines))

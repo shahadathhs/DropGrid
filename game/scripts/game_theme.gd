@@ -9,10 +9,10 @@ extends Theme
 const UI_SCALE := 1.5
 
 ## Corner radii from the prototype (CSS px 8 / 12 / 16 / 24), times UI_SCALE.
-const RADIUS_SM := 12
-const RADIUS_MD := 18
-const RADIUS_LG := 24
-const RADIUS_XL := 36
+const RADIUS_SM := 4
+const RADIUS_MD := 4
+const RADIUS_LG := 4
+const RADIUS_XL := 4
 const RADIUS_PILL := 200
 
 ## Body text size: the prototype body is 14 CSS px.
@@ -20,6 +20,8 @@ const FONT_BODY := 21
 
 ## Bold weight used for headings, buttons, and "strong" labels.
 var _bold_font: Font
+## Pixel face for the score, level numbers, and the wordmark. One weight.
+var _pixel_font: Font
 
 
 func _init() -> void:
@@ -31,21 +33,22 @@ func _init() -> void:
 	_set_input_and_progress()
 
 
-## Fonts: the prototype uses the system UI font stack, so this uses the system font too
-## (SystemFont). The project has no bundled font, so Godot's default font is the fallback.
+## Fonts: Martian Mono (UI text, two weights) and Departure Mono (a pixel face for the
+## score and big numbers). Both are SIL OFL 1.1, licenses next to the files in assets/fonts.
+## Both are monospaced, so digits never change width as a score changes.
 func _set_fonts() -> void:
-	var regular := SystemFont.new()
-	regular.font_names = PackedStringArray(["Helvetica Neue", "Segoe UI", "Roboto", "Arial"])
-	regular.font_weight = 400
+	var regular := FontVariation.new()
+	regular.base_font = load("res://assets/fonts/MartianMono.ttf")
+	regular.variation_opentype = {"wght": 400}
 	default_font = regular
 	default_font_size = FONT_BODY
 
-	# Bold: a fake-bold of the regular face (variation_embolden). Godot's SystemFont
-	# weight is not applied on every platform, so this is the reliable option.
 	var bold := FontVariation.new()
-	bold.base_font = regular
-	bold.variation_embolden = 0.9
+	bold.base_font = regular.base_font
+	bold.variation_opentype = {"wght": 700}
 	_bold_font = bold
+
+	_pixel_font = load("res://assets/fonts/DepartureMono-Regular.otf")
 
 
 ## Label variations. Use with theme_type_variation on a Label.
@@ -94,6 +97,13 @@ func _set_label_variations() -> void:
 	_make_label_type("PrimaryLabel", 21, Palette.ACCENT_INK, true)
 	_make_label_type("SecondaryLabel", 21, Palette.TEXT, true)
 	_make_label_type("GhostLabel", 20, Palette.TEXT_MUTED, true)
+	# Gameplay HUD: the score is the largest type on screen, the rest are small.
+	_make_label_type("StatCaption", 15, Palette.TEXT_MUTED, true)
+	_make_label_type("Score", 66, Palette.TEXT, false)
+	_make_label_type("StatValue", 33, Palette.TEXT, false)
+	# Numbers use the pixel face. All sizes are multiples of 11 so its pixels stay square.
+	for numeric in ["Score", "StatValue", "Value", "Best", "BigValue", "LiveScore", "MiniValue", "Display", "DisplayAccent"]:
+		set_font("font", numeric, _pixel_font)
 
 
 func _make_label_type(type_name: String, size: int, color: Color, bold: bool) -> void:
@@ -131,6 +141,12 @@ func _set_button_variations() -> void:
 	_make_button_type("TextButton", Color(0, 0, 0, 0), Palette.TEXT_MUTED, Color(0, 0, 0, 0), 0, RADIUS_MD, 20)
 	# Quiet text: the faint "Quit to home" link (prototype .btn-text.quiet).
 	_make_button_type("QuietButton", Color(0, 0, 0, 0), Palette.TEXT_FAINT, Color(0, 0, 0, 0), 0, RADIUS_MD, 18)
+	# Back: a text button with no side padding, so it lines up with the screen's content edge.
+	_make_button_type("BackButton", Color(0, 0, 0, 0), Palette.TEXT_MUTED, Color(0, 0, 0, 0), 0, RADIUS_MD, 20)
+	for style_name in ["normal", "hover", "pressed", "hover_pressed", "disabled", "focus"]:
+		var back_box := get_stylebox(style_name, "BackButton") as StyleBoxFlat
+		back_box.content_margin_left = 0
+		back_box.content_margin_right = 0
 	# Danger text: "Delete account" link (prototype .danger-text).
 	_make_button_type("DangerTextButton", Color(0, 0, 0, 0), Palette.DANGER, Color(0, 0, 0, 0), 0, RADIUS_MD, 20)
 	# Danger filled: the confirm delete button (prototype .danger-btn).
@@ -138,13 +154,13 @@ func _set_button_variations() -> void:
 	# Icon button: square, surface-2 with a thin line border (prototype .icon-btn).
 	_make_button_type("IconButton", Palette.SURFACE_2, Palette.TEXT, Palette.LINE, 2, RADIUS_MD, 21)
 	# Game pad tiles (bottom control bar): chunkier rounding and clearer hierarchy.
-	_make_button_type("PadButton", Palette.SURFACE_2, Palette.TEXT, Palette.LINE_STRONG, 2, 20, 21)
+	_make_button_type("PadButton", Palette.SURFACE_2, Palette.TEXT, Palette.LINE_STRONG, 2, RADIUS_MD, 21)
 	# Pause tile: quiet accent, clearly secondary to the actions.
-	_make_button_type("PadPause", Palette.ACCENT_SOFT, Palette.ACCENT, Palette.ACCENT_BORDER, 2, 20, 21)
+	_make_button_type("PadPause", Palette.SURFACE, Palette.TEXT_MUTED, Palette.LINE_STRONG, 2, RADIUS_MD, 21)
 	# Rotate: the accent action.
-	_make_button_type("PadRotate", Palette.ACCENT, Palette.TEXT, Color(0, 0, 0, 0), 0, 20, 21)
+	_make_button_type("PadRotate", Palette.ACCENT, Palette.ACCENT_INK, Color(0, 0, 0, 0), 0, RADIUS_MD, 21)
 	# Hard drop: the amber action.
-	_make_button_type("PadHard", Palette.WARNING, Palette.ACCENT_INK, Color(0, 0, 0, 0), 0, 20, 21)
+	_make_button_type("PadHard", Palette.WARNING, Palette.ACCENT_INK, Color(0, 0, 0, 0), 0, RADIUS_MD, 21)
 	# Segment tab (prototype .segmented button). The pressed style is the selected tab.
 	_make_button_type("SegmentButton", Color(0, 0, 0, 0), Palette.TEXT_MUTED, Color(0, 0, 0, 0), 0, RADIUS_SM, 20)
 	set_stylebox("pressed", "SegmentButton", _box(Palette.SURFACE_3, RADIUS_SM, Color(0, 0, 0, 0), 0))
@@ -240,7 +256,7 @@ func _set_panel_variations() -> void:
 
 	# Level pill (prototype .level-pill): soft accent with a border.
 	set_type_variation("LevelPill", "PanelContainer")
-	set_stylebox("panel", "LevelPill", _box(Palette.ACCENT_SOFT, 12, Palette.ACCENT_BORDER, 2, 15, 6))
+	set_stylebox("panel", "LevelPill", _box(Palette.ACCENT_SOFT, RADIUS_SM, Palette.ACCENT_BORDER, 2, 15, 6))
 
 	# Toggle track (prototype .toggle): surface-3 when off, accent when on. The knob is a child.
 	set_type_variation("ToggleOff", "Panel")

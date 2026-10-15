@@ -1,114 +1,65 @@
-# Visual Design — Theme, Color, UI, and Layout
+# Visual Design
 
-> This file describes the current look. It will be replaced by the redesign ([MasterPrompt.md](../MasterPrompt.md)) in Phase D of the implementation plan.
+The look is called **Cell Unit**: the board's square cell is the unit for everything. The board, the next-piece preview, the wordmark and the level tiles all draw blocks through one helper (`game/scripts/cell_style.gd`). Chosen from `docs/design/01-analysis.md` (concept B). The tokens live in `game/scripts/palette.gd` and the styles in `game/scripts/game_theme.gd`; this file describes the rules those two follow.
 
-> The Godot theme (`game/scripts/game_theme.gd`) implements the exact color tokens below, and `game/scenes/` mirrors these layouts.
+## Rules
 
-## 1. Art direction
+- One flat ground color. No cards, no gradients, no glow, no glass, no particles, no grid lines.
+- Group with spacing and a small caption, not with borders or boxes.
+- Corners are 4 px (design units) on every button and field. Toggles are square.
+- Exactly one primary button per screen. Primary is filled ink. Secondary is a flat tile. Text buttons are quiet.
+- Copy is short labels. No taglines, no questions, no exclamation marks, no two-color headlines, no tooltips.
+- Numbers use the pixel face. Text uses the mono face. Both are monospaced, so digits never change width.
 
-Use a **modern, minimalist arcade** style: dark, calm, crisp, and slightly premium. The board should be the visual focus. Use color to distinguish pieces, not to decorate every empty area.
+## Color
 
-Avoid generic AI-generated dashboard styling, excessive gradients, glassmorphism, noisy backgrounds, and too many rounded cards. The game should feel designed specifically for a falling-block puzzle.
+Two grounds share one design. Dark is the default; pass `--light` after `--` on the command line to preview light.
 
-## 2. Color system
+| Token | Dark | Light |
+|---|---|---|
+| Ground | `#161513` | `#EFEBE2` |
+| Empty tile | `#262320` | `#E3DED2` |
+| Text / ink (also the primary fill) | `#ECE7DC` | `#1B1A17` |
+| Muted text | `#A09A8E` | `#6B665C` |
+| Signal (hard drop, delete, errors) | `#FF5A36` | `#D63A18` |
 
-Use these as starting tokens. Centralize them in a theme/resource or a small constants file so they can be changed globally.
+Pieces use seven hues with brightness about 23 points apart, so they can still be told apart in grayscale (by brightness on dark: J, T, Z, S, L, I, O):
 
-- **Background:** `#0B1020` — deep blue-black.
-- **Primary surface:** `#121A2B` — menus and panels.
-- **Secondary surface:** `#1B263B` — secondary controls and highlighted panels.
-- **Board background:** `#0A0F1A`.
-- **Grid lines:** `#202B40` — subtle, low contrast.
-- **Primary text:** `#F3F6FC`.
-- **Secondary text:** `#9AA8BE`.
-- **Primary accent:** `#7C9CFF`.
-- **Success / line-clear accent:** `#62E6B5`.
-- **Warning / pause accent:** `#FFC96B`.
-- **Danger / game-over accent:** `#FF7185`.
+| I | O | T | S | Z | J | L |
+|---|---|---|---|---|---|---|
+| `#96DCE6` | `#F6E292` | `#874CCB` | `#58C083` | `#DB548C` | `#265AB4` | `#F59F5D` |
 
-Piece colors should be bright enough to read against the board but not painfully saturated. Suggested palette:
-- Cyan: `#55DDE0`
-- Blue: `#6688FF`
-- Orange: `#FFAA5C`
-- Yellow: `#F6D365`
-- Green: `#69D69B`
-- Purple: `#B38CFF`
-- Pink: `#FF83B8`
+Light-ground piece colors are in `palette.gd`.
 
-Check contrast on an actual phone. Do not communicate important state through color alone; combine color with position, animation, or text where useful.
+## Type
 
-## 3. Typography
+- **Martian Mono** (variable weight, SIL OFL 1.1) for text, buttons and captions.
+- **Departure Mono** (SIL OFL 1.1) for the score, level and line numbers, and screen titles.
+- Licenses sit next to the fonts in `game/assets/fonts/`.
 
-- Use a clean sans-serif font with strong legibility at small sizes.
-- Prefer one font family with two or three weights.
-- Score digits should use tabular/monospaced numerals if the chosen font supports them.
-- Avoid tiny labels and long all-caps text.
-- Establish a clear hierarchy: screen title, score, secondary stats, control labels.
+## Blocks
 
-If a custom font is not included, use a reliable bundled/system fallback. Verify font licensing before shipping any third-party font.
+- A tile sits in its cell with a gap of 1/8 cell.
+- A locked block is a flat fill inside a darker frame 1/8 cell wide.
+- The active piece has an ink frame. The ghost is a frame with no fill.
+- The wordmark is drawn from the same blocks (`game/scripts/wordmark.gd`), one piece color per letter.
 
-## 4. Portrait layout
+## Gameplay layout (portrait, 720 design units wide)
 
-Design the game screen from top to bottom:
+HUD in one row: score (largest type on screen), level, lines, next piece, pause. Board below at 85% of the screen width where the height allows it, then one row of controls: left, right, rotate, soft drop, and hard drop separated from the rest by a gap. Icons only, no labels. Pause is in the HUD, away from the thumbs. Safe-area insets are applied on phones.
 
-1. **Top bar:** pause button on the left; compact score/best-score information or a clear score area.
-2. **Main board:** centered and visually dominant. Preserve the board's intended cell proportions; do not stretch cells to fill arbitrary space.
-3. **Secondary stats:** cleared lines and level, placed where they are visible without shrinking the board too much.
-4. **Controls:** large, well-spaced touch buttons near the bottom: left, rotate, right, soft drop. A hard-drop action may be included if it can be made easy to distinguish and difficult to trigger accidentally.
-5. **Safe area:** respect device cutouts, rounded corners, and system navigation areas.
+On short phones (about 360 x 640) the board gets about 66% of the width because height runs out first.
 
-Use `Control` containers and anchors appropriately instead of hardcoding every element to one resolution. Check short/tall screens and different aspect ratios.
+## Previewing without a phone
 
-## 5. Main menu
+Debug builds on a desktop can save screenshots, see `game/autoload/device_preview.gd`:
 
-- Game title / logo treatment (brand mark and wordmark) and a settings button in the top bar.
-- One obvious primary **Play** button (starts at level 1).
-- Best score.
-- A **Levels** button that opens the start-level picker.
-- When online features are on: account (Sign in / Profile), **Leaderboard**, and **Continue as guest** while signed out. When the build has no server URL, these three are hidden.
-- Settings (sound and haptics) open as an overlay.
+```sh
+godot --path game res://scenes/game.tscn -- --shot=/tmp/a.png --size=390x844 --demo
+```
 
-Avoid adding a tutorial carousel, shop, or several secondary modes.
+`--demo` fills the board, `--overlay=pause|gameover` opens an overlay, `--light` uses the light ground. F9 cycles phone sizes in a running window.
 
-## 5b. Levels screen (start-level picker)
+## Status
 
-- Title "Start level", a summary of lifetime lines cleared, and a back button.
-- One card per level, 1 to 10. Unlocked cards start a game at that level and show the drop interval. The newest unlocked level is highlighted. Locked cards cannot be pressed and show "Unlocks at N lines".
-
-## 6. Game-over and pause screens
-
-**Pause overlay**
-- Dim the gameplay behind the overlay.
-- Show Resume, End run (shows the game-over results), and Menu.
-- Keep the board state intact while paused.
-
-**Game-over overlay**
-- Show “Game Over”, final score, and best score.
-- Primary action: Play Again.
-- Secondary actions: Levels (back to the picker) and Main Menu.
-- Make the best-score improvement clear without a large disruptive animation.
-
-## 7. Motion and feedback
-
-Use short, purposeful effects:
-- Subtle landing/lock feedback.
-- A quick line-clear animation.
-- Small score feedback when lines clear.
-- Gentle button press states.
-- A restrained game-over transition.
-
-Keep animations brief and never let decorative effects block input. Add reduced-motion or simplified-effects settings only if feasible; at minimum, do not rely on intense flashing.
-
-## 8. Sound
-
-Use short, original or properly licensed sounds for movement, rotation, landing, line clearing, and game over. Include a mute toggle. Do not use copyrighted sounds ripped from existing games.
-
-## 9. Design acceptance checklist
-
-- The board is the strongest visual element during play.
-- Controls are easy to hit with thumbs.
-- Text is readable on a phone at normal viewing distance.
-- Empty cells remain visually distinct from occupied cells.
-- Every screen has one clear primary action.
-- UI adapts to different screen sizes without overlapping.
-- No decorative element makes gameplay harder to read.
+Built and screenshot-checked: gameplay, pause, game over, main menu, start-level picker, leaderboard, sign in, profile, settings. Not done: motion (line-clear and level-up animations), device testing, a drawn app icon.

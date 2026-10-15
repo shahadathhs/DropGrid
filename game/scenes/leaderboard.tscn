@@ -1,8 +1,6 @@
 [gd_scene format=3]
 
 [ext_resource type="Script" path="res://scripts/leaderboard_screen.gd" id="1_board"]
-[ext_resource type="Texture2D" path="res://assets/icons/arrow_left.svg" id="2_back"]
-[ext_resource type="Texture2D" path="res://assets/icons/rotate_cw.svg" id="3_retry"]
 
 [node name="LeaderboardScreen" type="Control"]
 layout_mode = 3
@@ -30,149 +28,93 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_constants/margin_left = 16
-theme_override_constants/margin_top = 24
-theme_override_constants/margin_right = 16
-theme_override_constants/margin_bottom = 24
+mouse_filter = 2
+theme_override_constants/margin_left = 54
+theme_override_constants/margin_top = 36
+theme_override_constants/margin_right = 54
+theme_override_constants/margin_bottom = 48
 
 [node name="Column" type="VBoxContainer" parent="Margin"]
 layout_mode = 2
-theme_override_constants/separation = 0
-
-[node name="TopBar" type="HBoxContainer" parent="Margin/Column"]
-custom_minimum_size = Vector2(0, 57)
-layout_mode = 2
-
-[node name="BackButton" type="Button" parent="Margin/Column/TopBar"]
-custom_minimum_size = Vector2(57, 57)
-layout_mode = 2
-theme_type_variation = &"IconButton"
-tooltip_text = "Go back"
-
-[node name="IconCenter" type="CenterContainer" parent="Margin/Column/TopBar/BackButton"]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
 mouse_filter = 2
+theme_override_constants/separation = 12
 
-[node name="Icon" type="TextureRect" parent="Margin/Column/TopBar/BackButton/IconCenter"]
-custom_minimum_size = Vector2(26, 26)
-layout_mode = 2
-mouse_filter = 2
-texture = ExtResource("2_back")
-expand_mode = 1
-stretch_mode = 5
-
-[node name="Title" type="Label" parent="Margin/Column/TopBar"]
-layout_mode = 2
-size_flags_horizontal = 3
-theme_type_variation = &"Title"
-horizontal_alignment = 1
-vertical_alignment = 1
-text = "Leaderboard"
-
-[node name="TopSpacer" type="Control" parent="Margin/Column/TopBar"]
-custom_minimum_size = Vector2(57, 0)
+[node name="BackRow" type="MarginContainer" parent="Margin/Column"]
 layout_mode = 2
 mouse_filter = 2
 
-[node name="HeadingMargin" type="MarginContainer" parent="Margin/Column"]
+[node name="BackButton" type="Button" parent="Margin/Column/BackRow"]
+custom_minimum_size = Vector2(0, 96)
 layout_mode = 2
-theme_override_constants/margin_top = 18
-theme_override_constants/margin_bottom = 27
+size_flags_horizontal = 0
+theme_type_variation = &"BackButton"
+text = "Back"
 
-[node name="Heading" type="VBoxContainer" parent="Margin/Column/HeadingMargin"]
-layout_mode = 2
-theme_override_constants/separation = 6
-
-[node name="Eyebrow" type="Label" parent="Margin/Column/HeadingMargin/Heading"]
-layout_mode = 2
-theme_type_variation = &"Eyebrow"
-text = "TOP 50 BY BEST SCORE"
-
-[node name="HeadingLine" type="HBoxContainer" parent="Margin/Column/HeadingMargin/Heading"]
-layout_mode = 2
-
-[node name="HeadingPlain" type="Label" parent="Margin/Column/HeadingMargin/Heading/HeadingLine"]
+[node name="Title" type="Label" parent="Margin/Column"]
 layout_mode = 2
 theme_type_variation = &"Heading"
-text = "Who’s "
+text = "LEADERBOARD"
 
-[node name="HeadingAccent" type="Label" parent="Margin/Column/HeadingMargin/Heading/HeadingLine"]
+[node name="Gap" type="Control" parent="Margin/Column"]
+custom_minimum_size = Vector2(0, 24)
 layout_mode = 2
-theme_type_variation = &"HeadingAccent"
-text = "on top?"
+mouse_filter = 2
 
 [node name="StatusBox" type="VBoxContainer" parent="Margin/Column"]
 unique_name_in_owner = true
 layout_mode = 2
-theme_override_constants/separation = 18
+mouse_filter = 2
+theme_override_constants/separation = 24
 
 [node name="StatusLabel" type="Label" parent="Margin/Column/StatusBox"]
 unique_name_in_owner = true
 layout_mode = 2
 theme_type_variation = &"Muted"
-horizontal_alignment = 1
 autowrap_mode = 3
-text = "Loading..."
+text = "Loading"
 
 [node name="RetryButton" type="Button" parent="Margin/Column/StatusBox"]
 unique_name_in_owner = true
 visible = false
-custom_minimum_size = Vector2(320, 69)
+custom_minimum_size = Vector2(0, 108)
 layout_mode = 2
-size_flags_horizontal = 4
-theme_type_variation = &"PrimaryButton"
-text = ""
-
-[node name="Content" type="HBoxContainer" parent="Margin/Column/StatusBox/RetryButton"]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-mouse_filter = 2
-alignment = 1
-theme_override_constants/separation = 12
-
-[node name="Icon" type="TextureRect" parent="Margin/Column/StatusBox/RetryButton/Content"]
-custom_minimum_size = Vector2(26, 26)
-layout_mode = 2
-size_flags_vertical = 4
-mouse_filter = 2
-modulate = Color(0.039, 0.059, 0.118, 1)
-texture = ExtResource("3_retry")
-expand_mode = 1
-stretch_mode = 5
-
-[node name="Label" type="Label" parent="Margin/Column/StatusBox/RetryButton/Content"]
-layout_mode = 2
-size_flags_vertical = 4
-theme_type_variation = &"PrimaryLabel"
-text = "Try again"
+theme_type_variation = &"SecondaryButton"
+text = "Retry"
 
 [node name="Scroll" type="ScrollContainer" parent="Margin/Column"]
 layout_mode = 2
 size_flags_vertical = 3
 horizontal_scroll_mode = 0
+vertical_scroll_mode = 3
 
 [node name="RowList" type="VBoxContainer" parent="Margin/Column/Scroll"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
-theme_override_constants/separation = 9
+mouse_filter = 2
+theme_override_constants/separation = 0
 
-[node name="NoteLabel" type="Label" parent="Margin/Column"]
+[node name="SignInBox" type="VBoxContainer" parent="Margin/Column"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+mouse_filter = 2
+theme_override_constants/separation = 12
+
+[node name="NoteLabel" type="Label" parent="Margin/Column/SignInBox"]
 unique_name_in_owner = true
 layout_mode = 2
 theme_type_variation = &"Muted"
-horizontal_alignment = 1
-autowrap_mode = 3
-text = "Sign in to save your score and appear on this list."
+text = "Sign in to appear here"
 
-[connection signal="pressed" from="Margin/Column/TopBar/BackButton" to="." method="_on_back_pressed"]
+[node name="SignInButton" type="Button" parent="Margin/Column/SignInBox"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 132)
+layout_mode = 2
+theme_type_variation = &"PrimaryButton"
+theme_override_font_sizes/font_size = 30
+text = "Sign in"
+
+[connection signal="pressed" from="Margin/Column/BackRow/BackButton" to="." method="_on_back_pressed"]
 [connection signal="pressed" from="Margin/Column/StatusBox/RetryButton" to="." method="_on_retry_pressed"]
+[connection signal="pressed" from="Margin/Column/SignInBox/SignInButton" to="." method="_on_sign_in_pressed"]

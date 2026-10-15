@@ -1,13 +1,8 @@
 [gd_scene format=3]
 
-[ext_resource type="Script" path="res://scripts/main_menu.gd" id="1_menu"]
+[ext_resource type="Script" path="res://scripts/main_menu.gd" id="1_s"]
 [ext_resource type="PackedScene" path="res://scenes/settings_overlay.tscn" id="2_settings"]
-[ext_resource type="Script" path="res://scripts/brand_mark.gd" id="3_mark"]
-[ext_resource type="Texture2D" path="res://assets/icons/settings.svg" id="4_gear"]
-[ext_resource type="Texture2D" path="res://assets/icons/play.svg" id="5_play"]
-[ext_resource type="Texture2D" path="res://assets/icons/user.svg" id="6_user"]
-[ext_resource type="Texture2D" path="res://assets/icons/trophy.svg" id="7_trophy"]
-[ext_resource type="Texture2D" path="res://assets/icons/sparkles.svg" id="8_sparkles"]
+[ext_resource type="Script" path="res://scripts/wordmark.gd" id="3_word"]
 
 [node name="MainMenu" type="Control"]
 layout_mode = 3
@@ -16,7 +11,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-script = ExtResource("1_menu")
+script = ExtResource("1_s")
 
 [node name="Background" type="Panel" parent="."]
 layout_mode = 1
@@ -35,254 +30,97 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_constants/margin_left = 16
-theme_override_constants/margin_top = 24
-theme_override_constants/margin_right = 16
-theme_override_constants/margin_bottom = 24
+mouse_filter = 2
+theme_override_constants/margin_left = 54
+theme_override_constants/margin_top = 72
+theme_override_constants/margin_right = 54
+theme_override_constants/margin_bottom = 48
 
 [node name="Column" type="VBoxContainer" parent="Margin"]
 layout_mode = 2
-theme_override_constants/separation = 0
-
-[node name="TopBar" type="HBoxContainer" parent="Margin/Column"]
-custom_minimum_size = Vector2(0, 57)
-layout_mode = 2
-theme_override_constants/separation = 15
-
-[node name="Brand" type="HBoxContainer" parent="Margin/Column/TopBar"]
-layout_mode = 2
-size_flags_horizontal = 3
-theme_override_constants/separation = 15
-
-[node name="Mark" type="Control" parent="Margin/Column/TopBar/Brand"]
-custom_minimum_size = Vector2(24, 24)
-layout_mode = 2
-size_flags_vertical = 4
 mouse_filter = 2
-script = ExtResource("3_mark")
+theme_override_constants/separation = 12
 
-[node name="Wordmark" type="Label" parent="Margin/Column/TopBar/Brand"]
-layout_mode = 2
-size_flags_vertical = 4
-theme_type_variation = &"Brand"
-text = "DROPGRID"
-
-[node name="SettingsButton" type="Button" parent="Margin/Column/TopBar"]
-custom_minimum_size = Vector2(57, 57)
-layout_mode = 2
-theme_type_variation = &"IconButton"
-tooltip_text = "Settings"
-
-[node name="IconCenter" type="CenterContainer" parent="Margin/Column/TopBar/SettingsButton"]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-mouse_filter = 2
-
-[node name="Icon" type="TextureRect" parent="Margin/Column/TopBar/SettingsButton/IconCenter"]
-custom_minimum_size = Vector2(26, 26)
-layout_mode = 2
-mouse_filter = 2
-texture = ExtResource("4_gear")
-expand_mode = 1
-stretch_mode = 5
-
-[node name="Hero" type="VBoxContainer" parent="Margin/Column"]
+[node name="TopSpacer" type="Control" parent="Margin/Column"]
 layout_mode = 2
 size_flags_vertical = 3
-alignment = 1
-
-[node name="Eyebrow" type="Label" parent="Margin/Column/Hero"]
-layout_mode = 2
-theme_type_variation = &"Eyebrow"
-text = "A FOCUSED ARCADE PUZZLE"
-
-[node name="HeroTitle" type="Label" parent="Margin/Column/Hero"]
-layout_mode = 2
-theme_type_variation = &"Display"
-text = "Find your"
-
-[node name="HeroAccent" type="Label" parent="Margin/Column/Hero"]
-layout_mode = 2
-theme_type_variation = &"DisplayAccent"
-text = "flow."
-
-[node name="HeroCopy" type="Label" parent="Margin/Column/Hero"]
-layout_mode = 2
-theme_type_variation = &"Muted"
-text = "Stack smart. Clear lines.\nBeat your best."
-
-[node name="Actions" type="VBoxContainer" parent="Margin/Column"]
-layout_mode = 2
-theme_override_constants/separation = 12
-
-[node name="PlayButton" type="Button" parent="Margin/Column/Actions"]
-custom_minimum_size = Vector2(0, 69)
-layout_mode = 2
-theme_type_variation = &"PrimaryButton"
-text = ""
-
-[node name="Content" type="HBoxContainer" parent="Margin/Column/Actions/PlayButton"]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
 mouse_filter = 2
-alignment = 1
-theme_override_constants/separation = 12
 
-[node name="Icon" type="TextureRect" parent="Margin/Column/Actions/PlayButton/Content"]
-custom_minimum_size = Vector2(26, 26)
+[node name="Wordmark" type="Control" parent="Margin/Column"]
+custom_minimum_size = Vector2(0, 430)
 layout_mode = 2
-size_flags_vertical = 4
 mouse_filter = 2
-modulate = Color(0.039, 0.059, 0.118, 1)
-texture = ExtResource("5_play")
-expand_mode = 1
-stretch_mode = 5
+script = ExtResource("3_word")
 
-[node name="Label" type="Label" parent="Margin/Column/Actions/PlayButton/Content"]
+[node name="Gap" type="Control" parent="Margin/Column"]
+custom_minimum_size = Vector2(0, 36)
 layout_mode = 2
-size_flags_vertical = 4
-theme_type_variation = &"PrimaryLabel"
-text = "Play"
-
-[node name="AccountButton" type="Button" parent="Margin/Column/Actions"]
-unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 69)
-layout_mode = 2
-theme_type_variation = &"SecondaryButton"
-text = ""
-
-[node name="Content" type="HBoxContainer" parent="Margin/Column/Actions/AccountButton"]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
 mouse_filter = 2
-alignment = 1
-theme_override_constants/separation = 12
 
-[node name="Icon" type="TextureRect" parent="Margin/Column/Actions/AccountButton/Content"]
-custom_minimum_size = Vector2(26, 26)
+[node name="BestCaption" type="Label" parent="Margin/Column"]
 layout_mode = 2
-size_flags_vertical = 4
-mouse_filter = 2
-texture = ExtResource("6_user")
-expand_mode = 1
-stretch_mode = 5
-
-[node name="AccountLabel" type="Label" parent="Margin/Column/Actions/AccountButton/Content"]
-unique_name_in_owner = true
-layout_mode = 2
-size_flags_vertical = 4
-theme_type_variation = &"SecondaryLabel"
-text = "Sign in"
-
-[node name="ContinueGuestButton" type="Button" parent="Margin/Column/Actions"]
-unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 63)
-layout_mode = 2
-theme_type_variation = &"GhostButton"
-text = "Continue as guest"
-
-[node name="LeaderboardButton" type="Button" parent="Margin/Column/Actions"]
-unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 63)
-layout_mode = 2
-theme_type_variation = &"GhostButton"
-text = ""
-
-[node name="Content" type="HBoxContainer" parent="Margin/Column/Actions/LeaderboardButton"]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-mouse_filter = 2
-alignment = 1
-theme_override_constants/separation = 12
-
-[node name="Icon" type="TextureRect" parent="Margin/Column/Actions/LeaderboardButton/Content"]
-custom_minimum_size = Vector2(26, 26)
-layout_mode = 2
-size_flags_vertical = 4
-mouse_filter = 2
-modulate = Color(0.576, 0.631, 0.729, 1)
-texture = ExtResource("7_trophy")
-expand_mode = 1
-stretch_mode = 5
-
-[node name="Label" type="Label" parent="Margin/Column/Actions/LeaderboardButton/Content"]
-layout_mode = 2
-size_flags_vertical = 4
-theme_type_variation = &"GhostLabel"
-text = "Leaderboard"
-
-[node name="LevelsButton" type="Button" parent="Margin/Column/Actions"]
-custom_minimum_size = Vector2(0, 63)
-layout_mode = 2
-theme_type_variation = &"GhostButton"
-text = ""
-
-[node name="Content" type="HBoxContainer" parent="Margin/Column/Actions/LevelsButton"]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-mouse_filter = 2
-alignment = 1
-theme_override_constants/separation = 12
-
-[node name="Icon" type="TextureRect" parent="Margin/Column/Actions/LevelsButton/Content"]
-custom_minimum_size = Vector2(26, 26)
-layout_mode = 2
-size_flags_vertical = 4
-mouse_filter = 2
-modulate = Color(0.576, 0.631, 0.729, 1)
-texture = ExtResource("8_sparkles")
-expand_mode = 1
-stretch_mode = 5
-
-[node name="Label" type="Label" parent="Margin/Column/Actions/LevelsButton/Content"]
-layout_mode = 2
-size_flags_vertical = 4
-theme_type_variation = &"GhostLabel"
-text = "Levels"
-
-[node name="BestNote" type="VBoxContainer" parent="Margin/Column"]
-layout_mode = 2
-alignment = 1
-theme_override_constants/separation = 2
-
-[node name="BestCaption" type="Label" parent="Margin/Column/BestNote"]
-layout_mode = 2
-theme_type_variation = &"Caption"
+theme_type_variation = &"StatCaption"
 horizontal_alignment = 1
-text = "PERSONAL BEST"
+text = "BEST"
 
-[node name="BestLabel" type="Label" parent="Margin/Column/BestNote"]
+[node name="BestLabel" type="Label" parent="Margin/Column"]
 unique_name_in_owner = true
 layout_mode = 2
 theme_type_variation = &"Best"
 horizontal_alignment = 1
 text = "0"
 
-[node name="Version" type="Label" parent="Margin/Column"]
+[node name="BottomSpacer" type="Control" parent="Margin/Column"]
 layout_mode = 2
-theme_type_variation = &"Faint"
-horizontal_alignment = 1
-text = "DropGrid · v1.0.0"
+size_flags_vertical = 3
+mouse_filter = 2
+
+[node name="PlayButton" type="Button" parent="Margin/Column"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 132)
+layout_mode = 2
+theme_type_variation = &"PrimaryButton"
+theme_override_font_sizes/font_size = 30
+text = "Play"
+
+[node name="Links" type="HBoxContainer" parent="Margin/Column"]
+layout_mode = 2
+mouse_filter = 2
+theme_override_constants/separation = 0
+
+[node name="LevelsButton" type="Button" parent="Margin/Column/Links"]
+custom_minimum_size = Vector2(0, 96)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_type_variation = &"TextButton"
+theme_override_font_sizes/font_size = 18
+text = "Levels"
+
+[node name="LeaderboardButton" type="Button" parent="Margin/Column/Links"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 96)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_type_variation = &"TextButton"
+theme_override_font_sizes/font_size = 18
+text = "Leaderboard"
+
+[node name="AccountButton" type="Button" parent="Margin/Column/Links"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 96)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_type_variation = &"TextButton"
+theme_override_font_sizes/font_size = 18
+text = "Sign in"
+
+[node name="SettingsButton" type="Button" parent="Margin/Column/Links"]
+custom_minimum_size = Vector2(0, 96)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_type_variation = &"TextButton"
+theme_override_font_sizes/font_size = 18
+text = "Settings"
 
 [node name="SettingsOverlay" parent="." instance=ExtResource("2_settings")]
 unique_name_in_owner = true
@@ -293,9 +131,8 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[connection signal="pressed" from="Margin/Column/TopBar/SettingsButton" to="." method="_on_settings_pressed"]
-[connection signal="pressed" from="Margin/Column/Actions/PlayButton" to="." method="_on_play_pressed"]
-[connection signal="pressed" from="Margin/Column/Actions/AccountButton" to="." method="_on_account_pressed"]
-[connection signal="pressed" from="Margin/Column/Actions/ContinueGuestButton" to="." method="_on_continue_guest_pressed"]
-[connection signal="pressed" from="Margin/Column/Actions/LeaderboardButton" to="." method="_on_leaderboard_pressed"]
-[connection signal="pressed" from="Margin/Column/Actions/LevelsButton" to="." method="_on_levels_pressed"]
+[connection signal="pressed" from="Margin/Column/PlayButton" to="." method="_on_play_pressed"]
+[connection signal="pressed" from="Margin/Column/Links/LevelsButton" to="." method="_on_levels_pressed"]
+[connection signal="pressed" from="Margin/Column/Links/LeaderboardButton" to="." method="_on_leaderboard_pressed"]
+[connection signal="pressed" from="Margin/Column/Links/AccountButton" to="." method="_on_account_pressed"]
+[connection signal="pressed" from="Margin/Column/Links/SettingsButton" to="." method="_on_settings_pressed"]

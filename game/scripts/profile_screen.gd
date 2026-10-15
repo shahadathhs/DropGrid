@@ -6,18 +6,15 @@ extends Control
 const MENU_SCENE := "res://scenes/main_menu.tscn"
 const SIGN_IN_SCENE := "res://scenes/sign_in.tscn"
 
-@onready var _avatar_label: Label = %AvatarLabel
 @onready var _username_label: Label = %UsernameLabel
 @onready var _subtitle_label: Label = %SubtitleLabel
 @onready var _settings_overlay: Control = %SettingsOverlay
 @onready var _create_button: Button = %CreateProfileButton
 @onready var _rename_caption: Label = %RenameCaption
-@onready var _rename_row: Control = %RenameRow
+@onready var _name_field: LineEdit = %NameField
 @onready var _best_value: Label = %BestValue
 @onready var _lines_value: Label = %LinesValue
 @onready var _games_value: Label = %GamesValue
-@onready var _level_value: Label = %LevelValue
-@onready var _name_field: LineEdit = %NameField
 @onready var _rename_button: Button = %RenameButton
 @onready var _status_label: Label = %StatusLabel
 @onready var _sign_out_button: Button = %SignOutButton
@@ -35,6 +32,7 @@ func _ready() -> void:
 	Sync.signed_out.connect(_on_signed_out)
 	Sync.request_failed.connect(_on_request_failed)
 	_confirm_box.hide()
+	_set_status("")
 	_settings_overlay.hide()
 	_settings_overlay.closed.connect(func(): _settings_overlay.hide())
 	_refresh_labels()
@@ -48,16 +46,13 @@ func _refresh_labels() -> void:
 	if Sync.is_signed_in():
 		var name_text := Sync.username() if Sync.username() != "" else "Player"
 		_username_label.text = name_text
-		_avatar_label.text = name_text.substr(0, 2).to_upper()
 		_subtitle_label.text = "Synced account"
 	else:
-		_username_label.text = "Guest player"
-		_avatar_label.text = "G"
-		_subtitle_label.text = "Guest, saved on this device"
+		_username_label.text = "Guest"
+		_subtitle_label.text = "Saved on this device"
 	_best_value.text = UiFormat.thousands(Save.best_score)
 	_lines_value.text = UiFormat.thousands(Save.total_lines)
 	_games_value.text = UiFormat.thousands(Save.games_played)
-	_level_value.text = str(GameController.level_for_lines(Save.total_lines))
 
 
 ## Guests get "Create a profile". Signed-in players get rename, sign out, and delete.
@@ -65,13 +60,26 @@ func _apply_account_state() -> void:
 	var signed_in := Sync.is_signed_in()
 	_create_button.visible = not signed_in
 	_rename_caption.visible = signed_in
-	_rename_row.visible = signed_in
+	_name_field.visible = signed_in
+	_rename_button.visible = signed_in
+	_sign_out_button.visible = signed_in
+	_delete_button.visible = signed_in
+
+
+## Swaps the account actions for the inline delete confirmation.
+func _set_confirming(confirming: bool) -> void:
+	_confirm_box.visible = confirming
+	var signed_in := Sync.is_signed_in() and not confirming
+	_rename_caption.visible = signed_in
+	_name_field.visible = signed_in
+	_rename_button.visible = signed_in
 	_sign_out_button.visible = signed_in
 	_delete_button.visible = signed_in
 
 
 func _set_status(message: String) -> void:
 	_status_label.text = message
+	_status_label.visible = message != ""
 
 
 func _on_profile_updated(_profile: Dictionary) -> void:
@@ -94,9 +102,7 @@ func _on_request_failed(action: String, message: String) -> void:
 		_set_status(message)
 		_confirm_delete_button.disabled = false
 		_cancel_delete_button.disabled = false
-		_confirm_box.hide()
-		_sign_out_button.show()
-		_delete_button.show()
+		_set_confirming(false)
 
 
 func _on_signed_out() -> void:
@@ -120,15 +126,11 @@ func _on_sign_out_pressed() -> void:
 
 func _on_delete_pressed() -> void:
 	_set_status("")
-	_sign_out_button.hide()
-	_delete_button.hide()
-	_confirm_box.show()
+	_set_confirming(true)
 
 
 func _on_cancel_delete_pressed() -> void:
-	_confirm_box.hide()
-	_sign_out_button.show()
-	_delete_button.show()
+	_set_confirming(false)
 
 
 func _on_create_profile_pressed() -> void:
