@@ -11,6 +11,13 @@ services:
     working_dir: /project
     environment:
       - GODOT_VERSION=${GODOT_VERSION:-4.7.2}
+      # Optional: a fixed debug key for signing (CI sets it; see docs/CI.md).
+      - ANDROID_DEBUG_KEYSTORE_BASE64
+      # Where Godot finds the debug key. docker/android-setup.sh creates it there if missing.
+      # (Godot 4.7 ignores the editor_settings-4.tres file that script also writes.)
+      - GODOT_ANDROID_KEYSTORE_DEBUG_PATH=/root/.android/debug.keystore
+      - GODOT_ANDROID_KEYSTORE_DEBUG_USER=androiddebugkey
+      - GODOT_ANDROID_KEYSTORE_DEBUG_PASSWORD=android
     volumes:
       - ./game:/project
       # Persist editor settings and the debug keystore between runs.

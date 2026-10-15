@@ -23,6 +23,7 @@ Working toward MVP1, the first Google Play release: the offline game, a start-le
 - [Visual design](docs/README_VISUAL_DESIGN.md): theme, colors, layout, sound
 - [Implementation plan](docs/README_IMPLEMENTATION_PLAN.md): MVP1 phases and verification checklist
 - [Deploying the backend](docs/DEPLOY.md): Neon + Render steps
+- [CI and APK builds](docs/CI.md): tests, and a downloadable APK from every push
 
 ## Development
 

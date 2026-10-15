@@ -10,6 +10,11 @@ KEYSTORE=/root/.android/debug.keystore
 [ -d "$SDK" ] || { echo "Android SDK not found at $SDK (set ANDROID_HOME)" >&2; exit 1; }
 
 mkdir -p /root/.android /root/.config/godot
+# CI passes a fixed key (base64) so every build is signed the same way and a newer
+# APK installs over an older one. Without it, a throwaway key is made below.
+if [ -n "${ANDROID_DEBUG_KEYSTORE_BASE64:-}" ] && [ ! -f "$KEYSTORE" ]; then
+  printf '%s' "$ANDROID_DEBUG_KEYSTORE_BASE64" | base64 -d > "$KEYSTORE"
+fi
 if [ ! -f "$KEYSTORE" ]; then
   keytool -keyalg RSA -genkeypair -alias androiddebugkey -keypass android \
     -keystore "$KEYSTORE" -storepass android \

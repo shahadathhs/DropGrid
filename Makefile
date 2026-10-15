@@ -6,7 +6,7 @@ PRESET  := Android
 BACKEND := backend
 
 .DEFAULT_GOAL := help
-.PHONY: help setup check-tools backend-env godot-install db-up db-down import check test apk install run-device run run-game \
+.PHONY: help android-key setup check-tools backend-env godot-install db-up db-down import check test apk install run-device run run-game \
         backend-install backend-run backend-test backend-lint backend-migrate \
         shell clean
 
@@ -28,6 +28,9 @@ apk: import ## Export a debug APK to game/build/
 	@mkdir -p game/build
 	$(GODOT) bash -c 'android-setup && godot --headless --path . --export-debug "$(PRESET)" build/dropgrid-debug.apk'
 	@echo "Built $(APK)"
+
+android-key: ## Print a new debug signing key as base64 (the CI secret; see docs/CI.md)
+	@$(GODOT) bash -c 'keytool -genkeypair -keyalg RSA -alias androiddebugkey -keypass android -keystore /tmp/k.ks -storepass android -dname "CN=DropGrid Debug" -validity 9999 -deststoretype pkcs12 >/dev/null 2>&1 && base64 -w0 /tmp/k.ks' 2>/dev/null | tail -1
 
 # ── Game: on this PC / phone ──────────────────────────────────────────
 
