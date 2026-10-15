@@ -1,6 +1,6 @@
 class_name Palette
 extends RefCounted
-## Color tokens. Values come from ui-prototype/app/globals.css (the approved look).
+## Color tokens from the approved design (the original globals.css mockup).
 ## The shared Theme (scripts/game_theme.gd) reads these, so change a color here only.
 
 const BACKGROUND := Color("0B1020")

@@ -1,15 +1,14 @@
-# Monorepo: game/ (Godot), backend/ (FastAPI), ui-prototype/ (Next.js reference).
-# Headless Godot work runs in Docker; backend uses uv; UI uses pnpm.
+# Monorepo: game/ (Godot), backend/ (FastAPI).
+# Headless Godot work runs in Docker; backend uses uv.
 GODOT   := docker compose run --rm godot
 APK     := game/build/dropgrid-debug.apk
 PRESET  := Android
-UI      := ui-prototype
 BACKEND := backend
 
 .DEFAULT_GOAL := help
 .PHONY: help setup check-tools backend-env godot-install db-up db-down import check test apk install run-device run run-game \
         backend-install backend-run backend-test backend-lint backend-migrate \
-        ui-install ui-dev ui-build shell clean
+        shell clean
 
 help: ## Show this help
 	@grep -E '^[a-z-]+:.*##' $(MAKEFILE_LIST) | awk -F':.*## ' '{printf "  %-16s %s\n", $$1, $$2}'
@@ -46,19 +45,17 @@ run-device: install ## Install and launch on the phone
 
 # ── Backend (uv, backend/) ────────────────────────────────────────────
 
-setup: check-tools backend-env db-up backend-install backend-migrate ui-install godot-install import ## One-time local setup: tools, database, backend, UI prototype, Godot
+setup: check-tools backend-env db-up backend-install backend-migrate godot-install import ## One-time local setup: tools, database, backend, Godot
 	@echo ""
 	@echo "Setup complete. Start the pieces you need:"
 	@echo "  make backend-run   API at http://localhost:8000 (docs at /docs)"
-	@echo "  make ui-dev        prototype at http://localhost:3000"
 	@echo "  make run           the game on this Mac"
 
-check-tools: ## Verify docker, uv, and pnpm are installed and Docker is running
+check-tools: ## Verify docker, uv, and Godot are installed and Docker is running
 	@command -v docker >/dev/null || { echo "Missing: docker. Install Docker Desktop: https://www.docker.com/products/docker-desktop"; exit 1; }
 	@docker info >/dev/null 2>&1 || { echo "Docker is installed but not running. Start Docker Desktop, then run make setup again."; exit 1; }
 	@command -v uv >/dev/null || { echo "Missing: uv. Install with: brew install uv"; exit 1; }
-	@command -v pnpm >/dev/null || { echo "Missing: pnpm. Install with: brew install pnpm (or: corepack enable)"; exit 1; }
-	@echo "Tools OK: docker (running), uv, pnpm"
+	@echo "Tools OK: docker (running), uv"
 
 backend-env: ## Create backend/.env for local Postgres if it does not exist (never overwrites)
 	@if [ -f $(BACKEND)/.env ]; then \
@@ -100,17 +97,6 @@ backend-test: ## Run backend tests (pytest)
 
 backend-lint: ## Lint backend (ruff)
 	cd $(BACKEND) && uv run ruff check .
-
-# ── UI prototype (pnpm, ui-prototype/) ────────────────────────────────
-
-ui-install: ## Install UI prototype dependencies (pnpm)
-	cd $(UI) && pnpm install
-
-ui-dev: ## Serve the UI prototype at http://localhost:3000
-	cd $(UI) && pnpm dev
-
-ui-build: ## Production-build the UI prototype
-	cd $(UI) && pnpm build
 
 # ── Misc ──────────────────────────────────────────────────────────────
 

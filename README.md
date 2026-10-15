@@ -7,7 +7,6 @@ A polished, lightweight 2D falling-block puzzle game built with **Godot 4.x** an
 ```text
 game/           Godot project (scenes, scripts, assets, tests)
 backend/        FastAPI service: accounts, stats sync, leaderboard
-ui-prototype/   Next.js mockup of the screens (visual reference only)
 docs/           Specifications
 docker/         Container helper scripts (Godot image entrypoint, Android setup)
 ```
@@ -26,7 +25,7 @@ Playable prototype with the sync release built: optional email/password accounts
 
 ## Development
 
-Headless Godot runs in Docker via `docker compose`; the backend uses [uv](https://docs.astral.sh/uv/); the UI prototype uses pnpm.
+Headless Godot runs in Docker via `docker compose`; the backend uses [uv](https://docs.astral.sh/uv/).
 
 ```sh
 make help          # list targets
@@ -35,14 +34,4 @@ make test          # run game unit tests
 make apk           # export game/build/dropgrid-debug.apk
 make install       # adb install to a USB-connected phone (brew install --cask android-platform-tools)
 make backend-run   # serve the backend at http://localhost:8000 (docs at /docs)
-make ui-dev        # serve the UI prototype at http://localhost:3000
-```
-
-## UI prototype
-
-A clickable Next.js mockup of the game's screens lives in [ui-prototype/](ui-prototype/) (v0 export; design reference only, not part of the game build).
-
-```sh
-make ui-install   # once (needs pnpm)
-make ui-dev       # serve at http://localhost:3000
 ```

@@ -1,6 +1,6 @@
 # Visual Design — Theme, Color, UI, and Layout
 
-> **Reference implementation:** the Next.js mockup in [`ui-prototype/`](../ui-prototype/) renders these screens (menu, hub, levels, profile, game, pause, settings) with the exact color tokens below. Use it as the visual reference when building Godot UI.
+> The Godot theme (`game/scripts/game_theme.gd`) implements the exact color tokens below, and `game/scenes/` mirrors these layouts.
 
 ## 1. Art direction
 

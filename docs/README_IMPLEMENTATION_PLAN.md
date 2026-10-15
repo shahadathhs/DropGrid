@@ -80,7 +80,7 @@ Use the accompanying README files as the product specification while building th
 
 ### Phase 10 — Sync client
 - Add the `sync` autoload (tokens, outbox, retry/backoff); gameplay code stays network-free.
-- Add sign-in/registration, profile, and leaderboard screens using `ui-prototype/` as the visual reference.
+- Add sign-in/registration, profile, and leaderboard screens following `docs/README_VISUAL_DESIGN.md`.
 - Wire sync triggers: after sign-in, after game over, on app background, on app start.
 - Verify guest paths make zero network calls and every failure path fails silently.
 

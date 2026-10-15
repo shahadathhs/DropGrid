@@ -83,7 +83,7 @@ Optional account features layered on top of local persistence:
 - Sign in / register with email and password; or keep playing as a guest.
 - After each game ends, stats (best score, total lines, games played) sync to the player's account in the background.
 - The server keeps the max of each stat, so offline play and multiple devices converge without conflicts.
-- New screens: sign-in/registration form, profile with synced stats and sign-out, global leaderboard (top 50). The `ui-prototype/` screens are the visual reference.
+- New screens: sign-in/registration form, profile with synced stats and sign-out, global leaderboard (top 50).
 - Sync runs after sign-in, after game over, on app background, and on app start.
 - Every account feature fails silently offline: no dialogs, no blocked gameplay.
 

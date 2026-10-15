@@ -10,7 +10,7 @@ The optional account/sync feature adds one FastAPI backend service and a single 
 
 ## 2. Suggested project structure
 
-The repository is a monorepo: the Godot project lives in `game/`, the FastAPI service in `backend/`, and the UI reference in `ui-prototype/`. Inside the Godot project:
+The repository is a monorepo: the Godot project lives in `game/` and the FastAPI service in `backend/`. Inside the Godot project:
 
 ```text
 game/ (res://)
