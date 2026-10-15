@@ -33,7 +33,7 @@ class Settings(BaseSettings):
     rate_limit_enabled: bool = True
     rate_limit_per_minute: int = 10
 
-    # Shown on the privacy page. Unset = no contact line (set it as an environment variable on the host).
+    # Shown on the privacy page. Unset = no contact line (set it on the host's environment).
     contact_email: str = ""
 
     # Browser origins allowed by CORS (comma-separated). The Godot client does not
