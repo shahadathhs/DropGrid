@@ -7,11 +7,13 @@
 [ext_resource type="PackedScene" path="res://scenes/pause_overlay.tscn" id="5_pause"]
 [ext_resource type="PackedScene" path="res://scenes/game_over_overlay.tscn" id="6_gameover"]
 [ext_resource type="Script" path="res://scripts/next_preview.gd" id="7_next"]
-[ext_resource type="Texture2D" path="res://assets/icons/pause.svg" id="8_pause"]
-[ext_resource type="Texture2D" path="res://assets/icons/chevron_left.svg" id="9_left"]
-[ext_resource type="Texture2D" path="res://assets/icons/rotate_cw.svg" id="10_rotate"]
+[ext_resource type="Script" path="res://scripts/brand_mark.gd" id="8_mark"]
+[ext_resource type="Texture2D" path="res://assets/icons/pause.svg" id="9_pause"]
+[ext_resource type="Texture2D" path="res://assets/icons/chevron_left.svg" id="10_left"]
 [ext_resource type="Texture2D" path="res://assets/icons/chevron_right.svg" id="11_right"]
 [ext_resource type="Texture2D" path="res://assets/icons/chevron_down.svg" id="12_down"]
+[ext_resource type="Texture2D" path="res://assets/icons/rotate_cw.svg" id="13_rotate"]
+[ext_resource type="Texture2D" path="res://assets/icons/hard_drop.svg" id="14_hard"]
 
 [node name="Game" type="Control"]
 layout_mode = 3
@@ -40,10 +42,10 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
-theme_override_constants/margin_left = 16
-theme_override_constants/margin_top = 24
-theme_override_constants/margin_right = 16
-theme_override_constants/margin_bottom = 24
+theme_override_constants/margin_left = 12
+theme_override_constants/margin_top = 16
+theme_override_constants/margin_right = 12
+theme_override_constants/margin_bottom = 16
 
 [node name="Column" type="VBoxContainer" parent="Margin"]
 layout_mode = 2
@@ -51,18 +53,210 @@ mouse_filter = 2
 theme_override_constants/separation = 0
 
 [node name="Header" type="HBoxContainer" parent="Margin/Column"]
-custom_minimum_size = Vector2(0, 57)
+custom_minimum_size = Vector2(0, 54)
+layout_mode = 2
+mouse_filter = 2
+theme_override_constants/separation = 15
+
+[node name="Brand" type="HBoxContainer" parent="Margin/Column/Header"]
+layout_mode = 2
+size_flags_vertical = 4
+mouse_filter = 2
+theme_override_constants/separation = 15
+
+[node name="Mark" type="Control" parent="Margin/Column/Header/Brand"]
+custom_minimum_size = Vector2(26, 26)
+layout_mode = 2
+mouse_filter = 2
+script = ExtResource("8_mark")
+
+[node name="Wordmark" type="HBoxContainer" parent="Margin/Column/Header/Brand"]
+layout_mode = 2
+mouse_filter = 2
+theme_override_constants/separation = 0
+
+[node name="BrandDrop" type="Label" parent="Margin/Column/Header/Brand/Wordmark"]
+layout_mode = 2
+theme_type_variation = &"Brand"
+theme_override_font_sizes/font_size = 30
+text = "DROP"
+
+[node name="BrandGrid" type="Label" parent="Margin/Column/Header/Brand/Wordmark"]
+layout_mode = 2
+theme_type_variation = &"BrandAccent"
+theme_override_font_sizes/font_size = 30
+text = "GRID"
+
+[node name="HeaderSpacer" type="Control" parent="Margin/Column/Header"]
+layout_mode = 2
+size_flags_horizontal = 3
+mouse_filter = 2
+
+[node name="LevelPill" type="PanelContainer" parent="Margin/Column/Header"]
+layout_mode = 2
+size_flags_vertical = 4
+mouse_filter = 2
+theme_type_variation = &"LevelPill"
+
+[node name="LevelPillLabel" type="Label" parent="Margin/Column/Header/LevelPill"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"Pill"
+text = "Level 01"
+
+[node name="StatsMargin" type="MarginContainer" parent="Margin/Column"]
+layout_mode = 2
+mouse_filter = 2
+theme_override_constants/margin_top = 12
+theme_override_constants/margin_bottom = 0
+
+[node name="StatsBar" type="PanelContainer" parent="Margin/Column/StatsMargin"]
+layout_mode = 2
+mouse_filter = 2
+theme_type_variation = &"StatCard"
+
+[node name="StatsRow" type="HBoxContainer" parent="Margin/Column/StatsMargin/StatsBar"]
 layout_mode = 2
 mouse_filter = 2
 
-[node name="PauseButton" type="Button" parent="Margin/Column/Header"]
-unique_name_in_owner = true
-custom_minimum_size = Vector2(57, 57)
+[node name="LinesSection" type="VBoxContainer" parent="Margin/Column/StatsMargin/StatsBar/StatsRow"]
 layout_mode = 2
-theme_type_variation = &"IconButton"
+size_flags_horizontal = 3
+size_flags_vertical = 3
+mouse_filter = 2
+alignment = 1
+theme_override_constants/separation = 4
+
+[node name="LinesCaption" type="Label" parent="Margin/Column/StatsMargin/StatsBar/StatsRow/LinesSection"]
+layout_mode = 2
+theme_type_variation = &"Caption"
+horizontal_alignment = 1
+text = "LINES"
+
+[node name="LinesLabel" type="Label" parent="Margin/Column/StatsMargin/StatsBar/StatsRow/LinesSection"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"Value"
+horizontal_alignment = 1
+text = "0"
+
+[node name="Divider1" type="ColorRect" parent="Margin/Column/StatsMargin/StatsBar/StatsRow"]
+custom_minimum_size = Vector2(2, 40)
+layout_mode = 2
+size_flags_vertical = 4
+mouse_filter = 2
+color = Color(0.1608, 0.2118, 0.3255, 1)
+
+[node name="ScoreSection" type="VBoxContainer" parent="Margin/Column/StatsMargin/StatsBar/StatsRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+mouse_filter = 2
+alignment = 1
+theme_override_constants/separation = 4
+
+[node name="ScoreCaption" type="Label" parent="Margin/Column/StatsMargin/StatsBar/StatsRow/ScoreSection"]
+layout_mode = 2
+theme_type_variation = &"Caption"
+horizontal_alignment = 1
+text = "SCORE"
+
+[node name="ScoreLabel" type="Label" parent="Margin/Column/StatsMargin/StatsBar/StatsRow/ScoreSection"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"Value"
+horizontal_alignment = 1
+text = "0"
+
+[node name="Divider2" type="ColorRect" parent="Margin/Column/StatsMargin/StatsBar/StatsRow"]
+custom_minimum_size = Vector2(2, 40)
+layout_mode = 2
+size_flags_vertical = 4
+mouse_filter = 2
+color = Color(0.1608, 0.2118, 0.3255, 1)
+
+[node name="NextSection" type="VBoxContainer" parent="Margin/Column/StatsMargin/StatsBar/StatsRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+mouse_filter = 2
+alignment = 1
+theme_override_constants/separation = 4
+
+[node name="NextCaption" type="Label" parent="Margin/Column/StatsMargin/StatsBar/StatsRow/NextSection"]
+layout_mode = 2
+theme_type_variation = &"Caption"
+horizontal_alignment = 1
+text = "NEXT"
+
+[node name="NextPreview" type="Control" parent="Margin/Column/StatsMargin/StatsBar/StatsRow/NextSection"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 52)
+layout_mode = 2
+size_flags_horizontal = 3
+mouse_filter = 2
+script = ExtResource("7_next")
+
+[node name="Divider3" type="ColorRect" parent="Margin/Column/StatsMargin/StatsBar/StatsRow"]
+custom_minimum_size = Vector2(2, 40)
+layout_mode = 2
+size_flags_vertical = 4
+mouse_filter = 2
+color = Color(0.1608, 0.2118, 0.3255, 1)
+
+[node name="DropSection" type="VBoxContainer" parent="Margin/Column/StatsMargin/StatsBar/StatsRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+mouse_filter = 2
+alignment = 1
+theme_override_constants/separation = 4
+
+[node name="DropCaption" type="Label" parent="Margin/Column/StatsMargin/StatsBar/StatsRow/DropSection"]
+layout_mode = 2
+theme_type_variation = &"Caption"
+horizontal_alignment = 1
+text = "DROP"
+
+[node name="DropLabel" type="Label" parent="Margin/Column/StatsMargin/StatsBar/StatsRow/DropSection"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"Value"
+horizontal_alignment = 1
+text = "0.80s"
+
+[node name="BoardMargin" type="MarginContainer" parent="Margin/Column"]
+layout_mode = 2
+size_flags_vertical = 3
+mouse_filter = 2
+theme_override_constants/margin_top = 12
+theme_override_constants/margin_bottom = 0
+
+[node name="BoardView" type="Control" parent="Margin/Column/BoardMargin"]
+unique_name_in_owner = true
+layout_mode = 2
+script = ExtResource("2_board")
+
+[node name="ControlsMargin" type="MarginContainer" parent="Margin/Column"]
+layout_mode = 2
+mouse_filter = 2
+theme_override_constants/margin_top = 12
+theme_override_constants/margin_bottom = 0
+
+[node name="Controls" type="HBoxContainer" parent="Margin/Column/ControlsMargin"]
+custom_minimum_size = Vector2(0, 110)
+layout_mode = 2
+mouse_filter = 2
+theme_override_constants/separation = 10
+
+[node name="PauseButton" type="Button" parent="Margin/Column/ControlsMargin/Controls"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(72, 110)
+layout_mode = 2
+theme_type_variation = &"PadPause"
 tooltip_text = "Pause game"
 
-[node name="IconCenter" type="CenterContainer" parent="Margin/Column/Header/PauseButton"]
+[node name="IconCenter" type="CenterContainer" parent="Margin/Column/ControlsMargin/Controls/PauseButton"]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -71,262 +265,192 @@ grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
 
-[node name="Icon" type="TextureRect" parent="Margin/Column/Header/PauseButton/IconCenter"]
-custom_minimum_size = Vector2(26, 26)
+[node name="Icon" type="TextureRect" parent="Margin/Column/ControlsMargin/Controls/PauseButton/IconCenter"]
+custom_minimum_size = Vector2(36, 36)
 layout_mode = 2
 mouse_filter = 2
-texture = ExtResource("8_pause")
+self_modulate = Color(0.4863, 0.6118, 1, 1)
+texture = ExtResource("9_pause")
 expand_mode = 1
 stretch_mode = 5
 
-[node name="LeftSpacer" type="Control" parent="Margin/Column/Header"]
-layout_mode = 2
-size_flags_horizontal = 3
-mouse_filter = 2
-
-[node name="ScoreColumn" type="VBoxContainer" parent="Margin/Column/Header"]
-layout_mode = 2
-mouse_filter = 2
-alignment = 1
-
-[node name="ScoreCaption" type="Label" parent="Margin/Column/Header/ScoreColumn"]
-layout_mode = 2
-theme_type_variation = &"Caption"
-horizontal_alignment = 1
-text = "SCORE"
-
-[node name="ScoreLabel" type="Label" parent="Margin/Column/Header/ScoreColumn"]
-unique_name_in_owner = true
-layout_mode = 2
-theme_type_variation = &"LiveScore"
-horizontal_alignment = 1
-text = "0"
-
-[node name="RightSpacer" type="Control" parent="Margin/Column/Header"]
-layout_mode = 2
-size_flags_horizontal = 3
-mouse_filter = 2
-
-[node name="BestColumn" type="VBoxContainer" parent="Margin/Column/Header"]
-layout_mode = 2
-mouse_filter = 2
-alignment = 1
-
-[node name="BestCaption" type="Label" parent="Margin/Column/Header/BestColumn"]
-layout_mode = 2
-theme_type_variation = &"Caption"
-horizontal_alignment = 2
-text = "BEST"
-
-[node name="BestLabel" type="Label" parent="Margin/Column/Header/BestColumn"]
-unique_name_in_owner = true
-layout_mode = 2
-theme_type_variation = &"MiniValue"
-horizontal_alignment = 2
-text = "0"
-
-[node name="MetaMargin" type="MarginContainer" parent="Margin/Column"]
-layout_mode = 2
-mouse_filter = 2
-theme_override_constants/margin_top = 18
-theme_override_constants/margin_bottom = 12
-
-[node name="Meta" type="HBoxContainer" parent="Margin/Column/MetaMargin"]
-layout_mode = 2
-mouse_filter = 2
-theme_override_constants/separation = 12
-
-[node name="LevelPill" type="PanelContainer" parent="Margin/Column/MetaMargin/Meta"]
-layout_mode = 2
-size_flags_vertical = 4
-mouse_filter = 2
-theme_type_variation = &"LevelPill"
-
-[node name="LevelPillLabel" type="Label" parent="Margin/Column/MetaMargin/Meta/LevelPill"]
-unique_name_in_owner = true
-layout_mode = 2
-theme_type_variation = &"Pill"
-text = "Level 01"
-
-[node name="MetaSpacer" type="Control" parent="Margin/Column/MetaMargin/Meta"]
-layout_mode = 2
-size_flags_horizontal = 3
-mouse_filter = 2
-
-[node name="NextCaption" type="Label" parent="Margin/Column/MetaMargin/Meta"]
-layout_mode = 2
-size_flags_vertical = 4
-theme_type_variation = &"Caption"
-text = "NEXT"
-
-[node name="NextPreview" type="Control" parent="Margin/Column/MetaMargin/Meta"]
-unique_name_in_owner = true
-custom_minimum_size = Vector2(54, 36)
-layout_mode = 2
-size_flags_vertical = 4
-mouse_filter = 2
-script = ExtResource("7_next")
-
-[node name="BoardView" type="Control" parent="Margin/Column"]
-unique_name_in_owner = true
-layout_mode = 2
-size_flags_vertical = 3
-script = ExtResource("2_board")
-
-[node name="Progress" type="VBoxContainer" parent="Margin/Column"]
-layout_mode = 2
-mouse_filter = 2
-theme_override_constants/separation = 9
-
-[node name="ProgressTop" type="Control" parent="Margin/Column/Progress"]
-custom_minimum_size = Vector2(0, 14)
-layout_mode = 2
-mouse_filter = 2
-
-[node name="ProgressBar" type="ProgressBar" parent="Margin/Column/Progress"]
-unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 6)
-layout_mode = 2
-max_value = 10.0
-show_percentage = false
-
-[node name="ProgressLabel" type="Label" parent="Margin/Column/Progress"]
-unique_name_in_owner = true
-layout_mode = 2
-theme_type_variation = &"Caption"
-horizontal_alignment = 1
-text = "10 lines to level 02"
-
-[node name="StatRowMargin" type="MarginContainer" parent="Margin/Column"]
-layout_mode = 2
-mouse_filter = 2
-theme_override_constants/margin_top = 0
-theme_override_constants/margin_bottom = 0
-
-[node name="StatRow" type="HBoxContainer" parent="Margin/Column/StatRowMargin"]
-layout_mode = 2
-mouse_filter = 2
-theme_override_constants/separation = 9
-
-[node name="StatLines" type="PanelContainer" parent="Margin/Column/StatRowMargin/StatRow"]
-layout_mode = 2
-size_flags_horizontal = 3
-theme_type_variation = &"StatCard"
-
-[node name="LinesColumn" type="VBoxContainer" parent="Margin/Column/StatRowMargin/StatRow/StatLines"]
-layout_mode = 2
-theme_override_constants/separation = 2
-
-[node name="LinesCaption" type="Label" parent="Margin/Column/StatRowMargin/StatRow/StatLines/LinesColumn"]
-layout_mode = 2
-theme_type_variation = &"Caption"
-text = "LINES"
-
-[node name="LinesLabel" type="Label" parent="Margin/Column/StatRowMargin/StatRow/StatLines/LinesColumn"]
-unique_name_in_owner = true
-layout_mode = 2
-theme_type_variation = &"Value"
-text = "0"
-
-[node name="StatLevel" type="PanelContainer" parent="Margin/Column/StatRowMargin/StatRow"]
-layout_mode = 2
-size_flags_horizontal = 3
-theme_type_variation = &"StatCard"
-
-[node name="LevelColumn" type="VBoxContainer" parent="Margin/Column/StatRowMargin/StatRow/StatLevel"]
-layout_mode = 2
-theme_override_constants/separation = 2
-
-[node name="LevelCaption" type="Label" parent="Margin/Column/StatRowMargin/StatRow/StatLevel/LevelColumn"]
-layout_mode = 2
-theme_type_variation = &"Caption"
-text = "LEVEL"
-
-[node name="LevelLabel" type="Label" parent="Margin/Column/StatRowMargin/StatRow/StatLevel/LevelColumn"]
-unique_name_in_owner = true
-layout_mode = 2
-theme_type_variation = &"Value"
-text = "1"
-
-[node name="StatDrop" type="PanelContainer" parent="Margin/Column/StatRowMargin/StatRow"]
-layout_mode = 2
-size_flags_horizontal = 3
-theme_type_variation = &"StatCard"
-
-[node name="DropColumn" type="VBoxContainer" parent="Margin/Column/StatRowMargin/StatRow/StatDrop"]
-layout_mode = 2
-theme_override_constants/separation = 2
-
-[node name="DropCaption" type="Label" parent="Margin/Column/StatRowMargin/StatRow/StatDrop/DropColumn"]
-layout_mode = 2
-theme_type_variation = &"Caption"
-text = "DROP"
-
-[node name="DropLabel" type="Label" parent="Margin/Column/StatRowMargin/StatRow/StatDrop/DropColumn"]
-unique_name_in_owner = true
-layout_mode = 2
-theme_type_variation = &"Value"
-text = "0.80s"
-
-[node name="ControlsMargin" type="MarginContainer" parent="Margin/Column"]
-layout_mode = 2
-mouse_filter = 2
-theme_override_constants/margin_top = 18
-theme_override_constants/margin_bottom = 0
-
-[node name="Controls" type="HBoxContainer" parent="Margin/Column/ControlsMargin"]
-custom_minimum_size = Vector2(0, 78)
-layout_mode = 2
-mouse_filter = 2
-theme_override_constants/separation = 13
-
 [node name="LeftButton" type="Button" parent="Margin/Column/ControlsMargin/Controls"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 78)
+custom_minimum_size = Vector2(0, 110)
 layout_mode = 2
 size_flags_horizontal = 3
-theme_type_variation = &"ControlButton"
-icon = ExtResource("9_left")
-expand_icon = true
+theme_type_variation = &"PadButton"
 tooltip_text = "Move left"
 
-[node name="RotateButton" type="Button" parent="Margin/Column/ControlsMargin/Controls"]
-unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 78)
+[node name="Content" type="VBoxContainer" parent="Margin/Column/ControlsMargin/Controls/LeftButton"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+theme_override_constants/separation = 7
+alignment = 1
+
+[node name="Icon" type="TextureRect" parent="Margin/Column/ControlsMargin/Controls/LeftButton/Content"]
+custom_minimum_size = Vector2(38, 38)
 layout_mode = 2
-size_flags_horizontal = 3
-theme_type_variation = &"ControlButton"
-icon = ExtResource("10_rotate")
-expand_icon = true
-tooltip_text = "Rotate"
+size_flags_horizontal = 4
+mouse_filter = 2
+texture = ExtResource("10_left")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Label" type="Label" parent="Margin/Column/ControlsMargin/Controls/LeftButton/Content"]
+layout_mode = 2
+theme_type_variation = &"GhostLabel"
+theme_override_font_sizes/font_size = 16
+horizontal_alignment = 1
+text = "Left"
 
 [node name="RightButton" type="Button" parent="Margin/Column/ControlsMargin/Controls"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 78)
+custom_minimum_size = Vector2(0, 110)
 layout_mode = 2
 size_flags_horizontal = 3
-theme_type_variation = &"ControlButton"
-icon = ExtResource("11_right")
-expand_icon = true
+theme_type_variation = &"PadButton"
 tooltip_text = "Move right"
+
+[node name="Content" type="VBoxContainer" parent="Margin/Column/ControlsMargin/Controls/RightButton"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+theme_override_constants/separation = 7
+alignment = 1
+
+[node name="Icon" type="TextureRect" parent="Margin/Column/ControlsMargin/Controls/RightButton/Content"]
+custom_minimum_size = Vector2(38, 38)
+layout_mode = 2
+size_flags_horizontal = 4
+mouse_filter = 2
+texture = ExtResource("11_right")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Label" type="Label" parent="Margin/Column/ControlsMargin/Controls/RightButton/Content"]
+layout_mode = 2
+theme_type_variation = &"GhostLabel"
+theme_override_font_sizes/font_size = 16
+horizontal_alignment = 1
+text = "Right"
+
+[node name="RotateButton" type="Button" parent="Margin/Column/ControlsMargin/Controls"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 110)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_type_variation = &"PadRotate"
+action_mode = 0
+tooltip_text = "Rotate"
+
+[node name="Content" type="VBoxContainer" parent="Margin/Column/ControlsMargin/Controls/RotateButton"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+theme_override_constants/separation = 7
+alignment = 1
+
+[node name="Icon" type="TextureRect" parent="Margin/Column/ControlsMargin/Controls/RotateButton/Content"]
+custom_minimum_size = Vector2(38, 38)
+layout_mode = 2
+size_flags_horizontal = 4
+mouse_filter = 2
+texture = ExtResource("13_rotate")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Label" type="Label" parent="Margin/Column/ControlsMargin/Controls/RotateButton/Content"]
+layout_mode = 2
+theme_type_variation = &"SecondaryLabel"
+theme_override_font_sizes/font_size = 16
+horizontal_alignment = 1
+text = "Rotate"
 
 [node name="SoftDropButton" type="Button" parent="Margin/Column/ControlsMargin/Controls"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 78)
+custom_minimum_size = Vector2(0, 110)
 layout_mode = 2
 size_flags_horizontal = 3
-theme_type_variation = &"ControlButton"
-icon = ExtResource("12_down")
-expand_icon = true
+theme_type_variation = &"PadButton"
 tooltip_text = "Soft drop"
+
+[node name="Content" type="VBoxContainer" parent="Margin/Column/ControlsMargin/Controls/SoftDropButton"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+theme_override_constants/separation = 7
+alignment = 1
+
+[node name="Icon" type="TextureRect" parent="Margin/Column/ControlsMargin/Controls/SoftDropButton/Content"]
+custom_minimum_size = Vector2(38, 38)
+layout_mode = 2
+size_flags_horizontal = 4
+mouse_filter = 2
+texture = ExtResource("12_down")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Label" type="Label" parent="Margin/Column/ControlsMargin/Controls/SoftDropButton/Content"]
+layout_mode = 2
+theme_type_variation = &"GhostLabel"
+theme_override_font_sizes/font_size = 16
+horizontal_alignment = 1
+text = "Soft Drop"
 
 [node name="HardDropButton" type="Button" parent="Margin/Column/ControlsMargin/Controls"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 78)
+custom_minimum_size = Vector2(0, 110)
 layout_mode = 2
 size_flags_horizontal = 3
-theme_type_variation = &"DropButton"
-text = "Hard"
+theme_type_variation = &"PadHard"
+action_mode = 0
+tooltip_text = "Hard drop"
+
+[node name="Content" type="VBoxContainer" parent="Margin/Column/ControlsMargin/Controls/HardDropButton"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+theme_override_constants/separation = 7
+alignment = 1
+
+[node name="Icon" type="TextureRect" parent="Margin/Column/ControlsMargin/Controls/HardDropButton/Content"]
+custom_minimum_size = Vector2(38, 38)
+layout_mode = 2
+size_flags_horizontal = 4
+mouse_filter = 2
+self_modulate = Color(0.0392, 0.0588, 0.1176, 1)
+texture = ExtResource("14_hard")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Label" type="Label" parent="Margin/Column/ControlsMargin/Controls/HardDropButton/Content"]
+layout_mode = 2
+theme_type_variation = &"PrimaryLabel"
+theme_override_font_sizes/font_size = 16
+horizontal_alignment = 1
+text = "Hard Drop"
 
 [node name="Hud" type="Node" parent="."]
 unique_name_in_owner = true

@@ -60,6 +60,8 @@ func _set_label_variations() -> void:
 	_make_label_type("Faint", 16, Palette.TEXT_FAINT, false)
 	# Brand wordmark (prototype .brand: 12 px, weight 800, uppercase).
 	_make_label_type("Brand", 18, Palette.TEXT, true)
+	# Accent half of the wordmark ("GRID" in DROPGRID).
+	_make_label_type("BrandAccent", 18, Palette.ACCENT, true)
 	# Top bar title (prototype .topbar strong: 14 px).
 	_make_label_type("Title", 24, Palette.TEXT, true)
 	# Hero heading, for example "Find your" (prototype .menu-hero h1: 44 px).
@@ -135,10 +137,14 @@ func _set_button_variations() -> void:
 	_make_button_type("DangerButton", Palette.DANGER_SOFT, Palette.DANGER, Palette.DANGER_LINE, 2, RADIUS_MD, 21)
 	# Icon button: square, surface-2 with a thin line border (prototype .icon-btn).
 	_make_button_type("IconButton", Palette.SURFACE_2, Palette.TEXT, Palette.LINE, 2, RADIUS_MD, 21)
-	# Game control keys (prototype .controls button).
-	_make_button_type("ControlButton", Palette.SURFACE_2, Palette.TEXT, Palette.LINE, 2, RADIUS_MD, 21)
-	# Hard drop key: warning colored (prototype .controls button.drop).
-	_make_button_type("DropButton", Color("241F14"), Palette.WARNING, Color("4A3F24"), 2, RADIUS_MD, 21)
+	# Game pad tiles (bottom control bar): chunkier rounding and clearer hierarchy.
+	_make_button_type("PadButton", Palette.SURFACE_2, Palette.TEXT, Palette.LINE_STRONG, 2, 20, 21)
+	# Pause tile: quiet accent, clearly secondary to the actions.
+	_make_button_type("PadPause", Palette.ACCENT_SOFT, Palette.ACCENT, Palette.ACCENT_BORDER, 2, 20, 21)
+	# Rotate: the accent action.
+	_make_button_type("PadRotate", Palette.ACCENT, Palette.TEXT, Color(0, 0, 0, 0), 0, 20, 21)
+	# Hard drop: the amber action.
+	_make_button_type("PadHard", Palette.WARNING, Palette.ACCENT_INK, Color(0, 0, 0, 0), 0, 20, 21)
 	# Segment tab (prototype .segmented button). The pressed style is the selected tab.
 	_make_button_type("SegmentButton", Color(0, 0, 0, 0), Palette.TEXT_MUTED, Color(0, 0, 0, 0), 0, RADIUS_SM, 20)
 	set_stylebox("pressed", "SegmentButton", _box(Palette.SURFACE_3, RADIUS_SM, Color(0, 0, 0, 0), 0))
