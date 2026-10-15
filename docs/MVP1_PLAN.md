@@ -60,7 +60,7 @@ Implementation notes (decisions the code made):
 - Check that DevicePreview does nothing on Android.
 
 ### 4.3 Backend to production
-- Deploy one instance (Fly.io, Railway, or Render) with Neon Postgres, HTTPS, and migrations run on deploy.
+- Deploy one instance (Render, via `render.yaml`) with Neon Postgres, HTTPS, and migrations run on deploy.
 - Set real secrets (JWT key) through the host's secret store, never committed.
 - Rate limits are in-memory: keep exactly one instance, and write that down.
 - Username blocklist on register and rename: the leaderboard shows usernames publicly.

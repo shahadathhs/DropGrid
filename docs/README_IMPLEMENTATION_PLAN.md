@@ -26,8 +26,8 @@ Every doc describes the code as it is now.
 **Checkpoint:** levels start real games; debug APK on a phone syncs over LAN and vibrates.
 
 ### Phase C — Backend live: code done, deploy not done
-- Done in code: username blocklist, sync plausibility check, `/privacy` and `/account/delete` pages, production secret guard, `backend/fly.toml`, [DEPLOY.md](DEPLOY.md).
-- Not done: create the Neon database and the Fly app, set secrets, deploy, set the release API URL in `game/project.godot`, run the smoke test against production (register, sync, leaderboard, delete).
+- Done in code: username blocklist, sync plausibility check, `/privacy` and `/account/delete` pages, production secret guard, `render.yaml`, [DEPLOY.md](DEPLOY.md).
+- Not done: create the Neon database and the Render service, set secrets, deploy, set the release API URL in `game/project.godot`, run the smoke test against production (register, sync, leaderboard, delete).
 - Keep exactly one instance (in-memory rate limits).
 
 **Checkpoint:** production smoke test passes; privacy and deletion pages reachable over HTTPS.

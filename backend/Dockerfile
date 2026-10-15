@@ -25,7 +25,7 @@ USER app
 ENV PORT=8000
 EXPOSE 8000
 # Shell form so ${PORT} is expanded; exec keeps uvicorn as PID 1 for clean signals.
-# --proxy-headers: behind Fly's proxy the real client IP (used by the rate limiter)
+# --proxy-headers: behind the host's proxy the real client IP (used by the rate limiter)
 # arrives in X-Forwarded-For. Trusting "*" is safe only because the app is reachable
 # solely through that proxy.
 CMD exec uvicorn main:app --host 0.0.0.0 --port "${PORT}" --proxy-headers --forwarded-allow-ips='*'

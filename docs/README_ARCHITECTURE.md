@@ -72,11 +72,10 @@ backend/
 │   └── web/                # /privacy and /account/delete HTML pages
 ├── migrations/             # Alembic
 ├── tests/                  # pytest
-├── Dockerfile
-└── fly.toml                # Fly.io config (one machine)
+└── Dockerfile
 ```
 
-Other top-level files: `Makefile`, `compose.yaml` (headless Godot and local Postgres), `Dockerfile`, `docker/` (helper scripts), `docs/`, `MasterPrompt.md` (redesign brief).
+Other top-level files: `render.yaml` (Render deploy blueprint), `Makefile`, `compose.yaml` (headless Godot and local Postgres), `Dockerfile`, `docker/` (helper scripts), `docs/`, `MasterPrompt.md` (redesign brief).
 
 Do not create empty scripts or scenes just to fill the tree.
 
