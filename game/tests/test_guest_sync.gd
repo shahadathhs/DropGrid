@@ -35,3 +35,7 @@ func test_guest_profile_fetch_queues_no_request() -> void:
 func test_guest_rename_fails_locally_without_a_request() -> void:
 	_sync.rename("newname")
 	assert_eq(_sync.queued_request_count(), 0)
+
+
+func test_default_build_has_an_api_url() -> void:
+	assert_true(_sync.is_online_enabled())

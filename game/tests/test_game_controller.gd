@@ -98,3 +98,22 @@ func test_fall_interval_decreases_with_level_but_has_a_floor() -> void:
 	var level10 := GameController.fall_interval(10)
 	assert_true(level10 < level1)
 	assert_true(level10 >= GameConfig.MIN_FALL_INTERVAL)
+
+
+func test_start_level_five_uses_level_five_speed_and_scoring() -> void:
+	var run := GameController.new(1, 5)
+	assert_eq(run.level, 5)
+	assert_eq(GameController.fall_interval(run.level), GameController.fall_interval(5))
+	assert_eq(GameController.points_for_lines(1, run.level), 500)
+
+
+func test_start_level_holds_until_lines_this_game_pass_fifty() -> void:
+	assert_eq(GameController.level_for_run(5, 0), 5)
+	assert_eq(GameController.level_for_run(5, 49), 5)
+	assert_eq(GameController.level_for_run(5, 50), 6)
+	assert_eq(GameController.level_for_run(1, 25), 3)
+
+
+func test_default_start_level_is_one() -> void:
+	assert_eq(game.level, 1)
+	assert_eq(game.start_level, 1)

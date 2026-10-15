@@ -6,6 +6,12 @@ extends RefCounted
 const STAT_KEYS := ["best_score", "total_lines", "games_played"]
 
 
+## Online features exist only when the build has an API URL. An empty URL (the release
+## default until a server is configured) means a clean offline game.
+static func is_online_enabled(api_url: String) -> bool:
+	return api_url.strip_edges() != ""
+
+
 ## Both sides keep monotonic counters, so the merged value is the larger one per stat.
 static func merge_stats(local: Dictionary, server: Dictionary) -> Dictionary:
 	var merged := {}

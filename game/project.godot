@@ -29,6 +29,11 @@ window/handheld/orientation=1
 
 theme/custom="res://resources/game_theme.tres"
 
+[dropgrid]
+
+network/api_base_url="http://localhost:8000/v1"
+network/api_base_url.release=""
+
 [rendering]
 
 environment/defaults/default_clear_color=Color(0.043, 0.063, 0.125, 1)

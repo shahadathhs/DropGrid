@@ -70,3 +70,9 @@ func test_email_needs_an_at_and_a_dot_after_it() -> void:
 func test_password_has_a_minimum_length() -> void:
 	assert_false(SyncLogic.is_valid_password("1234567"))
 	assert_true(SyncLogic.is_valid_password("12345678"))
+
+
+func test_empty_api_url_disables_online_features() -> void:
+	assert_false(SyncLogic.is_online_enabled(""))
+	assert_false(SyncLogic.is_online_enabled("   "))
+	assert_true(SyncLogic.is_online_enabled("https://api.example.com/v1"))

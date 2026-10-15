@@ -6,7 +6,6 @@ extends Node
 
 @onready var _score_label: Label = %ScoreLabel
 @onready var _lines_label: Label = %LinesLabel
-@onready var _level_label: Label = %LevelLabel
 @onready var _level_pill: Label = %LevelPillLabel
 @onready var _drop_label: Label = %DropLabel
 @onready var _next_preview: Control = %NextPreview
@@ -35,7 +34,6 @@ func _on_lines_changed(lines: int) -> void:
 
 
 func _on_level_changed(level: int) -> void:
-	_level_label.text = str(level)
 	_level_pill.text = "Level %02d" % level
 	# Drop readout: seconds between automatic steps at this level.
 	_drop_label.text = "%.2fs" % GameController.fall_interval(level)

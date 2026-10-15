@@ -155,6 +155,8 @@ func _set_button_variations() -> void:
 	# containers that ignore the mouse, so the whole card can be pressed.
 	_make_button_type("CardButton", Palette.SURFACE, Palette.TEXT, Palette.LINE, 2, RADIUS_MD, 21)
 	set_stylebox("hover", "CardButton", _box(Palette.SURFACE, RADIUS_MD, Palette.LINE_STRONG, 2))
+	# Highlighted card: accent border on a soft accent fill (the newest unlocked level).
+	_make_button_type("CardButtonCurrent", Palette.ACCENT_SOFT, Palette.TEXT, Palette.ACCENT, 2, RADIUS_MD, 21)
 
 
 ## Builds one button variation. Heights are not set here: each node sets custom_minimum_size.

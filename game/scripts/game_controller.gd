@@ -23,6 +23,8 @@ var state := State.PLAYING
 var score := 0
 var lines := 0
 var level := 1
+## Level the run began at; the level never drops below it.
+var start_level := 1
 
 var has_active := false
 var active_type := 0
@@ -36,7 +38,9 @@ var _fall_timer := 0.0
 
 
 ## Pass a seed (>= 0) for a repeatable piece order, e.g. in tests.
-func _init(seed_value: int = -1) -> void:
+func _init(seed_value: int = -1, start_level_value: int = 1) -> void:
+	start_level = maxi(1, start_level_value)
+	level = start_level
 	_bag = PieceBag.new(seed_value)
 	next_type = _bag.next_piece()
 	_spawn_next()
@@ -56,6 +60,11 @@ static func points_for_lines(count: int, for_level: int) -> int:
 static func level_for_lines(total_lines: int) -> int:
 	@warning_ignore("integer_division")
 	return total_lines / GameConfig.LINES_PER_LEVEL + 1
+
+
+## Level during a run: the start level, or the line-based level once that is higher.
+static func level_for_run(start: int, lines_this_game: int) -> int:
+	return maxi(start, level_for_lines(lines_this_game))
 
 
 ## Advance the fall timer. Does nothing unless the game is being played.
@@ -188,7 +197,7 @@ func _lock_active() -> void:
 		lines_cleared.emit(cleared, points)
 		score_changed.emit(score)
 		lines_changed.emit(lines)
-		var new_level := level_for_lines(lines)
+		var new_level := level_for_run(start_level, lines)
 		if new_level != level:
 			level = new_level
 			level_changed.emit(level)

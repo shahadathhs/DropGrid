@@ -16,10 +16,13 @@ const HAPTIC_DURATION_MS := 20
 @onready var _game_over_overlay: Control = %GameOverOverlay
 
 var game: GameController
+## Start level of this run; Play again repeats it.
+var _start_level := 1
 var _window_had_focus := false
 
 
 func _ready() -> void:
+	_start_level = StartLevel.take()
 	_start_new_game()
 
 	_pause_button.pressed.connect(func(): game.set_paused(true))
@@ -86,7 +89,7 @@ func _restart() -> void:
 
 
 func _start_new_game() -> void:
-	game = GameController.new()
+	game = GameController.new(-1, _start_level)
 	_board_view.setup(game)
 	_hud.setup(game)
 	_touch_controls.setup(game)

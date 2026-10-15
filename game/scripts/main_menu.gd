@@ -9,6 +9,8 @@ const LEVELS_SCENE := "res://scenes/levels.tscn"
 @onready var _best_label: Label = %BestLabel
 @onready var _account_label: Label = %AccountLabel
 @onready var _continue_guest_button: Button = %ContinueGuestButton
+@onready var _account_button: Button = %AccountButton
+@onready var _leaderboard_button: Button = %LeaderboardButton
 @onready var _settings_overlay: Control = %SettingsOverlay
 
 
@@ -17,7 +19,10 @@ func _ready() -> void:
 	# Guests see Sign in; signed-in players see their Profile instead.
 	_account_label.text = "Profile" if Sync.is_signed_in() else "Sign in"
 	# "Continue as guest" only makes sense before sign-in; it plays exactly like Play.
-	_continue_guest_button.visible = not Sync.is_signed_in()
+	_continue_guest_button.visible = Sync.is_online_enabled() and not Sync.is_signed_in()
+	# A build without an API URL is a plain offline game: no account or leaderboard entries.
+	_account_button.visible = Sync.is_online_enabled()
+	_leaderboard_button.visible = Sync.is_online_enabled()
 	_settings_overlay.hide()
 	_settings_overlay.closed.connect(func(): _settings_overlay.hide())
 

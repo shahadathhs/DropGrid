@@ -66,6 +66,11 @@ func email() -> String:
 	return str(_session.get("email", ""))
 
 
+## False when this build has no API URL: no requests are made and the UI hides account features.
+func is_online_enabled() -> bool:
+	return SyncLogic.is_online_enabled(GameConfig.api_base_url())
+
+
 ## Number of requests waiting or in flight. Lets tests check that guests send nothing.
 func queued_request_count() -> int:
 	return _queue.size()
@@ -126,7 +131,7 @@ func push_stats() -> void:
 # ---------------------------------------------------------------------------
 
 func _send_stats(force: bool) -> void:
-	if not is_signed_in() or _sync_queued:
+	if not is_online_enabled() or not is_signed_in() or _sync_queued:
 		return
 	if not force and not Save.pending_sync:
 		return
@@ -229,6 +234,9 @@ func _report(action: String, code: int, data: Dictionary) -> void:
 # ---------------------------------------------------------------------------
 
 func _enqueue(action: String, method: int, path: String, body: Variant, auth: bool, on_done: Callable) -> void:
+	if not is_online_enabled():
+		request_failed.emit(action, "Online features are not available in this build.")
+		return
 	_queue.append({
 		"action": action,
 		"method": method,
@@ -256,7 +264,7 @@ func _pump() -> void:
 	if job["auth"]:
 		headers.append("Authorization: Bearer %s" % _session["access_token"])
 	var body_text := "" if job["body"] == null else JSON.stringify(job["body"])
-	var err := _http.request(GameConfig.API_BASE_URL + job["path"], headers, job["method"], body_text)
+	var err := _http.request(GameConfig.api_base_url() + job["path"], headers, job["method"], body_text)
 	if err != OK:
 		_finish_job(0, {})
 

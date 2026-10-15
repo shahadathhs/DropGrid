@@ -185,7 +185,7 @@ unique_name_in_owner = true
 custom_minimum_size = Vector2(0, 69)
 layout_mode = 2
 theme_type_variation = &"SecondaryButton"
-text = "View level path"
+text = "Start level"
 
 [node name="MenuButton" type="Button" parent="Margin/Column"]
 unique_name_in_owner = true
