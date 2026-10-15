@@ -46,7 +46,7 @@ run-device: install ## Install and launch on the phone
 
 # ── Backend (uv, backend/) ────────────────────────────────────────────
 
-setup: check-tools backend-env db-up backend-install backend-migrate ui-install godot-install ## One-time local setup: tools, database, backend, UI prototype, Godot
+setup: check-tools backend-env db-up backend-install backend-migrate ui-install godot-install import ## One-time local setup: tools, database, backend, UI prototype, Godot
 	@echo ""
 	@echo "Setup complete. Start the pieces you need:"
 	@echo "  make backend-run   API at http://localhost:8000 (docs at /docs)"
@@ -82,7 +82,11 @@ godot-install: ## Install Godot 4.7 with Homebrew if it is not already installed
 		brew install --cask godot; \
 	fi
 
-backend-install: ## Install backend dependencies (uv)
+backend-install: ## Install backend dependencies (uv), recreating a stale .venv (e.g. after moving/copying the repo)
+	@cd $(BACKEND) && if [ -d .venv ] && ! uv run --no-sync uvicorn --version >/dev/null 2>&1; then \
+		echo "backend/.venv is stale or broken, recreating it"; \
+		rm -rf .venv; \
+	fi
 	cd $(BACKEND) && uv sync
 
 backend-run: backend-migrate ## Migrate the dev database, then serve at http://localhost:8000 (uvicorn --reload)
