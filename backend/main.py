@@ -7,6 +7,7 @@ from core.config import settings
 from modules.auth.router import router as auth_router
 from modules.players.router import router as players_router
 from modules.scores.router import router as scores_router
+from modules.web.router import router as web_router
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(name)s: %(message)s")
 
@@ -38,3 +39,6 @@ async def health() -> dict[str, str]:
 app.include_router(auth_router, prefix=settings.api_prefix)
 app.include_router(players_router, prefix=settings.api_prefix)
 app.include_router(scores_router, prefix=settings.api_prefix)
+
+# Plain HTML pages (privacy policy, account deletion) live outside /v1.
+app.include_router(web_router)

@@ -1,6 +1,7 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, HTTPException
 from sqlalchemy import select
 
+from core.game_limits import max_plausible_score
 from core.security.deps import CurrentPlayer, DbSession
 from models.player import Player
 from modules.players.schemas import PlayerOut
@@ -11,8 +12,16 @@ router = APIRouter(tags=["scores"])
 LEADERBOARD_SIZE = 50
 
 
+def _check_plausible(data: SyncIn) -> None:
+    if data.games_played == 0 and (data.total_lines > 0 or data.best_score > 0):
+        raise HTTPException(422, detail="Implausible stats: progress without any games played")
+    if data.best_score > max_plausible_score(data.total_lines):
+        raise HTTPException(422, detail="Implausible stats: best_score is too high for total_lines")
+
+
 @router.post("/sync", response_model=PlayerOut)
 async def sync(data: SyncIn, player: CurrentPlayer, db: DbSession) -> PlayerOut:
+    _check_plausible(data)
     # Lock the row so concurrent syncs for one player cannot read the same
     # baseline and overwrite each other's max (Postgres; SQLite ignores FOR UPDATE).
     locked = (

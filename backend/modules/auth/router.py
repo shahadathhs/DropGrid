@@ -64,15 +64,19 @@ async def register(data: RegisterIn, db: DbSession) -> TokenPair:
     return _issue_tokens(player)
 
 
+async def authenticate(db: AsyncSession, email: str, password: str) -> Player | None:
+    """Check email + password (login and web account deletion). None if they do not match."""
+    player = (await db.execute(select(Player).where(Player.email == email))).scalar_one_or_none()
+    if player is None:
+        verify_password(password, _dummy_hash())
+        return None
+    return player if verify_password(password, player.password_hash) else None
+
+
 @router.post("/login", response_model=TokenPair, dependencies=[Depends(rate_limit("login"))])
 async def login(data: LoginIn, db: DbSession) -> TokenPair:
-    player = (
-        await db.execute(select(Player).where(Player.email == data.email))
-    ).scalar_one_or_none()
+    player = await authenticate(db, data.email, data.password)
     if player is None:
-        verify_password(data.password, _dummy_hash())
-        raise UnauthorizedException(INVALID_CREDENTIALS)
-    if not verify_password(data.password, player.password_hash):
         raise UnauthorizedException(INVALID_CREDENTIALS)
     return _issue_tokens(player)
 

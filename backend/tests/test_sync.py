@@ -45,12 +45,34 @@ def test_lower_client_value_never_lowers_server(client: TestClient) -> None:
 
 def test_sync_accepts_bounds_and_rejects_out_of_range(client: TestClient) -> None:
     tokens = register(client, "bounds@example.com", "bounds_user")
-    assert _sync(client, tokens, 2_000_000_000, 0, 0).status_code == 200
-    assert _sync(client, tokens, -1, 0, 0).status_code == 422
-    assert _sync(client, tokens, 2_000_000_001, 0, 0).status_code == 422
+    assert _sync(client, tokens, 2_000_000_000, 2_000_000_000, 1).status_code == 200
+    assert _sync(client, tokens, -1, 0, 1).status_code == 422
+    assert _sync(client, tokens, 2_000_000_001, 0, 1).status_code == 422
     assert _sync(client, tokens, 0, 0, -5).status_code == 422
 
 
 def test_sync_requires_auth(client: TestClient) -> None:
     response = client.post("/v1/sync", json={"best_score": 1, "total_lines": 1, "games_played": 1})
     assert response.status_code == 401
+
+
+def test_sync_plausibility_boundary(client: TestClient) -> None:
+    tokens = register(client, "plaus@example.com", "plaus_user")
+    # 25 lines: 200 * 25 * (10 + 2) = 60000
+    assert _sync(client, tokens, 60_000, 25, 5).status_code == 200
+    over = _sync(client, tokens, 60_001, 25, 5)
+    assert over.status_code == 422
+    assert "detail" in over.json()
+
+
+def test_sync_rejects_score_with_no_lines(client: TestClient) -> None:
+    tokens = register(client, "zero@example.com", "zero_user")
+    assert _sync(client, tokens, 1, 0, 1).status_code == 422
+    assert _sync(client, tokens, 0, 0, 1).status_code == 200
+
+
+def test_sync_rejects_progress_without_games(client: TestClient) -> None:
+    tokens = register(client, "nog@example.com", "nog_user")
+    assert _sync(client, tokens, 0, 5, 0).status_code == 422
+    assert _sync(client, tokens, 100, 0, 0).status_code == 422
+    assert _sync(client, tokens, 0, 0, 0).status_code == 200

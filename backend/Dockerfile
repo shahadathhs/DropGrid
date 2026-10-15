@@ -18,5 +18,14 @@ RUN uv sync --frozen --no-install-project --no-dev
 
 COPY . .
 
+# Run as an unprivileged user.
+RUN useradd --system --no-create-home --uid 10001 app
+USER app
+
+ENV PORT=8000
 EXPOSE 8000
-CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
+# Shell form so ${PORT} is expanded; exec keeps uvicorn as PID 1 for clean signals.
+# --proxy-headers: behind Fly's proxy the real client IP (used by the rate limiter)
+# arrives in X-Forwarded-For. Trusting "*" is safe only because the app is reachable
+# solely through that proxy.
+CMD exec uvicorn main:app --host 0.0.0.0 --port "${PORT}" --proxy-headers --forwarded-allow-ips='*'

@@ -1,5 +1,6 @@
 from functools import lru_cache
 
+from pydantic import model_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -10,7 +11,8 @@ class Settings(BaseSettings):
         extra="ignore",
     )
 
-    # App
+    # App. ENVIRONMENT=production turns on startup safety checks (see below).
+    environment: str = "development"
     app_name: str = "dropgrid"
     debug: bool = True
     api_prefix: str = "/v1"
@@ -31,8 +33,20 @@ class Settings(BaseSettings):
     rate_limit_enabled: bool = True
     rate_limit_per_minute: int = 10
 
-    # CORS origins (comma-separated). The Next.js prototype dev server.
-    cors_origins: str = "http://localhost:3000"
+    # Shown on the privacy page. Unset = no contact line (set it with `fly secrets set`).
+    contact_email: str = ""
+
+    # Browser origins allowed by CORS (comma-separated). The Godot client does not
+    # need CORS, so none are allowed by default.
+    cors_origins: str = ""
+
+    @model_validator(mode="after")
+    def _require_real_secret_in_production(self) -> "Settings":
+        if self.environment.lower() == "production" and (
+            self.jwt_secret == "change-me" or len(self.jwt_secret) < 32
+        ):
+            raise ValueError("JWT_SECRET must be a random string of 32+ chars in production")
+        return self
 
 
 @lru_cache

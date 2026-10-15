@@ -4,11 +4,19 @@ from typing import Annotated
 
 from pydantic import AfterValidator, EmailStr, Field
 
+from core.blocklist import is_blocked_username
+
 BCRYPT_MAX_BYTES = 72
 
 
 def _lower(value: str) -> str:
     return value.lower()
+
+
+def _check_username_allowed(value: str) -> str:
+    if is_blocked_username(value):
+        raise ValueError("username is not allowed")
+    return value
 
 
 def _check_bcrypt_length(value: str) -> str:
@@ -23,6 +31,7 @@ Username = Annotated[
     str,
     Field(min_length=3, max_length=20, pattern=r"^[A-Za-z0-9_]+$"),
     AfterValidator(_lower),
+    AfterValidator(_check_username_allowed),
 ]
 NewPassword = Annotated[
     str,
