@@ -19,8 +19,26 @@ def _check_plausible(data: SyncIn) -> None:
         raise HTTPException(422, detail="Implausible stats: best_score is too high for total_lines")
 
 
-@router.post("/sync", response_model=PlayerOut)
+@router.post(
+    "/sync",
+    response_model=PlayerOut,
+    summary="Push your stats",
+    responses={
+        401: {"description": "Missing or invalid access token"},
+        422: {
+            "description": "Implausible stats (progress without games, or score too high for lines)"
+        },
+    },
+)
 async def sync(data: SyncIn, player: CurrentPlayer, db: DbSession) -> PlayerOut:
+    """Merge the client's stats into the player's record and return the result.
+
+    Each stat merges as `max(server, client)`, so replaying an older state
+    can never lower the stored values. The row is locked for the merge so
+    two devices syncing at once cannot overwrite each other. Stats that
+    break the server's plausibility rules are rejected with 422 instead of
+    being stored.
+    """
     _check_plausible(data)
     # Lock the row so concurrent syncs for one player cannot read the same
     # baseline and overwrite each other's max (Postgres; SQLite ignores FOR UPDATE).
@@ -39,8 +57,18 @@ async def sync(data: SyncIn, player: CurrentPlayer, db: DbSession) -> PlayerOut:
     return PlayerOut.model_validate(locked)
 
 
-@router.get("/leaderboard", response_model=LeaderboardOut)
+@router.get(
+    "/leaderboard",
+    response_model=LeaderboardOut,
+    summary="Top 50 players",
+    responses={200: {"description": "The top 50 by best score; empty until someone scores"}},
+)
 async def leaderboard(db: DbSession) -> LeaderboardOut:
+    """Return the top 50 players by best score, highest first.
+
+    Ties break by earliest signup. Players with a best score of 0 are not
+    listed. No auth required.
+    """
     rows = (
         await db.execute(
             select(Player.username, Player.best_score)
