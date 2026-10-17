@@ -37,9 +37,17 @@ def _issue_tokens(player: Player) -> TokenPair:
     "/register",
     response_model=TokenPair,
     status_code=201,
+    summary="Create an account",
+    responses={409: {"description": "Email or username already registered"}},
     dependencies=[Depends(rate_limit("register"))],
 )
 async def register(data: RegisterIn, db: DbSession) -> TokenPair:
+    """Create a player account and return a token pair.
+
+    Email and username must both be unused (usernames are case-insensitive).
+    The password is stored as a bcrypt hash. Stats start at zero; carry them
+    over by syncing after sign-in on a new device.
+    """
     if await _exists(db, Player.email == data.email):
         raise ConflictException("Email is already registered")
     if await _exists(db, Player.username == data.username):
@@ -73,16 +81,34 @@ async def authenticate(db: AsyncSession, email: str, password: str) -> Player | 
     return player if verify_password(password, player.password_hash) else None
 
 
-@router.post("/login", response_model=TokenPair, dependencies=[Depends(rate_limit("login"))])
+@router.post(
+    "/login",
+    response_model=TokenPair,
+    summary="Sign in with email and password",
+    responses={401: {"description": "Unknown email or wrong password"}},
+    dependencies=[Depends(rate_limit("login"))],
+)
 async def login(data: LoginIn, db: DbSession) -> TokenPair:
+    """Verify the credentials and return a fresh token pair."""
     player = await authenticate(db, data.email, data.password)
     if player is None:
         raise UnauthorizedException(INVALID_CREDENTIALS)
     return _issue_tokens(player)
 
 
-@router.post("/refresh", response_model=TokenPair, dependencies=[Depends(rate_limit("refresh"))])
+@router.post(
+    "/refresh",
+    response_model=TokenPair,
+    summary="Exchange a refresh token for a new pair",
+    responses={401: {"description": "Missing, expired, or invalidated refresh token"}},
+    dependencies=[Depends(rate_limit("refresh"))],
+)
 async def refresh(data: RefreshIn, db: DbSession) -> TokenPair:
+    """Trade a valid refresh token for a new pair and rotate nothing else.
+
+    A refresh token stops working once the player changes their password
+    (the stored `password_version` no longer matches the token's `pv` claim).
+    """
     claims = decode_token(data.refresh_token, "refresh")
     if claims is None:
         raise UnauthorizedException(INVALID_REFRESH)

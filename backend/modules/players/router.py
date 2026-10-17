@@ -17,12 +17,18 @@ async def delete_player(db: AsyncSession, player: Player) -> None:
     await db.commit()
 
 
-@router.get("/me", response_model=PlayerOut)
+@router.get("/me", response_model=PlayerOut, summary="Get your profile")
 async def me(player: CurrentPlayer) -> PlayerOut:
+    """Return the signed-in player's stats as the server sees them."""
     return PlayerOut.model_validate(player)
 
 
-@router.patch("/me", response_model=PlayerOut)
+@router.patch(
+    "/me",
+    response_model=PlayerOut,
+    summary="Change your username",
+    responses={409: {"description": "Username already taken"}},
+)
 async def rename(data: PlayerUpdateIn, player: CurrentPlayer, db: DbSession) -> PlayerOut:
     taken = await db.execute(
         select(Player.id).where(Player.username == data.username, Player.id != player.id).limit(1)
@@ -38,6 +44,16 @@ async def rename(data: PlayerUpdateIn, player: CurrentPlayer, db: DbSession) -> 
     return PlayerOut.model_validate(player)
 
 
-@router.delete("/me", status_code=204)
+@router.delete(
+    "/me",
+    status_code=204,
+    summary="Delete your account",
+    responses={204: {"description": "Account and all stats permanently deleted"}},
+)
 async def delete_account(player: CurrentPlayer, db: DbSession) -> None:
+    """Hard-delete the account. There is no soft-delete and no undo.
+
+    Also reachable without the app at `/account/delete`, which is the URL
+    submitted to Google Play's account-deletion requirement.
+    """
     await delete_player(db, player)
