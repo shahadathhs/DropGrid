@@ -3,6 +3,8 @@
 android/
 *.translation
 export_credentials.cfg
+# Leftover uid for a local debug script that is not in the repo.
+game/tools/tdbg.gd.uid
 
 # Build output
 build/
