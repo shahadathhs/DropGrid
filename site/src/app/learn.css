@@ -1,0 +1,248 @@
+/* Shared by /modes and /how-to-play. Tokens only: no color, font or radius of
+   its own. Scroll-linked rules sit inside @supports (animation-timeline) and
+   prefers-reduced-motion: no-preference; hover rules change color, border,
+   opacity or transform in 120ms. */
+
+@layer components {
+  /* ---- /modes ---- */
+
+  .mode-row {
+    border-top: 1px solid var(--line);
+    transition: border-color 120ms linear;
+  }
+
+  .mode-row dt {
+    color: var(--text-faint);
+    transition: color 120ms linear;
+  }
+
+  .mode-row dd {
+    color: var(--text-muted);
+  }
+
+  .mode-row dd.mode-rank {
+    color: var(--text);
+  }
+
+  @media (hover: hover) {
+    .mode-row:hover,
+    .mode-row:focus-within {
+      border-top-color: var(--text);
+    }
+
+    .mode-row:hover dt,
+    .mode-row:focus-within dt {
+      color: var(--text-muted);
+    }
+  }
+
+  @media (hover: hover) and (prefers-reduced-motion: no-preference) {
+    .mode-row .mode-phone {
+      transition: transform 120ms linear;
+    }
+
+    .mode-row:hover .mode-phone,
+    .mode-row:focus-within .mode-phone {
+      transform: translateY(-0.25rem);
+    }
+  }
+
+  .mode-name a {
+    transition: color 120ms linear;
+  }
+
+  .mode-name a:hover,
+  .mode-name a:focus-visible {
+    color: var(--text-muted);
+  }
+
+  /* ---- /how-to-play ---- */
+
+  /* The control row drawn standalone: one design unit is 1/720 of its width,
+     exactly like a screen, so the game's .ctl styles apply unchanged. */
+  .pad {
+    container-type: inline-size;
+    width: 100%;
+    max-width: 32rem;
+    padding: 1rem;
+    background: var(--background-deep);
+    border-radius: var(--radius-cell);
+  }
+
+  .pad > .controls {
+    --u: calc(100cqw / 720);
+    width: 100%;
+    margin: 0;
+  }
+
+  .pad--rtl > .controls {
+    direction: rtl;
+  }
+
+  /* A small button beside its rule. */
+  .chip {
+    --u: 0.5px;
+    flex: none;
+    width: 3.25rem;
+  }
+
+  @media (min-width: 40rem) {
+    .chip {
+      width: 4.25rem;
+    }
+  }
+
+  .chip .ctl {
+    width: 100%;
+  }
+
+  .spec {
+    --p: 1.25rem;
+    display: grid;
+    grid-template-columns: repeat(4, var(--p));
+    grid-auto-rows: var(--p);
+    padding: 0.5rem;
+    background: var(--board-cell);
+    border-radius: var(--radius-cell);
+  }
+
+  .spec--gray {
+    filter: grayscale(1);
+  }
+
+  .demo-board {
+    --p: 1.5rem;
+    position: relative;
+    display: grid;
+    grid-template-columns: repeat(var(--cols), var(--p));
+    grid-auto-rows: var(--p);
+    width: fit-content;
+    padding: 0.5rem;
+    background: var(--background-deep);
+    border-radius: var(--radius-cell);
+  }
+
+  .demo-board > .active-piece {
+    inset: 0.5rem;
+  }
+
+  .num {
+    font-variant-numeric: tabular-nums;
+    text-align: right;
+  }
+
+  .bar {
+    display: block;
+    height: 0.5rem;
+    background: var(--text-muted);
+  }
+
+  .track {
+    display: flex;
+    height: 0.75rem;
+    background: var(--surface-2);
+  }
+
+  .track > .fill {
+    display: block;
+    height: 100%;
+    background: var(--text-muted);
+    transform-origin: left;
+  }
+
+  .track > .tick {
+    flex: none;
+    width: 0.1875rem;
+    height: 100%;
+    margin-inline: 0.1875rem;
+    background: var(--text);
+  }
+
+  /* The side list only where the page is wide enough to have a side column. */
+  @media (min-width: 64rem) {
+    .toc a {
+      border-left: 2px solid var(--line);
+      padding-left: 0.75rem;
+    }
+  }
+}
+
+/* Scroll-linked: a section's list entry lights while the section covers the
+   middle of the viewport. Each section is its own view timeline whose scrollport
+   is shrunk to a zero-height line at the viewport middle (inset 50%), so the
+   timeline is active exactly while the section is under that line. */
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    @keyframes toc-on {
+      from,
+      to {
+        color: var(--text);
+        border-left-color: var(--text);
+      }
+    }
+
+    @keyframes track-fill {
+      from {
+        transform: scaleX(0);
+      }
+      to {
+        transform: scaleX(1);
+      }
+    }
+
+    @media (min-width: 64rem) {
+      .htp {
+        timeline-scope: --s1, --s2, --s3, --s4, --s5;
+      }
+
+      .htp-section[data-s="1"] {
+        view-timeline: --s1 block;
+        view-timeline-inset: 50%;
+      }
+      .htp-section[data-s="2"] {
+        view-timeline: --s2 block;
+        view-timeline-inset: 50%;
+      }
+      .htp-section[data-s="3"] {
+        view-timeline: --s3 block;
+        view-timeline-inset: 50%;
+      }
+      .htp-section[data-s="4"] {
+        view-timeline: --s4 block;
+        view-timeline-inset: 50%;
+      }
+      .htp-section[data-s="5"] {
+        view-timeline: --s5 block;
+        view-timeline-inset: 50%;
+      }
+
+      .toc a {
+        animation: toc-on linear;
+        animation-duration: auto;
+        animation-range: cover;
+      }
+      .toc a[data-s="1"] {
+        animation-timeline: --s1;
+      }
+      .toc a[data-s="2"] {
+        animation-timeline: --s2;
+      }
+      .toc a[data-s="3"] {
+        animation-timeline: --s3;
+      }
+      .toc a[data-s="4"] {
+        animation-timeline: --s4;
+      }
+      .toc a[data-s="5"] {
+        animation-timeline: --s5;
+      }
+    }
+
+    .track > .fill {
+      animation: track-fill linear both;
+      animation-duration: auto;
+      animation-timeline: view();
+      animation-range: entry 10% entry 90%;
+    }
+  }
+}

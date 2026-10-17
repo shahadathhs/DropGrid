@@ -16,19 +16,28 @@ const departureMono = localFont({
   display: "swap",
 });
 
+const description =
+  "A portrait falling-block puzzle for Android. Offline first, no ads, no purchases. Five modes and an optional global leaderboard.";
+
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
-  title: "DropGrid — a falling-block puzzle for Android",
-  description:
-    "A portrait falling-block puzzle. Offline first, no ads, no purchases. Optional account for a global leaderboard.",
+  title: {
+    default: "DropGrid, a falling-block puzzle for Android",
+    template: "%s · DropGrid",
+  },
+  description,
   alternates: { canonical: "/" },
   openGraph: {
-    title: "DropGrid — a falling-block puzzle for Android",
-    description:
-      "Offline first. No ads. Clear lines, chase your best, start at any unlocked level.",
+    title: "DropGrid, a falling-block puzzle for Android",
+    description,
     url: siteUrl,
     siteName: "DropGrid",
     type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "DropGrid, a falling-block puzzle for Android",
+    description,
   },
   icons: [{ rel: "icon", url: "/icon.svg", type: "image/svg+xml" }],
 };

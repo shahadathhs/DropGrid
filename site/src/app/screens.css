@@ -1,0 +1,355 @@
+/* The phone screens, rebuilt from the game (game/scenes/*.tscn, game_theme.gd).
+   One screen is 720 design units wide, exactly like the game's viewport. Each
+   screen is a size container; --u is one design unit, so every length below is
+   "calc(var(--u) * N)" with N taken from the game. Colors are the tokens only.
+   Corners are the one cell radius. */
+
+@layer components {
+  .scr {
+    container-type: inline-size;
+    position: relative;
+    aspect-ratio: 390 / 844;
+    overflow: hidden;
+    background: var(--background);
+    color: var(--text);
+    font-family: var(--font-mono);
+  }
+
+  .scr-in {
+    --u: calc(100cqw / 720);
+    --bw: calc(var(--u) * 552);
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    padding: calc(var(--u) * 84) calc(var(--u) * 54) calc(var(--u) * 48);
+    font-size: calc(var(--u) * 31.5);
+    line-height: 1.25;
+  }
+
+  .scr-in--top {
+    padding-top: calc(var(--u) * 72);
+  }
+
+  .scr-display {
+    font-family: var(--font-display);
+  }
+
+  .scr-muted {
+    color: var(--text-muted);
+  }
+
+  .scr-faint {
+    color: var(--text-faint);
+  }
+
+  .scr-back {
+    display: flex;
+    align-items: center;
+    height: calc(var(--u) * 96);
+    color: var(--text-muted);
+  }
+
+  .scr-heading {
+    font-family: var(--font-display);
+    font-size: calc(var(--u) * 67);
+    line-height: 1.1;
+    margin-top: calc(var(--u) * 24);
+    margin-bottom: calc(var(--u) * 24);
+  }
+
+  .scr-caption {
+    font-size: calc(var(--u) * 22);
+    letter-spacing: 0.2em;
+    color: var(--text-muted);
+  }
+
+  .scr-primary {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: calc(var(--u) * 132);
+    border-radius: var(--radius-cell);
+    background: var(--accent);
+    color: var(--accent-ink);
+    font-size: calc(var(--u) * 45);
+    font-weight: 600;
+  }
+
+  .scr-link-row {
+    display: flex;
+  }
+
+  .scr-link {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: calc(var(--u) * 96);
+    font-size: calc(var(--u) * 27);
+    color: var(--text-muted);
+  }
+
+  .scr-card {
+    display: flex;
+    align-items: center;
+    gap: calc(var(--u) * 20);
+    min-height: calc(var(--u) * 132);
+    padding: calc(var(--u) * 20) calc(var(--u) * 24);
+    border: calc(var(--u) * 2) solid var(--line);
+    border-radius: var(--radius-cell);
+    background: var(--surface);
+  }
+
+  .scr-card-name {
+    text-transform: uppercase;
+  }
+
+  .scr-card-text {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: calc(var(--u) * 4);
+  }
+
+  .scr-card-hint {
+    color: var(--text-muted);
+    font-size: calc(var(--u) * 30);
+  }
+
+  .scr-switch {
+    position: relative;
+    flex: none;
+    width: calc(var(--u) * 80);
+    height: calc(var(--u) * 40);
+    border: calc(var(--u) * 2) solid var(--line-strong);
+  }
+
+  .scr-switch::after {
+    content: "";
+    position: absolute;
+    top: calc(var(--u) * 4);
+    left: calc(var(--u) * 4);
+    width: calc(var(--u) * 28);
+    height: calc(var(--u) * 28);
+    background: var(--text-muted);
+  }
+
+  .scr-switch[data-on] {
+    background: var(--accent);
+    border-color: var(--accent);
+  }
+
+  .scr-switch[data-on]::after {
+    left: auto;
+    right: calc(var(--u) * 6);
+    top: calc(var(--u) * 6);
+    background: var(--accent-ink);
+  }
+
+  .scr-stat {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: calc(var(--u) * 24);
+    padding: calc(var(--u) * 24) 0;
+    border-bottom: calc(var(--u) * 2) solid var(--line);
+  }
+
+  .scr-stat-value {
+    font-family: var(--font-display);
+    font-size: calc(var(--u) * 50);
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* The board: ten columns, tiles inset by 1/16 cell on each side (a 1/8 cell
+     gap between neighbours), locked blocks framed with the fill pulled 32% toward
+     black, as cell_style.gd does. */
+  .board {
+    --p: calc(var(--bw) / 10);
+    position: relative;
+    display: grid;
+    grid-template-columns: repeat(10, var(--p));
+    grid-auto-rows: var(--p);
+    width: var(--bw);
+    margin-inline: auto;
+  }
+
+  .tile {
+    margin: calc(var(--p) / 16);
+    background: var(--board-cell);
+  }
+
+  .blk {
+    background: var(--c);
+    border: calc(var(--p) / 8) solid color-mix(in srgb, var(--c), black 32%);
+  }
+
+  .blk--ghost {
+    background: transparent;
+    border-color: var(--c);
+  }
+
+  .blk--i {
+    --c: var(--piece-i);
+  }
+  .blk--o {
+    --c: var(--piece-o);
+  }
+  .blk--t {
+    --c: var(--piece-t);
+  }
+  .blk--s {
+    --c: var(--piece-s);
+  }
+  .blk--z {
+    --c: var(--piece-z);
+  }
+  .blk--j {
+    --c: var(--piece-j);
+  }
+  .blk--l {
+    --c: var(--piece-l);
+  }
+
+  /* A block placed by board cell (--x, --y) on a layer over the empty tiles. */
+  .layer,
+  .active-piece {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+  }
+
+  .cell-abs,
+  .active-cell {
+    position: absolute;
+    left: calc(var(--p) * var(--x) + var(--p) / 16);
+    top: calc(var(--p) * var(--y) + var(--p) / 16);
+    width: calc(var(--p) * 0.875);
+    height: calc(var(--p) * 0.875);
+  }
+
+  .active-cell {
+    border-color: var(--text);
+  }
+
+  /* A preview slot (hold, next queue, menu hero): the same tile, smaller. */
+  .mini {
+    display: grid;
+    padding: calc(var(--u) * 8);
+    background: var(--board-cell);
+    border-radius: var(--radius-cell);
+  }
+
+  .controls {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr) 0.35fr 1fr;
+    width: var(--bw);
+    margin: calc(var(--u) * 24) auto 0;
+    gap: calc(var(--u) * 12);
+  }
+
+  .controls > .ctl-gap {
+    visibility: hidden;
+  }
+
+  .ctl {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: calc(var(--u) * 96);
+    border: calc(var(--u) * 2) solid var(--line);
+    border-radius: var(--radius-cell);
+    background: var(--surface-2);
+    color: var(--text);
+  }
+
+  .ctl-text {
+    font-size: calc(var(--u) * 26);
+    letter-spacing: 0.04em;
+  }
+
+  .ctl svg {
+    width: calc(var(--u) * 40);
+    height: calc(var(--u) * 40);
+  }
+
+  .ctl--drop {
+    color: var(--signal);
+  }
+
+  /* The wordmark and menu hero draw tiles on their own pitch. */
+  .blockmark {
+    display: grid;
+    margin-inline: auto;
+  }
+
+  /* Game HUD, in game.tscn's order: hold, score, level, lines, time, the next
+     queue and the pause tile. Each column is a small caption over its value. */
+  .hud {
+    display: flex;
+    align-items: center;
+    gap: calc(var(--u) * 10);
+    width: var(--bw);
+    margin: 0 auto calc(var(--u) * 24);
+  }
+
+  .hud-col {
+    flex: none;
+    display: flex;
+    flex-direction: column;
+    gap: calc(var(--u) * 6);
+  }
+
+  .hud-col--score {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .hud-label {
+    font-size: calc(var(--u) * 13);
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    color: var(--text-muted);
+  }
+
+  .hud-score {
+    font-family: var(--font-display);
+    font-size: calc(var(--u) * 46);
+    line-height: 1;
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+  }
+
+  .hud-value {
+    font-family: var(--font-display);
+    font-size: calc(var(--u) * 28);
+    line-height: 1;
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+  }
+
+  .hud-queue {
+    display: flex;
+    flex-direction: column;
+    gap: calc(var(--u) * 6);
+  }
+
+  .pause-btn {
+    flex: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: calc(var(--u) * 52);
+    height: calc(var(--u) * 52);
+    border: calc(var(--u) * 2) solid var(--line-strong);
+    border-radius: var(--radius-cell);
+    background: var(--surface);
+    color: var(--text-muted);
+  }
+
+  .pause-btn svg {
+    width: calc(var(--u) * 22);
+    height: calc(var(--u) * 22);
+  }
+}

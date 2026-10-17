@@ -1,0 +1,34 @@
+/* Leaderboard page. Weight, not color, marks the top three; hover is a
+   background change only (120ms). */
+
+.lb-section {
+  scroll-margin-top: 1.5rem;
+}
+
+.lb-row {
+  transition: background-color 120ms linear;
+}
+
+.lb-row:hover {
+  background-color: var(--surface);
+}
+
+.lb-row[data-top] {
+  font-weight: 700;
+}
+
+.lb-row td:first-child {
+  padding-left: 0.5rem;
+}
+
+.lb-row td:last-child {
+  padding-right: 0.5rem;
+}
+
+.lb-table th:first-child {
+  padding-left: 0.5rem;
+}
+
+.lb-table th:last-child {
+  padding-right: 0.5rem;
+}

@@ -1,4 +1,6 @@
 @import "tailwindcss";
+@import "./screens.css";
+@import "./motion.css";
 
 /* DropGrid design tokens — game/scripts/palette.gd is law.
    Two grounds, one system: warm graphite with off-white ink (default) and
@@ -88,4 +90,38 @@
   --radius-cell: 4px; /* game_theme.gd RADIUS_SM..XL — the only radius */
   --font-mono: var(--font-martian-mono), ui-monospace, monospace;
   --font-display: var(--font-departure-mono), var(--font-martian-mono), monospace;
+}
+
+@layer base {
+  html {
+    scroll-behavior: auto;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  /* Keyboard focus: a plain ink outline. */
+  :focus-visible {
+    outline: 2px solid var(--text);
+    outline-offset: 3px;
+    border-radius: var(--radius-cell);
+  }
+}
+
+@layer components {
+  /* Page width: about 72rem on desktop; long-form text stays at .measure. */
+  .wrap {
+    width: 100%;
+    max-width: 72rem;
+    margin-inline: auto;
+    padding-inline: 1.25rem;
+  }
+
+  @media (min-width: 40rem) {
+    .wrap {
+      padding-inline: 2rem;
+    }
+  }
+
+  .measure {
+    max-width: 38rem;
+  }
 }
