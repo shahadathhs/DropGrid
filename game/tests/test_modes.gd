@@ -13,22 +13,6 @@ func _fill_row_except(game: GameController, row: int, from_col: int, to_col: int
 			game.board.lock_cells([Vector2i(0, 0)], Vector2i(x, row), 1)
 
 
-## Rotates, moves the active piece to column target_x, and hard drops it.
-func _drop_at(game: GameController, target_x: int, rotations: int) -> void:
-	for _turn in rotations:
-		game.rotate_piece()
-	var dx := target_x - game.active_position.x
-	# Bounded, so a blocked move fails the test instead of looping forever.
-	var steps := 0
-	while dx != 0 and steps < GameConfig.COLS:
-		assert_true(
-			game.move(1 if dx > 0 else -1), "piece could not move toward column %d" % target_x
-		)
-		dx = target_x - game.active_position.x
-		steps += 1
-	game.hard_drop()
-
-
 ## Clears one row with whatever piece is active (see test_gameplay_depth).
 func _clear_one_row(game: GameController) -> void:
 	var cells := PieceData.cells(game.active_type, 0)
@@ -62,11 +46,11 @@ func test_sprint_finishes_at_forty_lines_as_a_win() -> void:
 	var game := _game(GameMode.new(GameMode.Mode.SPRINT))
 	var finished := [false]
 	game.run_finished.connect(func(_score): finished[0] = true)
-	# Ten self-cleaning tetrises (a vertical I leaves nothing behind) = 40 lines.
-	for _round in GameConfig.SPRINT_GOAL_LINES / 4:
-		for row in range(GameConfig.ROWS - 4, GameConfig.ROWS):
-			_fill_row_except(game, row, 9, 9)
-		_drop_at(game, 7, 1)
+	# Forty single-line clears, with whatever piece is active each time. The board is
+	# emptied between rounds so leftovers from one piece never block the next.
+	for _round in GameConfig.SPRINT_GOAL_LINES:
+		game.board.reset()
+		_clear_one_row(game)
 	assert_true(finished[0], "sprint must fire run_finished at the goal")
 	assert_eq(game.lines, GameConfig.SPRINT_GOAL_LINES)
 	assert_eq(game.state, GameController.State.GAME_OVER)

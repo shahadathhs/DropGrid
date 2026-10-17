@@ -70,10 +70,14 @@ func is_zen() -> bool:
 	return mode == Mode.ZEN
 
 
-## Every player gets the same piece order on the same UTC day.
+## Every player gets the same piece order on the same UTC day. The seed is the
+## UTC date as a number, YYYYMMDD (for example 20261017), as the docs describe.
 static func daily_seed() -> int:
-	var days := Time.get_unix_time_from_system() / 86400.0
-	return int(floor(days))
+	var date := Time.get_datetime_dict_from_unix_time(int(Time.get_unix_time_from_system()))
+	var year: int = date.year
+	var month: int = date.month
+	var day: int = date.day
+	return year * 10000 + month * 100 + day
 
 
 static func daily_date() -> String:

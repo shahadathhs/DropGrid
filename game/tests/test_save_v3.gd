@@ -56,7 +56,9 @@ func test_expired_daily_bests_stop_counting() -> void:
 	var payload := {"score": 700, "lines": 3, "date": "1999-01-01"}
 	manager.category_bests["daily"] = payload
 	assert_eq(manager.counting_best("daily"), {}, "a daily best from 1999 counts no more")
-	assert_false(manager.record_category_run("daily", {"score": 100, "lines": 1}))
+	# The expired best is ignored, so the first run of a new day counts as an improvement.
+	assert_true(manager.record_category_run("daily", {"score": 100, "lines": 1}))
+	assert_eq(int(manager.counting_best("daily")["score"]), 100)
 
 
 func test_daily_records_are_stamped_with_the_utc_date() -> void:
