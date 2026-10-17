@@ -34,6 +34,20 @@ The loop should be predictable and fair. Avoid introducing extra mechanics unles
 - Soft drop: increase downward speed while held, or move down one step per press.
 - Hard drop: optional; if included, make the control visually distinct from soft drop.
 
+### Keyboard controls (web build)
+
+| Keys        | Action     |
+| ----------- | ---------- |
+| Left or A   | Move left  |
+| Right or D  | Move right |
+| Down or S   | Soft drop  |
+| Up or X     | Rotate     |
+| C or Shift  | Hold       |
+| Space       | Hard drop  |
+| P or Escape | Pause      |
+
+The web build (played at `/play` on the site) runs as a guest only: nothing is saved to the browser and no request is made, so scores and settings do not persist and there is no sign-in or leaderboard. The site's `/play` page lists these keys.
+
 ### Input behavior
 
 - Controls must respond promptly.

@@ -65,3 +65,12 @@ Debug builds keep using the LAN or emulator URL. An empty release URL turns ever
 - **Rotate the JWT secret:** Dashboard > Environment > edit `JWT_SECRET`. This signs everyone out.
 - **Logs and rollback:** the service's Logs and Events tabs. Rollback by redeploying an earlier deploy from Events.
 - **Blueprint changes:** if you edit `render.yaml`, Render asks you to sync the blueprint. If it rejects a key, check the current Blueprint spec at render.com/docs/blueprint-spec; the file was written from memory of that spec and has not been run.
+
+## The site (Vercel) and the browser build
+
+The marketing site in `site/` deploys on Vercel. Its `/play` page hosts the game's web export at `/play/game/`. The export is not in the repo: `pnpm build` and `pnpm dev` first run `site/scripts/fetch-playground.mjs`, which downloads `dropgrid-web.tar.gz` from the rolling `latest` GitHub release and unpacks it into `site/public/play/` (gitignored).
+
+- If the asset does not exist yet, the network is down, or `tar` is missing, the script prints one warning and the build continues. `/play` then shows "not available in this build" with the download button instead of the player.
+- A local export wins: if `site/public/play/game/index.html` already exists the script does nothing. `FORCE=1 pnpm build` fetches again.
+- To keep the playground current, add the optional `VERCEL_DEPLOY_HOOK` secret in GitHub so CI rebuilds the site after it refreshes `latest` ([CI.md](CI.md)). Without it the playground lags one site deploy behind.
+- `/play/game/*` is served with `Cache-Control: public, max-age=3600, stale-while-revalidate=86400` (`site/next.config.mjs`).

@@ -84,9 +84,13 @@ Do not create empty scripts or scenes just to fill the tree.
 There are four, set in `game/project.godot`:
 
 - `Save`: wraps one `SaveManager` so every screen shares the same local data.
-- `Sfx`: plays sound effects.
+- `Sfx`: plays sound effects. The `SFX` and `Music` audio buses are defined in `game/default_bus_layout.tres` and are never created in code: on the web, a bus added at runtime is mismatched in the browser's audio graph, so muting it silences the master bus and the game makes no sound at all. `tests/test_audio_buses.gd` guards the layout.
 - `Sync`: accounts, tokens, outbox, HTTP. The only networking code in the client.
 - `DevicePreview`: development tool for desktop debug runs. F9 cycles phone sizes, F10 rotates. It checks for desktop and debug features and does nothing on Android. The check is in code; it has not yet been confirmed on a device.
+
+## Site and the web build
+
+`site/` is a static Next.js marketing site (Vercel). Its `/play` page shows the game's Web export inside a phone frame. The export is built by `make web` (the "Web" preset, headless Godot in Docker; CI job `web`) into `game/build/web/` and published as the `dropgrid-web.tar.gz` asset of the rolling `latest` release. At build time the site's `scripts/fetch-playground.mjs` unpacks it into `site/public/play/game/`; the repo never holds it. The page is a plain server component: an iframe whose inline poster has one Play link, so the game loads only after the visitor presses Play and the site ships no JavaScript for it. When the files are missing at build time the page shows an unavailable state instead. The web build runs as a guest: no storage, no network, keyboard controls. See [DEPLOY.md](DEPLOY.md) and [CI.md](CI.md).
 
 ## 3. Responsibilities
 
