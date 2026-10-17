@@ -1,7 +1,8 @@
 # One pipeline. PRs and every push run the quality gates; pushes to main
-# continue through the Render deploy, an APK build, and a rolling "latest"
-# release; v* tags produce official releases. All of it shows as check
-# status on the commit. Secrets and variables: docs/CI.md.
+# continue through the Render deploy, an APK build, and the rolling "latest"
+# release; a version bump (make release v=X.Y.Z) publishes DropGrid vX.Y.Z;
+# v* tags also produce official releases. All of it shows as check status on
+# the commit. Secrets and variables: docs/CI.md.
 name: CI/CD
 
 on:
@@ -124,6 +125,9 @@ jobs:
     needs: [game-tests, backend-tests, deploy-render]
     if: github.event_name != 'pull_request' && (github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/v'))
     runs-on: ubuntu-latest
+    outputs:
+      is-release: ${{ steps.ver.outputs.is-release }}
+      version: ${{ steps.ver.outputs.version }}
     env:
       # Repository variable, e.g. https://dropgrid-api.onrender.com/v1 (optional).
       API_BASE_URL: ${{ vars.API_BASE_URL }}
@@ -132,17 +136,35 @@ jobs:
     steps:
       - uses: actions/checkout@v7
 
-      - name: Set version and server URL
+      # A main push becomes a versioned release when the VERSION file names a
+      # version that has no release yet (the bump script wrote it); otherwise
+      # the build is a plain rolling build.
+      - name: Resolve version
+        id: ver
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if [[ "${GITHUB_REF}" == refs/tags/v* ]]; then
+            VERSION="${GITHUB_REF_NAME#v}"
+            echo "is-release=true" >> "$GITHUB_OUTPUT"
+          else
+            FILE_VERSION=$(cat VERSION)
+            if gh release view "v${FILE_VERSION}" --repo "${GITHUB_REPOSITORY}" >/dev/null 2>&1; then
+              VERSION="0.1.0-${GITHUB_SHA::7}"
+              echo "is-release=false" >> "$GITHUB_OUTPUT"
+            else
+              VERSION="${FILE_VERSION}"
+              echo "is-release=true" >> "$GITHUB_OUTPUT"
+            fi
+          fi
+          echo "version=${VERSION}" >> "$GITHUB_OUTPUT"
+          echo "VERSION=${VERSION}" >> "$GITHUB_ENV"
+
+      - name: Set server URL
         run: |
           # Each build gets a higher version code, so a newer APK installs over an older one.
           sed -i "s|^version/code=.*|version/code=${GITHUB_RUN_NUMBER}|" game/export_presets.cfg
-          if [[ "${GITHUB_REF}" == refs/tags/v* ]]; then
-            VERSION="${GITHUB_REF_NAME#v}"
-          else
-            VERSION="0.1.0-${GITHUB_SHA::7}"
-          fi
           sed -i "s|^version/name=.*|version/name=\"${VERSION}\"|" game/export_presets.cfg
-          echo "VERSION=${VERSION}" >> "$GITHUB_ENV"
 
           if [ -n "${API_BASE_URL}" ]; then
             case "${API_BASE_URL}" in
@@ -181,10 +203,8 @@ jobs:
         with:
           name: dropgrid-apk
 
-      # Main builds refresh one rolling release, so "releases/latest" always
-      # points at the newest APK without flooding the releases page. It is a
-      # full release (not a pre-release) so it shows up in the sidebar and
-      # resolves as "latest".
+      # Rolling dev channel: refreshed on every main push. Never claims the
+      # "latest" flag — that belongs to versioned releases.
       - name: Refresh the rolling latest build
         if: github.ref == 'refs/heads/main'
         env:
@@ -193,15 +213,18 @@ jobs:
           gh release delete latest --repo "${GITHUB_REPOSITORY}" --cleanup-tag --yes || true
           gh release create latest dropgrid-*.apk --repo "${GITHUB_REPOSITORY}" \
             --title "Latest build (main@${GITHUB_SHA::7})" \
-            --notes "Automatic build of commit ${GITHUB_SHA}. This is a rolling label, not a versioned release — expect rough edges. Versioned releases come from \`v*\` tags." \
-            --latest
+            --notes "Automatic build of commit ${GITHUB_SHA}. This is a rolling dev channel, not a versioned release — expect rough edges. Get versioned releases from the releases page." \
+            --latest=false
 
+      # Fires when the VERSION file names a version without a release yet
+      # (the bump script wrote it), or when a v* tag was pushed.
       - name: Create the versioned release
-        if: startsWith(github.ref, 'refs/tags/v')
+        if: needs.apk.outputs.is-release == 'true'
         env:
           GH_TOKEN: ${{ github.token }}
+          VERSION: ${{ needs.apk.outputs.version }}
         run: |
-          gh release create "${GITHUB_REF_NAME}" dropgrid-*.apk \
+          gh release create "v${VERSION}" dropgrid-*.apk \
             --repo "${GITHUB_REPOSITORY}" \
-            --title "DropGrid ${GITHUB_REF_NAME}" \
+            --title "DropGrid v${VERSION}" \
             --generate-notes --latest

@@ -1,7 +1,8 @@
 import Link from "next/link";
+import { GameScreen } from "@/components/game-screen";
+import { PhoneFrame } from "@/components/phone-frame";
 import { Wordmark } from "@/components/wordmark";
 import { downloadUrl, repo } from "@/lib/links";
-import { grounds, pieceColors } from "@/lib/tokens";
 
 export default function Home() {
   return (
@@ -38,33 +39,31 @@ export default function Home() {
           </div>
         </section>
 
-        {/* Two grounds, one system */}
+        {/* The game itself: two grounds of one real board state */}
         <section className="flex flex-col gap-4">
-          <h2 className="text-sm font-semibold tracking-wide text-text-muted">TWO GROUNDS</h2>
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-            {Object.entries(grounds).map(([key, g]) => (
-              <div
-                key={key}
-                className="flex flex-col gap-3 rounded-cell border border-line p-4"
-                style={{ background: g.background, color: g.ink }}
-              >
-                <span className="font-display tracking-[0.14em]">{g.label.toUpperCase()}</span>
-                <div className="flex gap-1.5">
-                  {pieceColors.map((c) => (
-                    <span
-                      key={c}
-                      className="h-5 w-5 rounded-cell"
-                      style={{ background: c }}
-                      aria-hidden
-                    />
-                  ))}
-                </div>
-                <span className="text-xs opacity-70">
-                  Seven piece colors, readable in grayscale.
-                </span>
-              </div>
-            ))}
+          <h2 className="text-sm font-semibold tracking-wide text-text-muted">
+            TWO GROUNDS, ONE GAME
+          </h2>
+          <div className="grid grid-cols-1 justify-items-center gap-6 sm:grid-cols-2">
+            <figure className="flex flex-col items-center gap-3">
+              <PhoneFrame>
+                <GameScreen />
+              </PhoneFrame>
+              <figcaption className="text-xs tracking-[0.18em] text-text-faint">
+                GRAPHITE
+              </figcaption>
+            </figure>
+            <figure className="flex flex-col items-center gap-3">
+              <PhoneFrame>
+                <GameScreen light />
+              </PhoneFrame>
+              <figcaption className="text-xs tracking-[0.18em] text-text-faint">PAPER</figcaption>
+            </figure>
           </div>
+          <p className="text-sm text-text-muted">
+            A real mid-game state rendered by the same rules the app plays. Graphite for the desk,
+            paper for the sun — one cell, seven piece colors that stay readable in grayscale.
+          </p>
         </section>
 
         {/* Facts — plain rows, no icon cards */}

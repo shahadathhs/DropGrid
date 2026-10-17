@@ -149,6 +149,9 @@ site-lint: ## Lint the site (oxlint + eslint + prettier)
 site-typecheck: ## Type-check the site (tsc)
 	cd site && pnpm typecheck
 
+release: ## Cut a versioned release: make release v=0.2.0 (bumps VERSION, commits, pushes)
+	@./scripts/bump-version.sh v=$(v)
+
 # ── Misc ──────────────────────────────────────────────────────────────
 
 shell: ## Open a shell in the Godot container
