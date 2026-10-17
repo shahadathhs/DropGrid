@@ -13,6 +13,9 @@ const SCORE_CATEGORIES: Array[String] = ["marathon", "sprint", "ultra", "daily"]
 
 ## Where this instance reads and writes. Tests point it at a temp file.
 var save_path := SAVE_PATH
+## When false nothing is read from or written to disk; everything lives in memory
+## for the session. The web build turns this off (user:// would be browser storage).
+var persist := not GameConfig.is_web()
 
 var best_score := 0
 var sound_enabled := true
@@ -37,6 +40,8 @@ var stats_revision := 0
 
 func load_data() -> void:
 	apply_data({})
+	if not persist:
+		return
 	if not FileAccess.file_exists(save_path):
 		return
 	var file := FileAccess.open(save_path, FileAccess.READ)
@@ -97,6 +102,8 @@ func to_dictionary() -> Dictionary:
 
 
 func save_data() -> void:
+	if not persist:
+		return
 	var file := FileAccess.open(save_path, FileAccess.WRITE)
 	if file == null:
 		push_warning(

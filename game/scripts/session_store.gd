@@ -9,7 +9,7 @@ const KEYS := ["access_token", "refresh_token", "username", "email"]
 
 ## Returns {} when there is no usable session (missing, corrupt, or no access token).
 static func load_session(path: String = PATH) -> Dictionary:
-	if not FileAccess.file_exists(path):
+	if GameConfig.is_web() or not FileAccess.file_exists(path):
 		return {}
 	var file := FileAccess.open(path, FileAccess.READ)
 	if file == null:
@@ -37,6 +37,8 @@ static func load_session(path: String = PATH) -> Dictionary:
 
 
 static func save_session(session: Dictionary, path: String = PATH) -> bool:
+	if GameConfig.is_web():
+		return false  # the web demo is guest-only and stores nothing
 	var data := {}
 	for key in KEYS:
 		data[key] = str(session.get(key, ""))
@@ -55,5 +57,5 @@ static func save_session(session: Dictionary, path: String = PATH) -> bool:
 
 
 static func clear_session(path: String = PATH) -> void:
-	if FileAccess.file_exists(path):
+	if not GameConfig.is_web() and FileAccess.file_exists(path):
 		DirAccess.remove_absolute(ProjectSettings.globalize_path(path))
