@@ -8,7 +8,9 @@ def test_me_returns_profile(client: TestClient) -> None:
     response = client.get("/v1/players/me", headers=auth_headers(tokens))
     assert response.status_code == 200
     body = response.json()
-    assert set(body) == {"id", "email", "username", "best_score", "total_lines", "games_played"}
+    assert set(body) == {
+        "id", "email", "username", "best_score", "total_lines", "games_played", "category_bests"
+    }
     assert body["email"] == "me@example.com"
     assert body["username"] == "me_user"
     assert body["best_score"] == body["total_lines"] == body["games_played"] == 0

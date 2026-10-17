@@ -20,9 +20,9 @@ def test_leaderboard_orders_by_score_desc(client: TestClient, seed) -> None:
         ]
     )
     assert _entries(client) == [
-        {"rank": 1, "username": "bravo", "best_score": 900},
-        {"rank": 2, "username": "charlie", "best_score": 600},
-        {"rank": 3, "username": "alpha", "best_score": 300},
+        {"rank": 1, "username": "bravo", "score": 900, "lines": 0, "duration_ms": None},
+        {"rank": 2, "username": "charlie", "score": 600, "lines": 0, "duration_ms": None},
+        {"rank": 3, "username": "alpha", "score": 300, "lines": 0, "duration_ms": None},
     ]
 
 
@@ -62,8 +62,12 @@ def test_leaderboard_is_capped_at_top_50(client: TestClient, seed) -> None:
     entries = _entries(client)
     assert len(entries) == 50
     assert [entry["rank"] for entry in entries] == list(range(1, 51))
-    assert entries[0] == {"rank": 1, "username": "player_60", "best_score": 600}
-    assert entries[-1] == {"rank": 50, "username": "player_11", "best_score": 110}
+    assert entries[0] == {
+        "rank": 1, "username": "player_60", "score": 600, "lines": 0, "duration_ms": None
+    }
+    assert entries[-1] == {
+        "rank": 50, "username": "player_11", "score": 110, "lines": 0, "duration_ms": None
+    }
     assert "player_10" not in {entry["username"] for entry in entries}
 
 
@@ -76,4 +80,6 @@ def test_leaderboard_reflects_sync(client: TestClient) -> None:
         json={"best_score": 42, "total_lines": 4, "games_played": 1},
         headers=auth_headers(tokens),
     )
-    assert _entries(client) == [{"rank": 1, "username": "sync_lb", "best_score": 42}]
+    assert _entries(client) == [
+        {"rank": 1, "username": "sync_lb", "score": 42, "lines": 4, "duration_ms": None}
+    ]
