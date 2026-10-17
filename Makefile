@@ -13,9 +13,9 @@ shot-size ?= 390x844
 shot-out  ?= /tmp/dropgrid-shot.png
 
 .DEFAULT_GOAL := help
-.PHONY: help android-key setup check-tools backend-env godot-install db-up db-down import check test apk install run-device run run-game lint format shot \
+.PHONY: help android-key setup check-tools backend-env godot-install db-up db-down import check test apk web web-serve install run-device run run-game lint format shot \
         backend-install backend-run backend-test backend-lint backend-typecheck backend-format backend-migrate backend-migration \
-        site-install site-dev site-build site-lint site-typecheck \
+        site-install site-dev site-play site-build site-lint site-typecheck \
         shell clean
 
 help: ## Show this help
@@ -43,6 +43,14 @@ apk: import ## Export a debug APK to game/build/
 	@mkdir -p game/build
 	$(GODOT) bash -c 'android-setup && godot --headless --path . --export-debug "$(PRESET)" build/dropgrid-debug.apk'
 	@echo "Built $(APK)"
+
+web: import ## Export the browser build to game/build/web/
+	@mkdir -p game/build/web
+	$(GODOT) bash -c 'godot --headless --path . --export-release "Web" build/web/index.html'
+	@echo "Built game/build/web/"
+
+web-serve: ## Serve game/build/web at http://localhost:8080
+	python3 -m http.server 8080 --directory game/build/web
 
 android-key: ## Print a new debug signing key as base64 (the CI secret; see docs/CI.md)
 	@$(GODOT) bash -c 'keytool -genkeypair -keyalg RSA -alias androiddebugkey -keypass android -keystore /tmp/k.ks -storepass android -dname "CN=DropGrid Debug" -validity 9999 -deststoretype pkcs12 >/dev/null 2>&1 && base64 -w0 /tmp/k.ks' 2>/dev/null | tail -1
@@ -139,6 +147,12 @@ site-install: ## Install site dependencies (pnpm)
 
 site-dev: ## Run the site dev server on :3000
 	cd site && pnpm dev
+
+site-play: web ## Build the browser game and put it in the site, so /play works locally
+	rm -rf site/public/play/game
+	mkdir -p site/public/play/game
+	rsync -a --exclude='*.import' game/build/web/ site/public/play/game/
+	@echo "Game copied to site/public/play/game. Run make site-dev and open /play."
 
 site-build: ## Build the site (next build)
 	cd site && pnpm build

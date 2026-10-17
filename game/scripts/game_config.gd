@@ -67,6 +67,12 @@ const BACKOFF_BASE_SECONDS := 5.0
 const BACKOFF_MAX_SECONDS := 300.0
 
 
-## The API base URL for this build (feature-tag overrides resolve automatically).
+## The API base URL for this build. Feature-tag overrides (.release, .web) only apply through
+## get_setting_with_override; plain get_setting returns the base value.
 static func api_base_url() -> String:
-	return str(ProjectSettings.get_setting(API_URL_SETTING, "")).strip_edges()
+	return str(ProjectSettings.get_setting_with_override(API_URL_SETTING)).strip_edges()
+
+
+## True in the browser build: a guest-only demo that never stores or sends anything.
+static func is_web() -> bool:
+	return OS.has_feature("web")

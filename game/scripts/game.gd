@@ -71,6 +71,38 @@ func _apply_safe_area() -> void:
 	)
 
 
+## Keyboard: maps keys to the same actions the touch buttons use. Handled in
+## _input so a focused button does not also react to Space.
+func _input(event: InputEvent) -> void:
+	var key := event as InputEventKey
+	if key == null or key.echo or not is_instance_valid(game):
+		return
+	var code := key.keycode if key.keycode != KEY_NONE else key.physical_keycode
+	var action := KeyMap.action_for(code)
+	if action == &"":
+		return
+	if action == KeyMap.PAUSE:
+		if key.pressed:
+			_toggle_pause()
+			get_viewport().set_input_as_handled()
+		return
+	if _game_over_overlay.visible or game.state == GameController.State.GAME_OVER:
+		return
+	if key.pressed and game.state != GameController.State.PLAYING:
+		return
+	_touch_controls.press_action(action, key.pressed)
+	get_viewport().set_input_as_handled()
+
+
+func _toggle_pause() -> void:
+	if _game_over_overlay.visible:
+		return
+	if game.state == GameController.State.PLAYING:
+		game.set_paused(true)
+	elif game.state == GameController.State.PAUSED and _pause_overlay.visible:
+		game.set_paused(false)
+
+
 func _process(delta: float) -> void:
 	game.advance(delta)
 

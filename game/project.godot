@@ -34,6 +34,7 @@ theme/custom="res://resources/game_theme.tres"
 
 network/api_base_url="http://localhost:8000/v1"
 network/api_base_url.release=""
+network/api_base_url.web=""
 
 [rendering]
 

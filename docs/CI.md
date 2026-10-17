@@ -2,16 +2,17 @@
 
 One workflow: `.github/workflows/ci.yml`. Pull requests and pushes run the quality gates; pushes to `main` and `v*` tags continue through deploy, packaging, and release — all visible as check status on the commit.
 
-| Job             | Runs for          | What it does                                                                                                                        |
-| --------------- | ----------------- | ----------------------------------------------------------------------------------------------------------------------------------- |
-| `game-tests`    | every push and PR | `make lint`, `make check`, `make test` (headless Godot in Docker)                                                                   |
-| `backend-tests` | every push and PR | ruff, pyright, pytest in `backend/`                                                                                                 |
-| `site`          | every push and PR | site lint (oxlint + prettier), tsc, `next build`                                                                                    |
-| `deploy-render` | `main`            | POSTs the Render deploy hook, then polls the Render API until the deploy is live (fails the run otherwise)                          |
-| `apk`           | `main`            | Version + server-URL injection, `make apk`, uploads the `dropgrid-apk` artifact (30 days)                                           |
-| `release`       | `main`            | Refreshes the rolling **Latest build**; if the `VERSION` file names a version without a release, also publishes **DropGrid vX.Y.Z** |
+| Job             | Runs for          | What it does                                                                                                                                                                                                    |
+| --------------- | ----------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `game-tests`    | every push and PR | `make lint`, `make check`, `make test` (headless Godot in Docker)                                                                                                                                               |
+| `backend-tests` | every push and PR | ruff, pyright, pytest in `backend/`                                                                                                                                                                             |
+| `site`          | every push and PR | site lint (oxlint + prettier), tsc, `next build`                                                                                                                                                                |
+| `deploy-render` | `main`            | POSTs the Render deploy hook, then polls the Render API until the deploy is live (fails the run otherwise)                                                                                                      |
+| `apk`           | `main`            | Version + server-URL injection, `make apk`, uploads the `dropgrid-apk` artifact (30 days)                                                                                                                       |
+| `web`           | every push and PR | `make web`, packs `game/build/web` into `dropgrid-web.tar.gz`, uploads the `dropgrid-web` artifact (7 days); pull requests prove the web export works                                                           |
+| `release`       | `main`            | Refreshes the rolling **Latest build** (the APK and `dropgrid-web.tar.gz`), then POSTs `VERCEL_DEPLOY_HOOK` if set; if the `VERSION` file names a version without a release, also publishes **DropGrid vX.Y.Z** |
 
-So a normal push to `main` does: gates → backend deploy → APK → new rolling _Latest build_. A version bump does all of that plus the versioned release.
+So a normal push to `main` does: gates → backend deploy → APK and web export → new rolling _Latest build_ → site rebuild (when the hook is set). A version bump does all of that plus the versioned release.
 
 ## Cutting a versioned release
 
@@ -71,10 +72,21 @@ gh secret set RENDER_API_KEY           # Render > Account Settings > API Keys
 
 **Already configured for this repo.** Optional: turn **autoDeploy off** in Render's service settings so the hook is the only deploy path and the deploy CD verifies is the deploy that runs.
 
+### 4. Site rebuild (optional, `VERCEL_DEPLOY_HOOK`)
+
+The site's `/play` page hosts the game's web export. The site fetches `dropgrid-web.tar.gz` from the rolling `latest` release when it builds (`site/scripts/fetch-playground.mjs`), but Vercel starts its build as soon as the push lands, before CI has attached the new asset. Without a rebuild, the playground lags one site deploy behind the game.
+
+```sh
+gh secret set VERCEL_DEPLOY_HOOK   # Vercel > project > Settings > Git > Deploy Hooks (branch: main)
+```
+
+The `release` job POSTs the hook after refreshing `latest`. Without the secret the step prints a notice and skips; nothing fails.
+
 ## Run the same build locally
 
 ```sh
 make lint check test apk    # writes game/build/dropgrid-debug.apk
+make web                    # writes game/build/web/ (the browser build)
 ```
 
 To sign locally with the same key CI uses, export `ANDROID_DEBUG_KEYSTORE_BASE64` first (the value from `make android-key`). Locally the key lives in a Docker volume, so the first build creates it and later builds reuse it.

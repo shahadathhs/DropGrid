@@ -8,3 +8,5 @@ next-env.d.ts
 *.log
 .env*.local
 site/.husky/_/
+# The web export of the game, fetched at build time (scripts/fetch-playground.mjs)
+public/play/

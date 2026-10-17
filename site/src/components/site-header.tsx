@@ -15,7 +15,7 @@ export function SiteHeader({ current }: { current?: string }) {
       </Link>
       <nav
         aria-label="Primary"
-        className="order-3 flex w-full flex-wrap gap-x-4 gap-y-1 text-[0.6875rem] sm:text-xs md:order-none md:w-auto md:gap-x-8 md:text-sm"
+        className="order-3 flex w-full flex-wrap gap-x-3 gap-y-1 text-[0.6875rem] sm:gap-x-4 sm:text-xs md:order-none md:w-auto md:gap-x-8 md:text-sm"
       >
         {navLinks.map((l) => (
           <Link

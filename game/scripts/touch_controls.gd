@@ -40,6 +40,33 @@ func _apply_layout() -> void:
 		root.scale = Vector2(factor, factor)
 
 
+## Runs a gameplay action from the keyboard through the same calls the buttons
+## make. Releases always apply; the controller ignores them unless playing.
+func press_action(action: StringName, pressed: bool) -> void:
+	if game == null:
+		return
+	var dx := 0
+	if action == KeyMap.LEFT:
+		dx = -1
+	elif action == KeyMap.RIGHT:
+		dx = 1
+	if dx != 0:
+		if pressed:
+			_on_direction_down(dx)
+		elif _repeating_direction == dx:
+			_on_direction_up()
+	elif action == KeyMap.SOFT_DROP:
+		game.set_soft_drop(pressed)
+	elif pressed:
+		match action:
+			KeyMap.ROTATE:
+				game.rotate_piece()
+			KeyMap.HOLD:
+				game.hold()
+			KeyMap.HARD_DROP:
+				game.hard_drop()
+
+
 func _on_direction_down(dx: int) -> void:
 	_repeating_direction = dx
 	game.move(dx)

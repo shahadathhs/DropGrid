@@ -115,3 +115,28 @@ func test_haptics_setting_round_trips_through_the_save() -> void:
 	assert_false(reloaded.haptics)
 	var parsed: Dictionary = JSON.parse_string(FileAccess.get_file_as_string(TEST_PATH))
 	assert_false(bool(parsed["haptics"]))
+
+
+func test_persist_false_never_creates_a_file() -> void:
+	_manager.persist = false
+	_manager.record_run(500, 3)
+	_manager.set_sound_enabled(false)
+	_manager.save_data()
+	assert_false(FileAccess.file_exists(TEST_PATH), "no file may be written")
+	assert_eq(_manager.best_score, 500, "state still lives in memory")
+	assert_false(_manager.sound_enabled)
+
+
+func test_persist_false_does_not_modify_an_existing_file_or_read_it() -> void:
+	_write_text('{"version":3,"best_score":42}')
+	_manager.persist = false
+	_manager.load_data()
+	assert_eq(_manager.best_score, 0, "nothing is read from disk")
+	_manager.record_run(900, 1)
+	assert_eq(FileAccess.get_file_as_string(TEST_PATH), '{"version":3,"best_score":42}')
+
+
+func test_persist_true_still_writes_the_file() -> void:
+	_manager.persist = true
+	_manager.record_run(500, 3)
+	assert_true(FileAccess.file_exists(TEST_PATH))
