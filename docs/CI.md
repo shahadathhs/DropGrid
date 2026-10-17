@@ -34,7 +34,7 @@ no release yet.
 
 To install: copy it to the phone and open it (allow "install unknown apps" once), or `adb install -r dropgrid-*.apk`.
 
-The file name carries the version: `dropgrid-0.1.0-<commit>.apk` for main builds, `dropgrid-0.2.0.apk` for tags. The version code is the run number, so a newer build installs over an older one (with the fixed key below).
+The file name carries the version: `dropgrid-<version>-<commit>.apk` for main builds (the version comes from the `VERSION` file), `dropgrid-0.2.0.apk` for tags. The version code is the run number, so a newer build installs over an older one (with the fixed key below).
 
 ## One-time setup (secrets and variables)
 

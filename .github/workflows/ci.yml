@@ -150,7 +150,7 @@ jobs:
           else
             FILE_VERSION=$(cat VERSION)
             if gh release view "v${FILE_VERSION}" --repo "${GITHUB_REPOSITORY}" >/dev/null 2>&1; then
-              VERSION="0.1.0-${GITHUB_SHA::7}"
+              VERSION="${FILE_VERSION}-${GITHUB_SHA::7}"
               echo "is-release=false" >> "$GITHUB_OUTPUT"
             else
               VERSION="${FILE_VERSION}"
