@@ -27,6 +27,7 @@ The loop should be predictable and fair. Avoid introducing extra mechanics unles
 ## 3. Controls
 
 ### Touch controls
+
 - Left: move one cell left.
 - Right: move one cell right.
 - Rotate: rotate the active piece.
@@ -34,21 +35,42 @@ The loop should be predictable and fair. Avoid introducing extra mechanics unles
 - Hard drop: optional; if included, make the control visually distinct from soft drop.
 
 ### Input behavior
+
 - Controls must respond promptly.
 - Holding left/right may repeat movement after a short initial delay.
 - Buttons should have clear pressed states.
 - Prevent a single touch from accidentally triggering multiple actions.
 - If keyboard controls are useful during desktop development, support left/right, rotate, soft drop, hard drop, and pause without making keyboard support a release requirement.
 
+## 3b. Hold, next queue, and lock delay
+
+- **Hold:** one swap per spawned piece; holding again does nothing until the next piece locks. The hold slot starts empty; holding with an empty slot stashes the piece and spawns the next.
+- **Next queue:** the HUD shows the next three pieces in bag order.
+- **Lock delay:** a landed piece waits 0.5 s (LOCK_DELAY) before locking. A successful move or rotation resets the timer, at most 15 times per piece (MAX_LOCK_RESETS); gravity stepping past a ledge also resets it.
+- **Time:** the HUD shows elapsed time (mm:ss). Ultra counts down instead.
+
+## 3c. Modes
+
+| Mode     | Rules                                                          | Leaderboard                         |
+| -------- | -------------------------------------------------------------- | ----------------------------------- |
+| Marathon | Classic survival, start level 1-10                             | Best score, all time                |
+| Sprint   | Clear 40 lines; the run ends as a win                          | Time to 40, lower is better         |
+| Ultra    | 2-minute score attack                                          | Best score, all time                |
+| Daily    | Marathon rules, piece order seeded by the UTC date (YYYYMMDD)  | Best score of the day; resets daily |
+| Zen      | No game over: a full board sheds everything and play continues | None                                |
+
 ## 4. Scoring and difficulty
 
-Use a familiar, transparent scoring model. Suggested initial values:
+Use a familiar, transparent scoring model. Live values (GameConfig):
+
 - 1 line: 100 × current level.
 - 2 lines: 300 × current level.
 - 3 lines: 500 × current level.
 - 4 lines: 800 × current level.
+- **Combo:** each lock that clears lines in an unbroken chain adds 50 × combo × level (the first clear of a chain adds nothing).
+- **Back-to-back:** a tetris immediately after another tetris scores × 1.5.
 
-These values are configurable; do not bury them throughout the code.
+These values are configurable; do not bury them throughout the code. The server mirrors the ceiling in backend/core/game_limits.py — change both together.
 
 - Track score, total lines cleared, and current level.
 - Increase level every 10 lines cleared in the current game.
@@ -81,6 +103,7 @@ Do not add combo, back-to-back, or complex bonus systems in MVP1 unless the core
 ## 6. Persistence and settings
 
 Save locally:
+
 - Best score.
 - Sound enabled/disabled.
 - Any additional setting only if it is actually implemented.
@@ -115,6 +138,7 @@ Optional account features layered on top of local persistence. Guests never touc
 ## 8. Testing cases
 
 Test at least:
+
 - Movement against each board wall.
 - Rotation near walls and occupied cells.
 - Landing on the floor and on other pieces.
@@ -131,6 +155,7 @@ Test at least:
 - App backgrounding and returning, especially while paused.
 
 Sync cases (run against the deployed backend):
+
 - Register, sign out, sign in on a second device — stats appear.
 - Play offline with an account, then sync on reconnect — server takes the max.
 - Airplane mode during game over — no crash, no dialog, stats stay local.
@@ -140,6 +165,7 @@ Sync cases (run against the deployed backend):
 - Sign in on a second device — total lines and unlocked levels appear.
 
 Offline-build cases:
+
 - A build with an empty server URL: no Sign in, Leaderboard, or Continue as guest entries, and no network requests (check with airplane mode and with the empty setting).
 - Debug build on a phone: haptics vibrate and sync works over the LAN (needs the INTERNET and VIBRATE permissions in the export).
 - Release build: the server URL is HTTPS, never `http://`.
