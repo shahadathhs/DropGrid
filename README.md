@@ -37,3 +37,13 @@ make apk           # export game/build/dropgrid-debug.apk
 make install       # adb install to a USB-connected phone (brew install --cask android-platform-tools)
 make backend-run   # serve the backend at http://localhost:8000 (docs at /docs)
 ```
+
+## Contributing
+
+Bug reports and pull requests are welcome — see [CONTRIBUTING.md](CONTRIBUTING.md) for setup, house rules, and what v1 deliberately excludes. Security issues go to [SECURITY.md](SECURITY.md), not the issue tracker. By participating you agree to the [Code of Conduct](CODE_OF_CONDUCT.md).
+
+Every push to `main` is tested by CI, then CD deploys the backend, builds an APK, and refreshes the [latest pre-release](https://github.com/shahadathhs/DropGrid/releases/tag/latest); version tags become official releases. See [docs/CI.md](docs/CI.md).
+
+## License
+
+[MIT](LICENSE)

@@ -28,7 +28,9 @@ func load_data() -> void:
 		return
 	var file := FileAccess.open(save_path, FileAccess.READ)
 	if file == null:
-		push_warning("SaveManager: could not open save file: %s" % error_string(FileAccess.get_open_error()))
+		push_warning(
+			"SaveManager: could not open save file: %s" % error_string(FileAccess.get_open_error())
+		)
 		return
 	var text := file.get_as_text()
 	file.close()
@@ -67,7 +69,9 @@ func to_dictionary() -> Dictionary:
 func save_data() -> void:
 	var file := FileAccess.open(save_path, FileAccess.WRITE)
 	if file == null:
-		push_warning("SaveManager: could not write save file: %s" % error_string(FileAccess.get_open_error()))
+		push_warning(
+			"SaveManager: could not write save file: %s" % error_string(FileAccess.get_open_error())
+		)
 		return
 	file.store_string(JSON.stringify(to_dictionary()))
 	file.close()

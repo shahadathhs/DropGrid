@@ -15,15 +15,19 @@ The `Makefile` is the command surface. Headless Godot runs in Docker (`make` wra
 ```sh
 make check          # load the game headless; fails on parse/script errors
 make test           # run GUT unit tests (game/tests/)
+make lint           # GDScript style gate: gdlint + gdformat --check (config: gdlintrc)
+make format         # fix GDScript style in place (gdformat)
 make apk            # export a debug APK to game/build/
 make backend-test   # pytest (run from repo root; cds into backend/)
 make backend-lint   # ruff check
+make backend-format # ruff format + autofix
+make backend-typecheck # pyright
 make backend-run    # serve API at http://localhost:8000 (needs db: make db-up)
 make run            # play the game on this PC (host Godot)
 make run-game       # run straight into the game scene
 ```
 
-After changing game code, run `make check` and `make test`. After changing backend code, run `make backend-lint` and `make backend-test`. Docs in `docs/` must match the code; update them in the same change when behavior changes.
+After changing game code, run `make lint`, `make check`, and `make test` — formatting is enforced (`gdformat`), so run `make format` if lint complains. After changing backend code, run `make backend-lint`, `make backend-typecheck`, and `make backend-test`. Docs in `docs/` must match the code; update them in the same change when behavior changes.
 
 ## Game architecture — do not break
 
@@ -58,4 +62,4 @@ Capture at **390×844**, **360×640**, and **412×915**; use `--demo` for a boar
 
 - Async FastAPI + SQLAlchemy 2 async + Alembic migrations; JWT auth (30 min access / 30 day refresh, `password_version` claim); bcrypt.
 - The rate limiter is in-process: the production service must stay a single instance.
-- Lint: ruff, line length 100, target py312.
+- Lint: ruff, line length 100, target py312 (rules E,F,I,UP,B,SIM,C4,RUF). Types: pyright, standard mode (`backend/pyrightconfig.json`).

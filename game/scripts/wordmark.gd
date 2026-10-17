@@ -4,8 +4,6 @@ extends Control
 ## 3 x 5 pattern of cells in one piece color. Two rows ("DROP" over "GRID") fill a
 ## square-ish area; one row ("DROPGRID") fits a narrow strip.
 
-@export var two_rows := true
-
 const LETTER_WIDTH := 3
 const LETTER_HEIGHT := 5
 const LETTER_GAP := 1
@@ -18,6 +16,8 @@ const GLYPHS := {
 	"G": ["011", "100", "101", "101", "011"],
 	"I": ["111", "010", "010", "010", "111"],
 }
+
+@export var two_rows := true
 
 
 func _draw() -> void:
@@ -44,4 +44,6 @@ func _draw() -> void:
 			for y in LETTER_HEIGHT:
 				for x in LETTER_WIDTH:
 					if glyph[y][x] == "1":
-						CellStyle.draw_block(self, CellStyle.tile_rect(origin, cell, left + x, top + y), cell, fill)
+						CellStyle.draw_block(
+							self, CellStyle.tile_rect(origin, cell, left + x, top + y), cell, fill
+						)

@@ -25,7 +25,10 @@ func _draw() -> void:
 	var knob_y := KNOB_INSET
 	if on:
 		draw_rect(track, Palette.ACCENT)
-		draw_rect(Rect2(CELL * 2.0 - KNOB_INSET - knob_size, knob_y, knob_size, knob_size), Palette.ACCENT_INK)
+		draw_rect(
+			Rect2(CELL * 2.0 - KNOB_INSET - knob_size, knob_y, knob_size, knob_size),
+			Palette.ACCENT_INK
+		)
 	else:
 		draw_rect(track, Palette.LINE_STRONG, false, BORDER)
 		draw_rect(Rect2(KNOB_INSET, knob_y, knob_size, knob_size), Palette.TEXT_MUTED)

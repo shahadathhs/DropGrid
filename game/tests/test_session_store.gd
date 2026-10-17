@@ -18,7 +18,10 @@ func test_missing_file_means_no_session() -> void:
 
 func test_saved_session_loads_back() -> void:
 	var session := {
-		"access_token": "a1", "refresh_token": "r1", "username": "rejoan", "email": "p@example.com",
+		"access_token": "a1",
+		"refresh_token": "r1",
+		"username": "rejoan",
+		"email": "p@example.com",
 	}
 	assert_true(SessionStore.save_session(session, TEST_PATH))
 	assert_eq(SessionStore.load_session(TEST_PATH), session)

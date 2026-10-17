@@ -1,0 +1,5 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Question or idea too small for an issue
+    url: mailto:shahadathhossensajib732@gmail.com
+    about: Email the maintainer instead of opening an issue.

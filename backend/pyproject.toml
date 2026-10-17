@@ -3,6 +3,7 @@ name = "dropgrid-backend"
 version = "0.1.0"
 description = "dropgrid — optional accounts, stats sync, and leaderboard backend"
 authors = [{ name = "dropgrid" }]
+license = "MIT"
 requires-python = ">=3.12"
 dependencies = [
     "fastapi>=0.115.6",
@@ -21,6 +22,7 @@ dependencies = [
 
 [dependency-groups]
 dev = [
+    "pyright>=1.1.391",
     "pytest>=8.3.0",
     "ruff>=0.8.0",
 ]
@@ -33,8 +35,9 @@ line-length = 100
 target-version = "py312"
 
 [tool.ruff.lint]
-# E/W pycodestyle, F pyflakes, I isort, UP pyupgrade, B bugbear, SIM simplify.
-select = ["E", "F", "I", "UP", "B", "SIM"]
+# E/W pycodestyle, F pyflakes, I isort, UP pyupgrade, B bugbear,
+# SIM simplify, C4 comprehensions, RUF ruff-specific.
+select = ["E", "F", "I", "UP", "B", "SIM", "C4", "RUF"]
 
 [tool.ruff.lint.per-file-ignores]
 # __init__.py re-exports are intentional.

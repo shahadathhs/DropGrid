@@ -16,17 +16,22 @@ extends Node
 ## Real logical point sizes of common devices. Aspect is what matters most;
 ## the window is scaled down if it would not fit the host screen.
 const DEVICES: Array[Vector2i] = [
-	Vector2i(375, 667), # iPhone SE
-	Vector2i(390, 844), # iPhone 14/15
-	Vector2i(430, 932), # iPhone 15 Pro Max
-	Vector2i(360, 800), # Galaxy S20
-	Vector2i(412, 915), # Pixel 7
-	Vector2i(600, 969), # small tablet
-	Vector2i(820, 1180), # iPad Air
+	Vector2i(375, 667),  # iPhone SE
+	Vector2i(390, 844),  # iPhone 14/15
+	Vector2i(430, 932),  # iPhone 15 Pro Max
+	Vector2i(360, 800),  # Galaxy S20
+	Vector2i(412, 915),  # Pixel 7
+	Vector2i(600, 969),  # small tablet
+	Vector2i(820, 1180),  # iPad Air
 ]
 const DEVICE_NAMES: Array[String] = [
-	"iPhone SE", "iPhone 14/15", "iPhone 15 Pro Max",
-	"Galaxy S20", "Pixel 7", "Tablet 600x969", "iPad Air",
+	"iPhone SE",
+	"iPhone 14/15",
+	"iPhone 15 Pro Max",
+	"Galaxy S20",
+	"Pixel 7",
+	"Tablet 600x969",
+	"iPad Air",
 ]
 const NEXT_KEY := KEY_F9
 const ROTATE_KEY := KEY_F10
@@ -37,7 +42,7 @@ const MAX_SCREEN_FRACTION := 0.85
 ## 720-wide design canvas (which makes everything blurry on the desktop).
 const PREVIEW_DENSITY := 2.0
 
-var _index := 1 # start on iPhone 14/15, closest to a typical target device
+var _index := 1  # start on iPhone 14/15, closest to a typical target device
 var _landscape := false
 ## Screenshot mode, set from command-line user args (after "--").
 var _custom_size := Vector2i.ZERO
@@ -83,7 +88,9 @@ func _unhandled_key_input(event: InputEvent) -> void:
 
 
 func _apply() -> void:
-	var size := DEVICES[_index] if not _landscape else Vector2i(DEVICES[_index].y, DEVICES[_index].x)
+	var size := (
+		DEVICES[_index] if not _landscape else Vector2i(DEVICES[_index].y, DEVICES[_index].x)
+	)
 	if _custom_size != Vector2i.ZERO:
 		size = _custom_size
 	var screen := DisplayServer.screen_get_usable_rect(DisplayServer.window_get_current_screen())
@@ -93,9 +100,15 @@ func _apply() -> void:
 	var window := get_window()
 	window.size = Vector2i(points * fit)
 	window.move_to_center()
-	window.title = "DropGrid - %s%s (%dx%d)" % [
-		DEVICE_NAMES[_index], " landscape" if _landscape else "", size.x, size.y,
-	]
+	window.title = (
+		"DropGrid - %s%s (%dx%d)"
+		% [
+			DEVICE_NAMES[_index],
+			" landscape" if _landscape else "",
+			size.x,
+			size.y,
+		]
+	)
 
 
 func _take_shot() -> void:
@@ -107,8 +120,12 @@ func _take_shot() -> void:
 	for i in 4:
 		await get_tree().process_frame
 	# Losing window focus (another window opening) pauses the game; undo that here.
-	if _overlay != "pause" and scene != null and "game" in scene \
-			and scene.game.state == GameController.State.PAUSED:
+	if (
+		_overlay != "pause"
+		and scene != null
+		and "game" in scene
+		and scene.game.state == GameController.State.PAUSED
+	):
 		scene.game.set_paused(false)
 		for i in 3:
 			await get_tree().process_frame
@@ -120,7 +137,7 @@ func _take_shot() -> void:
 ## A fixed mid-game position: a stack with holes, an active piece in the air
 ## (so the ghost shows), and non-zero score, lines, and level.
 func _stage_demo(scene: Node) -> void:
-	scene.set_process(false) # freeze falling
+	scene.set_process(false)  # freeze falling
 	var game: GameController = scene.game
 	var rows := [
 		"..........",

@@ -4,10 +4,17 @@ GODOT   := docker compose run --rm godot
 APK     := game/build/dropgrid-debug.apk
 PRESET  := Android
 BACKEND := backend
+# Pinned GDScript tooling, run from the host via uv (no Docker needed).
+GDTOOLKIT := gdtoolkit==4.5.0
+GDLINT    := uvx --from $(GDTOOLKIT) gdlint
+GDFORMAT  := uvx --from $(GDTOOLKIT) gdformat
+
+shot-size ?= 390x844
+shot-out  ?= /tmp/dropgrid-shot.png
 
 .DEFAULT_GOAL := help
-.PHONY: help android-key setup check-tools backend-env godot-install db-up db-down import check test apk install run-device run run-game \
-        backend-install backend-run backend-test backend-lint backend-migrate \
+.PHONY: help android-key setup check-tools backend-env godot-install db-up db-down import check test apk install run-device run run-game lint format shot \
+        backend-install backend-run backend-test backend-lint backend-typecheck backend-format backend-migrate backend-migration \
         shell clean
 
 help: ## Show this help
@@ -24,6 +31,13 @@ check: import ## Load the project headless (autoloads + main scene); fails on er
 test: ## Run game unit tests (GUT, game/tests/)
 	$(GODOT) godot --headless --path . -s addons/gut/gut_cmdln.gd -gdir=res://tests -gexit
 
+lint: ## Check GDScript style: gdlint + gdformat --check (config: gdlintrc)
+	$(GDLINT) game/scripts game/autoload game/tests
+	$(GDFORMAT) --check game/scripts game/autoload game/tests
+
+format: ## Fix GDScript style in place (gdformat, then gdlint still applies)
+	$(GDFORMAT) game/scripts game/autoload game/tests
+
 apk: import ## Export a debug APK to game/build/
 	@mkdir -p game/build
 	$(GODOT) bash -c 'android-setup && godot --headless --path . --export-debug "$(PRESET)" build/dropgrid-debug.apk'
@@ -39,6 +53,9 @@ run: ## Play the game on this PC (needs godot: brew install --cask godot)
 
 run-game: ## Run straight into the game scene, for debugging gameplay
 	godot --path game res://scenes/game.tscn
+
+shot: ## Screenshot the game via DevicePreview: make shot [size=390x844] [out=/tmp/dropgrid-shot.png]
+	godot --path game -- --shot=$(shot-out) --size=$(shot-size) --demo
 
 install: ## Install the APK on a USB-connected phone (needs adb on the host)
 	adb install -r $(APK)
@@ -100,6 +117,19 @@ backend-test: ## Run backend tests (pytest)
 
 backend-lint: ## Lint backend (ruff)
 	cd $(BACKEND) && uv run ruff check .
+
+backend-format: ## Format backend (ruff format + autofix)
+	cd $(BACKEND) && uv run ruff format .
+	cd $(BACKEND) && uv run ruff check --fix .
+
+backend-typecheck: ## Type-check backend (pyright)
+	cd $(BACKEND) && uv run pyright
+
+backend-migration: ## Generate a migration: make backend-migration m="add x"
+	@test -n "$(m)" || { echo 'Usage: make backend-migration m="message"'; exit 1; }
+	cd $(BACKEND) && uv run alembic upgrade head
+	cd $(BACKEND) && uv run alembic revision --autogenerate -m "$(m)"
+	@echo "If upgrade()/downgrade() are just 'pass', there were no model changes - delete the file."
 
 # ── Misc ──────────────────────────────────────────────────────────────
 

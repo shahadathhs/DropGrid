@@ -1,6 +1,9 @@
 extends Node
 ## Converts button presses into gameplay actions. Never edits board state directly.
 
+var game: GameController
+var _repeating_direction := 0
+
 @onready var _left: Button = %LeftButton
 @onready var _right: Button = %RightButton
 @onready var _rotate: Button = %RotateButton
@@ -8,9 +11,6 @@ extends Node
 @onready var _hard_drop: Button = %HardDropButton
 
 @onready var _repeat_timer: Timer = %RepeatTimer
-
-var game: GameController
-var _repeating_direction := 0
 
 
 func setup(controller: GameController) -> void:

@@ -1,0 +1,41 @@
+name: Feature request
+description: Propose a change or addition. Read the scope first — v1 deliberately excludes many things.
+labels: [enhancement]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem
+      description: What can you not do today, or what works badly? Concrete situations, not solutions.
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposal
+      description: What you suggest, in one or two sentences.
+    validations:
+      required: true
+  - type: checkboxes
+    id: scope
+    attributes:
+      label: Scope
+      description: >
+        [docs/README_PROJECT_OVERVIEW.md](../blob/main/docs/README_PROJECT_OVERVIEW.md)
+        lists what v1 does not include. Proposals inside that list will be declined
+        for v1, so check first.
+      options:
+        - label: This is not on the overview's "not included" list, or I explain why the list should change
+          required: true
+  - type: dropdown
+    id: fit
+    attributes:
+      label: Which v1 goal does this serve?
+      options:
+        - The core offline game
+        - The start-level picker / progression
+        - Accounts, sync, leaderboard
+        - Visual design
+        - Tooling, CI, docs
+    validations:
+      required: true

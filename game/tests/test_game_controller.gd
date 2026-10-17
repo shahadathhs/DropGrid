@@ -62,7 +62,11 @@ func test_full_row_clears_and_scores() -> void:
 
 	var cleared_rows := [[]]
 	var points := [0]
-	game.lines_cleared.connect(func(rows, pts): cleared_rows[0] = rows; points[0] = pts)
+	game.lines_cleared.connect(
+		func(rows, pts):
+			cleared_rows[0] = rows
+			points[0] = pts
+	)
 
 	# Force a single-column piece shape isn't available, so instead verify via
 	# board_model directly combined with controller scoring math.
@@ -88,7 +92,7 @@ func test_game_over_when_spawn_is_blocked() -> void:
 
 	var ended := [false]
 	game.game_over.connect(func(_score): ended[0] = true)
-	game.hard_drop() # locks the current active piece, then tries to spawn the next
+	game.hard_drop()  # locks the current active piece, then tries to spawn the next
 	assert_true(ended[0])
 	assert_eq(game.state, GameController.State.GAME_OVER)
 

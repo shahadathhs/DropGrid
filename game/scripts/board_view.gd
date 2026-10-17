@@ -21,7 +21,7 @@ func setup(controller: GameController) -> void:
 	rows = game.board.rows
 	game.board_changed.connect(queue_redraw)
 	game.piece_locked.connect(_on_piece_locked)
-	resized.connect(queue_redraw) # containers set our size after setup
+	resized.connect(queue_redraw)  # containers set our size after setup
 	queue_redraw()
 
 
@@ -42,8 +42,9 @@ func _cell_size() -> float:
 
 ## Design units -> device pixels: the stretch scale times the display scale.
 func _pixel_scale() -> float:
-	return get_viewport().get_screen_transform().get_scale().x \
-			* DisplayServer.screen_get_max_scale()
+	return (
+		get_viewport().get_screen_transform().get_scale().x * DisplayServer.screen_get_max_scale()
+	)
 
 
 func _draw() -> void:
@@ -79,7 +80,9 @@ func _draw_locked_cells(origin: Vector2, cell: float) -> void:
 			CellStyle.draw_block(self, rect, cell, color)
 			# The lock flash is an ink frame that fades out over a few frames.
 			if _flash_timer > 0.0 and _flash_cells.has(Vector2i(x, y)):
-				CellStyle.draw_frame(self, rect, cell, Color(Palette.ACCENT, _flash_timer / LOCK_FLASH_TIME))
+				CellStyle.draw_frame(
+					self, rect, cell, Color(Palette.ACCENT, _flash_timer / LOCK_FLASH_TIME)
+				)
 
 
 func _draw_ghost(origin: Vector2, cell: float) -> void:
@@ -91,4 +94,6 @@ func _draw_ghost(origin: Vector2, cell: float) -> void:
 func _draw_active(origin: Vector2, cell: float) -> void:
 	var color: Color = Palette.PIECE_COLORS[PieceData.color_index(game.active_type)]
 	for pos in game.active_cells():
-		CellStyle.draw_block(self, CellStyle.tile_rect(origin, cell, pos.x, pos.y), cell, color, Palette.ACCENT)
+		CellStyle.draw_block(
+			self, CellStyle.tile_rect(origin, cell, pos.x, pos.y), cell, color, Palette.ACCENT
+		)

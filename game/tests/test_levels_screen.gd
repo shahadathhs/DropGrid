@@ -1,5 +1,6 @@
 extends GutTest
-## Start level rules: unlock thresholds, locked levels cannot start, and the screen loads headlessly.
+## Start level rules: unlock thresholds, locked levels cannot start, and the
+## screen loads headlessly.
 
 const LevelsScreen := preload("res://scripts/levels_screen.gd")
 
@@ -32,7 +33,10 @@ func test_level_n_unlocks_at_ten_times_n_minus_one() -> void:
 
 func test_huge_total_is_capped_at_max_start_level() -> void:
 	assert_eq(_unlocked_levels(1000000).size(), GameConfig.MAX_START_LEVEL)
-	assert_eq(LevelsScreen.node_state(GameConfig.MAX_START_LEVEL + 1, 1000000), LevelsScreen.NodeState.LOCKED)
+	assert_eq(
+		LevelsScreen.node_state(GameConfig.MAX_START_LEVEL + 1, 1000000),
+		LevelsScreen.NodeState.LOCKED
+	)
 	assert_eq(LevelsScreen.highest_unlocked(1000000), GameConfig.MAX_START_LEVEL)
 
 
@@ -49,7 +53,9 @@ func test_levels_scene_builds_one_card_per_start_level() -> void:
 	var tree: GridContainer = screen.get_node("%LevelTree")
 	assert_eq(tree.get_child_count(), GameConfig.MAX_START_LEVEL)
 	for card: Button in tree.get_children():
-		assert_eq(card.disabled, card.get_index() + 1 > LevelsScreen.highest_unlocked(Save.total_lines))
+		assert_eq(
+			card.disabled, card.get_index() + 1 > LevelsScreen.highest_unlocked(Save.total_lines)
+		)
 
 
 func test_start_level_is_read_once_then_resets() -> void:

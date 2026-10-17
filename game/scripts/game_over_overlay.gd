@@ -13,7 +13,9 @@ signal menu_pressed
 
 
 ## Fills the screen with the finished run. "improved" means this run set a new personal best.
-func show_results(final_score: int, best_score: int, improved: bool, lines: int = 0, level: int = 1) -> void:
+func show_results(
+	final_score: int, best_score: int, improved: bool, lines: int = 0, level: int = 1
+) -> void:
 	_score_label.text = UiFormat.thousands(final_score)
 	_lines_label.text = str(lines)
 	_level_label.text = str(level)

@@ -19,7 +19,13 @@ const BASE_CELLS := {
 
 # Side length of the square box each shape rotates inside.
 const BOX_SIZE := {
-	Type.I: 4, Type.O: 4, Type.T: 3, Type.S: 3, Type.Z: 3, Type.J: 3, Type.L: 3,
+	Type.I: 4,
+	Type.O: 4,
+	Type.T: 3,
+	Type.S: 3,
+	Type.Z: 3,
+	Type.J: 3,
+	Type.L: 3,
 }
 
 

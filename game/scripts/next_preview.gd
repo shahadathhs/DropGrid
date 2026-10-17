@@ -25,9 +25,7 @@ func _draw() -> void:
 		max_cell = Vector2i(maxi(max_cell.x, cell.x), maxi(max_cell.y, cell.y))
 	var span := max_cell - min_cell + Vector2i.ONE
 	# Fit the piece's bounding box into this control.
-	var side := minf(
-		(size.x - (span.x - 1) * GAP) / span.x,
-		(size.y - (span.y - 1) * GAP) / span.y)
+	var side := minf((size.x - (span.x - 1) * GAP) / span.x, (size.y - (span.y - 1) * GAP) / span.y)
 	side = floorf(side)
 	var used := Vector2(span) * side + Vector2(span - Vector2i.ONE) * GAP
 	var origin := ((size - used) * 0.5).floor()

@@ -56,8 +56,10 @@ static func is_valid_email(text: String) -> bool:
 
 
 static func is_valid_username(text: String) -> bool:
-	return text.length() >= GameConfig.USERNAME_MIN_LENGTH \
+	return (
+		text.length() >= GameConfig.USERNAME_MIN_LENGTH
 		and text.length() <= GameConfig.USERNAME_MAX_LENGTH
+	)
 
 
 static func is_valid_password(text: String) -> bool:

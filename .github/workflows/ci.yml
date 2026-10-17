@@ -1,12 +1,14 @@
-# Tests the game and the backend on every push, and builds a downloadable Android APK.
-# Download it from the run's "Artifacts" section; pushing a tag like v0.2.0 also attaches
-# it to a GitHub Release. Setup (signing key, server URL): docs/CI.md.
+# Quality gates: tests and checks. Packaging, backend deploy, and releases
+# live in cd.yml, which runs after this workflow succeeds on main or a tag.
+# APK artifact setup (signing key, server URL): docs/CI.md.
 name: CI
 
 on:
   push:
-    branches: ["**"]
+    branches: [main]
     tags: ["v*"]
+  pull_request:
+    branches: [main]
   workflow_dispatch:
 
 concurrency:
@@ -20,7 +22,10 @@ jobs:
   game-tests:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
+      - uses: astral-sh/setup-uv@v7
+      - name: Lint GDScript (gdlint + format check)
+        run: make lint
       # The same commands as local development (Makefile): headless Godot in Docker.
       - name: Check the project loads
         run: make check
@@ -33,74 +38,18 @@ jobs:
       run:
         working-directory: backend
     steps:
-      - uses: actions/checkout@v4
-      - uses: astral-sh/setup-uv@v5
+      - uses: actions/checkout@v7
+      - uses: astral-sh/setup-uv@v7
+        with:
+          enable-cache: true
+          cache-dependency-glob: "backend/uv.lock"
+      - name: Set up Python
+        run: uv python install
+      - name: Install dependencies
+        run: uv sync --frozen
       - name: Lint
         run: uv run ruff check .
+      - name: Type-check
+        run: uv run pyright
       - name: Test
         run: uv run pytest -q
-
-  apk:
-    needs: game-tests
-    runs-on: ubuntu-latest
-    env:
-      # Repository variable, e.g. https://dropgrid-api.onrender.com/v1 (optional).
-      API_BASE_URL: ${{ vars.API_BASE_URL }}
-      # Repository secret: base64 of a fixed debug keystore (optional, see docs/CI.md).
-      ANDROID_DEBUG_KEYSTORE_BASE64: ${{ secrets.ANDROID_DEBUG_KEYSTORE_BASE64 }}
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Set version and server URL
-        run: |
-          # Each build gets a higher version code, so a newer APK installs over an older one.
-          sed -i "s|^version/code=.*|version/code=${GITHUB_RUN_NUMBER}|" game/export_presets.cfg
-          if [ "${GITHUB_REF_TYPE}" = "tag" ]; then
-            VERSION="${GITHUB_REF_NAME#v}"
-          else
-            VERSION="0.1.0-${GITHUB_SHA::7}"
-          fi
-          sed -i "s|^version/name=.*|version/name=\"${VERSION}\"|" game/export_presets.cfg
-          echo "VERSION=${VERSION}" >> "$GITHUB_ENV"
-
-          if [ -n "${API_BASE_URL}" ]; then
-            case "${API_BASE_URL}" in
-              https://*/v1) ;;
-              *) echo "API_BASE_URL must be https://.../v1 (got: ${API_BASE_URL})" >&2; exit 1 ;;
-            esac
-            sed -i "s|^network/api_base_url=.*|network/api_base_url=\"${API_BASE_URL}\"|" game/project.godot
-            sed -i "s|^network/api_base_url.release=.*|network/api_base_url.release=\"${API_BASE_URL}\"|" game/project.godot
-          else
-            echo "::warning::API_BASE_URL is not set: this APK points at localhost, so accounts and the leaderboard will not work on a phone."
-          fi
-          if [ -z "${ANDROID_DEBUG_KEYSTORE_BASE64}" ]; then
-            echo "::warning::ANDROID_DEBUG_KEYSTORE_BASE64 is not set: this APK is signed with a one-off key and cannot be installed over a previous build."
-          fi
-
-      - name: Build the APK
-        run: make apk
-
-      - name: Name the file
-        run: mv game/build/dropgrid-debug.apk "game/build/dropgrid-${VERSION}.apk"
-
-      - uses: actions/upload-artifact@v4
-        with:
-          name: dropgrid-apk
-          path: game/build/dropgrid-*.apk
-          if-no-files-found: error
-          retention-days: 30
-
-  release:
-    if: startsWith(github.ref, 'refs/tags/v')
-    needs: [apk, backend-tests]
-    runs-on: ubuntu-latest
-    permissions:
-      contents: write
-    steps:
-      - uses: actions/download-artifact@v4
-        with:
-          name: dropgrid-apk
-      - name: Create the release
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: gh release create "${GITHUB_REF_NAME}" dropgrid-*.apk --repo "${GITHUB_REPOSITORY}" --title "${GITHUB_REF_NAME}" --generate-notes

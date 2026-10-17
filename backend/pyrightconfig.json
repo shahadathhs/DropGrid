@@ -1,0 +1,7 @@
+{
+  "include": ["main.py", "core", "models", "modules"],
+  "exclude": ["**/__pycache__", "migrations"],
+  "typeCheckingMode": "standard",
+  "reportMissingImports": "error",
+  "reportMissingTypeStubs": "none"
+}

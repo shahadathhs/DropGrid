@@ -11,7 +11,7 @@ func before_each() -> void:
 
 func test_piece_falls_when_the_scene_processes_frames() -> void:
 	var start_y: int = _scene.game.active_position.y
-	simulate(_scene, 120, 1.0 / 60.0) # ~2 seconds of frames
+	simulate(_scene, 120, 1.0 / 60.0)  # ~2 seconds of frames
 	assert_gt(_scene.game.active_position.y, start_y, "the active piece should have fallen")
 
 

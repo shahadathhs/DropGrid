@@ -13,7 +13,12 @@ static func load_session(path: String = PATH) -> Dictionary:
 		return {}
 	var file := FileAccess.open(path, FileAccess.READ)
 	if file == null:
-		push_warning("SessionStore: could not open session file: %s" % error_string(FileAccess.get_open_error()))
+		push_warning(
+			(
+				"SessionStore: could not open session file: %s"
+				% error_string(FileAccess.get_open_error())
+			)
+		)
 		return {}
 	var json := JSON.new()
 	var parse_error := json.parse(file.get_as_text())
@@ -37,7 +42,12 @@ static func save_session(session: Dictionary, path: String = PATH) -> bool:
 		data[key] = str(session.get(key, ""))
 	var file := FileAccess.open(path, FileAccess.WRITE)
 	if file == null:
-		push_warning("SessionStore: could not write session file: %s" % error_string(FileAccess.get_open_error()))
+		push_warning(
+			(
+				"SessionStore: could not write session file: %s"
+				% error_string(FileAccess.get_open_error())
+			)
+		)
 		return false
 	file.store_string(JSON.stringify(data))
 	file.close()

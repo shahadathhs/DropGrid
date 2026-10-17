@@ -80,16 +80,29 @@ func queued_request_count() -> int:
 # Public actions. Each one reports back through a signal.
 # ---------------------------------------------------------------------------
 
+
 func register(email_text: String, password: String, username_text: String) -> void:
 	var body := {"email": email_text, "password": password, "username": username_text}
-	_enqueue("register", HTTPClient.METHOD_POST, "/auth/register", body, false,
-		_on_auth_finished.bind(email_text, username_text, "register"))
+	_enqueue(
+		"register",
+		HTTPClient.METHOD_POST,
+		"/auth/register",
+		body,
+		false,
+		_on_auth_finished.bind(email_text, username_text, "register")
+	)
 
 
 func sign_in(email_text: String, password: String) -> void:
 	var body := {"email": email_text, "password": password}
-	_enqueue("sign_in", HTTPClient.METHOD_POST, "/auth/login", body, false,
-		_on_auth_finished.bind(email_text, "", "sign_in"))
+	_enqueue(
+		"sign_in",
+		HTTPClient.METHOD_POST,
+		"/auth/login",
+		body,
+		false,
+		_on_auth_finished.bind(email_text, "", "sign_in")
+	)
 
 
 func sign_out() -> void:
@@ -106,8 +119,14 @@ func rename(new_username: String) -> void:
 	if not is_signed_in():
 		request_failed.emit("rename", "Sign in to change your username.")
 		return
-	_enqueue("rename", HTTPClient.METHOD_PATCH, "/players/me", {"username": new_username}, true,
-		_on_rename_finished)
+	_enqueue(
+		"rename",
+		HTTPClient.METHOD_PATCH,
+		"/players/me",
+		{"username": new_username},
+		true,
+		_on_rename_finished
+	)
 
 
 func fetch_profile() -> void:
@@ -117,7 +136,9 @@ func fetch_profile() -> void:
 
 
 func fetch_leaderboard() -> void:
-	_enqueue("leaderboard", HTTPClient.METHOD_GET, "/leaderboard", null, false, _on_leaderboard_finished)
+	_enqueue(
+		"leaderboard", HTTPClient.METHOD_GET, "/leaderboard", null, false, _on_leaderboard_finished
+	)
 
 
 ## Sends local stats if there is a session and something changed. Called after each game,
@@ -129,6 +150,7 @@ func push_stats() -> void:
 # ---------------------------------------------------------------------------
 # Stat sync and retry
 # ---------------------------------------------------------------------------
+
 
 func _send_stats(force: bool) -> void:
 	if not is_online_enabled() or not is_signed_in() or _sync_queued:
@@ -180,7 +202,10 @@ func _apply_profile(profile: Dictionary, revision: int = -1) -> void:
 # Callbacks for each action
 # ---------------------------------------------------------------------------
 
-func _on_auth_finished(code: int, data: Dictionary, email_text: String, username_text: String, action: String) -> void:
+
+func _on_auth_finished(
+	code: int, data: Dictionary, email_text: String, username_text: String, action: String
+) -> void:
 	if (code != 200 and code != 201) or not _has_tokens(data):
 		_report(action, code, data)
 		return
@@ -233,20 +258,28 @@ func _report(action: String, code: int, data: Dictionary) -> void:
 # Request queue and token refresh
 # ---------------------------------------------------------------------------
 
-func _enqueue(action: String, method: int, path: String, body: Variant, auth: bool, on_done: Callable) -> void:
+
+func _enqueue(
+	action: String, method: int, path: String, body: Variant, auth: bool, on_done: Callable
+) -> void:
 	if not is_online_enabled():
 		request_failed.emit(action, "Online features are not available in this build.")
 		return
-	_queue.append({
-		"action": action,
-		"method": method,
-		"path": path,
-		"body": body,
-		"auth": auth,
-		"on_done": on_done,
-		"retried": false,
-		"is_refresh": false,
-	})
+	(
+		_queue
+		. append(
+			{
+				"action": action,
+				"method": method,
+				"path": path,
+				"body": body,
+				"auth": auth,
+				"on_done": on_done,
+				"retried": false,
+				"is_refresh": false,
+			}
+		)
+	)
 	# Deferred so a request is never started from inside another request's signal.
 	call_deferred("_pump")
 
@@ -264,12 +297,16 @@ func _pump() -> void:
 	if job["auth"]:
 		headers.append("Authorization: Bearer %s" % _session["access_token"])
 	var body_text := "" if job["body"] == null else JSON.stringify(job["body"])
-	var err := _http.request(GameConfig.api_base_url() + job["path"], headers, job["method"], body_text)
+	var err := _http.request(
+		GameConfig.api_base_url() + job["path"], headers, job["method"], body_text
+	)
 	if err != OK:
 		_finish_job(0, {})
 
 
-func _on_request_completed(result: int, code: int, _headers: PackedStringArray, body: PackedByteArray) -> void:
+func _on_request_completed(
+	result: int, code: int, _headers: PackedStringArray, body: PackedByteArray
+) -> void:
 	if result != HTTPRequest.RESULT_SUCCESS:
 		code = 0
 	var data := _parse_body(body)
@@ -307,13 +344,13 @@ func _make_refresh_job() -> Dictionary:
 
 
 func _on_refresh_finished(code: int, data: Dictionary) -> void:
-	_queue.pop_front() # the refresh job itself
+	_queue.pop_front()  # the refresh job itself
 	_busy = false
 	if code == 200 and _has_tokens(data):
 		_session["access_token"] = str(data["access_token"])
 		_session["refresh_token"] = str(data["refresh_token"])
 		_save_session()
-		call_deferred("_pump") # resend the original request with the new token
+		call_deferred("_pump")  # resend the original request with the new token
 	elif code == 401:
 		# The refresh token is no good, so the user is a guest now. Fail every
 		# queued signed-in request and keep the local stats untouched.

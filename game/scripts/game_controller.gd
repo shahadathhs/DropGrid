@@ -14,7 +14,7 @@ signal piece_locked(cells: Array[Vector2i])
 signal lines_cleared(rows: Array[int], points: int)
 signal game_over(final_score: int)
 signal pause_changed(is_paused: bool)
-signal board_changed ## anything visible changed; views should redraw
+signal board_changed  ## anything visible changed; views should redraw
 
 enum State { PLAYING, PAUSED, GAME_OVER }
 
@@ -109,7 +109,7 @@ func set_soft_drop(enabled: bool) -> void:
 	if state != State.PLAYING:
 		enabled = false
 	if enabled and not soft_dropping:
-		_fall_timer = GameConfig.SOFT_DROP_INTERVAL # step down right away
+		_fall_timer = GameConfig.SOFT_DROP_INTERVAL  # step down right away
 	soft_dropping = enabled
 
 

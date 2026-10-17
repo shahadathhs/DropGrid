@@ -102,7 +102,17 @@ func _set_label_variations() -> void:
 	_make_label_type("Score", 66, Palette.TEXT, false)
 	_make_label_type("StatValue", 33, Palette.TEXT, false)
 	# Numbers use the pixel face. All sizes are multiples of 11 so its pixels stay square.
-	for numeric in ["Score", "StatValue", "Value", "Best", "BigValue", "LiveScore", "MiniValue", "Display", "DisplayAccent"]:
+	for numeric in [
+		"Score",
+		"StatValue",
+		"Value",
+		"Best",
+		"BigValue",
+		"LiveScore",
+		"MiniValue",
+		"Display",
+		"DisplayAccent"
+	]:
 		set_font("font", numeric, _pixel_font)
 
 
@@ -132,39 +142,69 @@ func _set_button_variations() -> void:
 	set_stylebox("focus", "Button", _box(Color(0, 0, 0, 0), RADIUS_MD, Palette.ACCENT, 3))
 
 	# Primary: accent fill with dark ink text (prototype .btn-primary).
-	_make_button_type("PrimaryButton", Palette.ACCENT, Palette.ACCENT_INK, Color(0, 0, 0, 0), 0, RADIUS_MD, 21)
+	_make_button_type(
+		"PrimaryButton", Palette.ACCENT, Palette.ACCENT_INK, Color(0, 0, 0, 0), 0, RADIUS_MD, 21
+	)
 	# Secondary: surface-2 fill with a strong border (prototype .btn-secondary).
-	_make_button_type("SecondaryButton", Palette.SURFACE_2, Palette.TEXT, Palette.LINE_STRONG, 2, RADIUS_MD, 21)
+	_make_button_type(
+		"SecondaryButton", Palette.SURFACE_2, Palette.TEXT, Palette.LINE_STRONG, 2, RADIUS_MD, 21
+	)
 	# Ghost: no fill, muted text that turns to ink on hover (prototype .btn-ghost).
-	_make_button_type("GhostButton", Color(0, 0, 0, 0), Palette.TEXT_MUTED, Color(0, 0, 0, 0), 0, RADIUS_MD, 20)
+	_make_button_type(
+		"GhostButton", Color(0, 0, 0, 0), Palette.TEXT_MUTED, Color(0, 0, 0, 0), 0, RADIUS_MD, 20
+	)
 	# Text: no fill, muted (prototype .btn-text).
-	_make_button_type("TextButton", Color(0, 0, 0, 0), Palette.TEXT_MUTED, Color(0, 0, 0, 0), 0, RADIUS_MD, 20)
+	_make_button_type(
+		"TextButton", Color(0, 0, 0, 0), Palette.TEXT_MUTED, Color(0, 0, 0, 0), 0, RADIUS_MD, 20
+	)
 	# Quiet text: the faint "Quit to home" link (prototype .btn-text.quiet).
-	_make_button_type("QuietButton", Color(0, 0, 0, 0), Palette.TEXT_FAINT, Color(0, 0, 0, 0), 0, RADIUS_MD, 18)
+	_make_button_type(
+		"QuietButton", Color(0, 0, 0, 0), Palette.TEXT_FAINT, Color(0, 0, 0, 0), 0, RADIUS_MD, 18
+	)
 	# Back: a text button with no side padding, so it lines up with the screen's content edge.
-	_make_button_type("BackButton", Color(0, 0, 0, 0), Palette.TEXT_MUTED, Color(0, 0, 0, 0), 0, RADIUS_MD, 20)
+	_make_button_type(
+		"BackButton", Color(0, 0, 0, 0), Palette.TEXT_MUTED, Color(0, 0, 0, 0), 0, RADIUS_MD, 20
+	)
 	for style_name in ["normal", "hover", "pressed", "hover_pressed", "disabled", "focus"]:
 		var back_box := get_stylebox(style_name, "BackButton") as StyleBoxFlat
 		back_box.content_margin_left = 0
 		back_box.content_margin_right = 0
 	# Danger text: "Delete account" link (prototype .danger-text).
-	_make_button_type("DangerTextButton", Color(0, 0, 0, 0), Palette.DANGER, Color(0, 0, 0, 0), 0, RADIUS_MD, 20)
+	_make_button_type(
+		"DangerTextButton", Color(0, 0, 0, 0), Palette.DANGER, Color(0, 0, 0, 0), 0, RADIUS_MD, 20
+	)
 	# Danger filled: the confirm delete button (prototype .danger-btn).
-	_make_button_type("DangerButton", Palette.DANGER_SOFT, Palette.DANGER, Palette.DANGER_LINE, 2, RADIUS_MD, 21)
+	_make_button_type(
+		"DangerButton", Palette.DANGER_SOFT, Palette.DANGER, Palette.DANGER_LINE, 2, RADIUS_MD, 21
+	)
 	# Icon button: square, surface-2 with a thin line border (prototype .icon-btn).
 	_make_button_type("IconButton", Palette.SURFACE_2, Palette.TEXT, Palette.LINE, 2, RADIUS_MD, 21)
 	# Game pad tiles (bottom control bar): chunkier rounding and clearer hierarchy.
-	_make_button_type("PadButton", Palette.SURFACE_2, Palette.TEXT, Palette.LINE_STRONG, 2, RADIUS_MD, 21)
+	_make_button_type(
+		"PadButton", Palette.SURFACE_2, Palette.TEXT, Palette.LINE_STRONG, 2, RADIUS_MD, 21
+	)
 	# Pause tile: quiet accent, clearly secondary to the actions.
-	_make_button_type("PadPause", Palette.SURFACE, Palette.TEXT_MUTED, Palette.LINE_STRONG, 2, RADIUS_MD, 21)
+	_make_button_type(
+		"PadPause", Palette.SURFACE, Palette.TEXT_MUTED, Palette.LINE_STRONG, 2, RADIUS_MD, 21
+	)
 	# Rotate: the accent action.
-	_make_button_type("PadRotate", Palette.ACCENT, Palette.ACCENT_INK, Color(0, 0, 0, 0), 0, RADIUS_MD, 21)
+	_make_button_type(
+		"PadRotate", Palette.ACCENT, Palette.ACCENT_INK, Color(0, 0, 0, 0), 0, RADIUS_MD, 21
+	)
 	# Hard drop: the amber action.
-	_make_button_type("PadHard", Palette.WARNING, Palette.ACCENT_INK, Color(0, 0, 0, 0), 0, RADIUS_MD, 21)
+	_make_button_type(
+		"PadHard", Palette.WARNING, Palette.ACCENT_INK, Color(0, 0, 0, 0), 0, RADIUS_MD, 21
+	)
 	# Segment tab (prototype .segmented button). The pressed style is the selected tab.
-	_make_button_type("SegmentButton", Color(0, 0, 0, 0), Palette.TEXT_MUTED, Color(0, 0, 0, 0), 0, RADIUS_SM, 20)
-	set_stylebox("pressed", "SegmentButton", _box(Palette.SURFACE_3, RADIUS_SM, Color(0, 0, 0, 0), 0))
-	set_stylebox("hover_pressed", "SegmentButton", _box(Palette.SURFACE_3, RADIUS_SM, Color(0, 0, 0, 0), 0))
+	_make_button_type(
+		"SegmentButton", Color(0, 0, 0, 0), Palette.TEXT_MUTED, Color(0, 0, 0, 0), 0, RADIUS_SM, 20
+	)
+	set_stylebox(
+		"pressed", "SegmentButton", _box(Palette.SURFACE_3, RADIUS_SM, Color(0, 0, 0, 0), 0)
+	)
+	set_stylebox(
+		"hover_pressed", "SegmentButton", _box(Palette.SURFACE_3, RADIUS_SM, Color(0, 0, 0, 0), 0)
+	)
 	set_color("font_pressed_color", "SegmentButton", Palette.TEXT)
 	set_color("font_hover_pressed_color", "SegmentButton", Palette.TEXT)
 	# Card button (prototype .setting-row, .hub-links button). Its content sits in child
@@ -172,11 +212,21 @@ func _set_button_variations() -> void:
 	_make_button_type("CardButton", Palette.SURFACE, Palette.TEXT, Palette.LINE, 2, RADIUS_MD, 21)
 	set_stylebox("hover", "CardButton", _box(Palette.SURFACE, RADIUS_MD, Palette.LINE_STRONG, 2))
 	# Highlighted card: accent border on a soft accent fill (the newest unlocked level).
-	_make_button_type("CardButtonCurrent", Palette.ACCENT_SOFT, Palette.TEXT, Palette.ACCENT, 2, RADIUS_MD, 21)
+	_make_button_type(
+		"CardButtonCurrent", Palette.ACCENT_SOFT, Palette.TEXT, Palette.ACCENT, 2, RADIUS_MD, 21
+	)
 
 
 ## Builds one button variation. Heights are not set here: each node sets custom_minimum_size.
-func _make_button_type(type_name: String, fill: Color, text_color: Color, border: Color, border_width: int, radius: int, font_size: int) -> void:
+func _make_button_type(
+	type_name: String,
+	fill: Color,
+	text_color: Color,
+	border: Color,
+	border_width: int,
+	radius: int,
+	font_size: int
+) -> void:
 	set_type_variation(type_name, "Button")
 	set_color("font_color", type_name, text_color)
 	set_color("font_hover_color", type_name, text_color)
@@ -192,7 +242,9 @@ func _make_button_type(type_name: String, fill: Color, text_color: Color, border
 	var normal := _box(fill, radius, border, border_width)
 	# Pressed brightens the fill a little (prototype: filter brightness 1.12 while active).
 	var pressed := _box(fill.lightened(0.12), radius, border, border_width)
-	var disabled := _box(Color(fill, fill.a * 0.45), radius, Color(border, border.a * 0.45), border_width)
+	var disabled := _box(
+		Color(fill, fill.a * 0.45), radius, Color(border, border.a * 0.45), border_width
+	)
 	set_stylebox("normal", type_name, normal)
 	set_stylebox("hover", type_name, normal)
 	set_stylebox("pressed", type_name, pressed)
@@ -214,7 +266,9 @@ func _set_panel_variations() -> void:
 
 	# Dim layer behind the pause panel (prototype: the board is dimmed while paused).
 	set_type_variation("DimLayer", "Panel")
-	set_stylebox("panel", "DimLayer", _box(Color(Palette.BACKGROUND, 0.78), 0, Color(0, 0, 0, 0), 0))
+	set_stylebox(
+		"panel", "DimLayer", _box(Color(Palette.BACKGROUND, 0.78), 0, Color(0, 0, 0, 0), 0)
+	)
 
 	# Stat card (prototype .stat): surface with a thin line border.
 	set_type_variation("StatCard", "PanelContainer")
@@ -222,11 +276,15 @@ func _set_panel_variations() -> void:
 
 	# Card with a stronger border (prototype .score-card, .confirm-panel).
 	set_type_variation("StrongCard", "PanelContainer")
-	set_stylebox("panel", "StrongCard", _box(Palette.SURFACE, RADIUS_LG, Palette.LINE_STRONG, 2, 24, 22))
+	set_stylebox(
+		"panel", "StrongCard", _box(Palette.SURFACE, RADIUS_LG, Palette.LINE_STRONG, 2, 24, 22)
+	)
 
 	# Pause panel (prototype .pause-panel): slightly see-through, very rounded.
 	set_type_variation("PausePanel", "PanelContainer")
-	set_stylebox("panel", "PausePanel", _box(Palette.PANEL, RADIUS_XL, Palette.LINE_STRONG, 2, 33, 30))
+	set_stylebox(
+		"panel", "PausePanel", _box(Palette.PANEL, RADIUS_XL, Palette.LINE_STRONG, 2, 33, 30)
+	)
 
 	# Segmented control wrapper (prototype .segmented).
 	set_type_variation("SegmentedBox", "PanelContainer")
@@ -234,17 +292,27 @@ func _set_panel_variations() -> void:
 
 	# Form error box (prototype .form-error).
 	set_type_variation("FormErrorBox", "PanelContainer")
-	set_stylebox("panel", "FormErrorBox", _box(Palette.DANGER_SOFT, RADIUS_SM, Palette.DANGER_LINE, 2, 18, 12))
+	set_stylebox(
+		"panel",
+		"FormErrorBox",
+		_box(Palette.DANGER_SOFT, RADIUS_SM, Palette.DANGER_LINE, 2, 18, 12)
+	)
 
 	# Leaderboard row (prototype .lb-row) and the signed-in player's row (.lb-row.me).
 	set_type_variation("LeaderRow", "PanelContainer")
 	set_stylebox("panel", "LeaderRow", _box(Palette.SURFACE, RADIUS_SM, Palette.LINE, 2, 18, 12))
 	set_type_variation("LeaderRowMe", "PanelContainer")
-	set_stylebox("panel", "LeaderRowMe", _box(Palette.ACCENT_SOFT, RADIUS_SM, Palette.ACCENT_ROW_BORDER, 2, 18, 12))
+	set_stylebox(
+		"panel",
+		"LeaderRowMe",
+		_box(Palette.ACCENT_SOFT, RADIUS_SM, Palette.ACCENT_ROW_BORDER, 2, 18, 12)
+	)
 
 	# Round avatar (prototype .avatar): accent-soft circle.
 	set_type_variation("AvatarCircle", "PanelContainer")
-	set_stylebox("panel", "AvatarCircle", _box(Palette.ACCENT_SOFT, RADIUS_PILL, Color(0, 0, 0, 0), 0))
+	set_stylebox(
+		"panel", "AvatarCircle", _box(Palette.ACCENT_SOFT, RADIUS_PILL, Color(0, 0, 0, 0), 0)
+	)
 
 	# Small rounded square behind a panel icon (prototype .panel-mark).
 	set_type_variation("IconTile", "PanelContainer")
@@ -256,7 +324,9 @@ func _set_panel_variations() -> void:
 
 	# Level pill (prototype .level-pill): soft accent with a border.
 	set_type_variation("LevelPill", "PanelContainer")
-	set_stylebox("panel", "LevelPill", _box(Palette.ACCENT_SOFT, RADIUS_SM, Palette.ACCENT_BORDER, 2, 15, 6))
+	set_stylebox(
+		"panel", "LevelPill", _box(Palette.ACCENT_SOFT, RADIUS_SM, Palette.ACCENT_BORDER, 2, 15, 6)
+	)
 
 	# Toggle track (prototype .toggle): surface-3 when off, accent when on. The knob is a child.
 	set_type_variation("ToggleOff", "Panel")
@@ -265,14 +335,18 @@ func _set_panel_variations() -> void:
 	set_stylebox("panel", "ToggleOn", _box(Palette.ACCENT, RADIUS_PILL, Color(0, 0, 0, 0), 0))
 	# Toggle knob (prototype .toggle i): muted when off, bright when on.
 	set_type_variation("ToggleKnobOff", "Panel")
-	set_stylebox("panel", "ToggleKnobOff", _box(Palette.TEXT_MUTED, RADIUS_PILL, Color(0, 0, 0, 0), 0))
+	set_stylebox(
+		"panel", "ToggleKnobOff", _box(Palette.TEXT_MUTED, RADIUS_PILL, Color(0, 0, 0, 0), 0)
+	)
 	set_type_variation("ToggleKnobOn", "Panel")
 	set_stylebox("panel", "ToggleKnobOn", _box(Palette.TEXT, RADIUS_PILL, Color(0, 0, 0, 0), 0))
 
 
 ## Text inputs (prototype .input-shell) and the progress bar (prototype .progress-line .track).
 func _set_input_and_progress() -> void:
-	set_stylebox("normal", "LineEdit", _box(Palette.SURFACE, RADIUS_MD, Palette.LINE_STRONG, 2, 21, 0))
+	set_stylebox(
+		"normal", "LineEdit", _box(Palette.SURFACE, RADIUS_MD, Palette.LINE_STRONG, 2, 21, 0)
+	)
 	set_stylebox("focus", "LineEdit", _box(Palette.SURFACE, RADIUS_MD, Palette.ACCENT, 2, 21, 0))
 	set_stylebox("read_only", "LineEdit", _box(Palette.SURFACE, RADIUS_MD, Palette.LINE, 2, 21, 0))
 	set_color("font_color", "LineEdit", Palette.TEXT)
@@ -287,7 +361,9 @@ func _set_input_and_progress() -> void:
 
 
 ## Builds a rounded box. Radius and padding are in Godot pixels (see the constants above).
-func _box(fill: Color, radius: int, border: Color, border_width: int, pad_x: int = 0, pad_y: int = 0) -> StyleBoxFlat:
+func _box(
+	fill: Color, radius: int, border: Color, border_width: int, pad_x: int = 0, pad_y: int = 0
+) -> StyleBoxFlat:
 	var box := StyleBoxFlat.new()
 	box.bg_color = fill
 	box.set_corner_radius_all(radius)

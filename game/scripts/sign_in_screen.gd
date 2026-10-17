@@ -4,6 +4,10 @@ extends Control
 
 const MENU_SCENE := "res://scenes/main_menu.tscn"
 
+var _creating_account := false
+## True while a request is in flight; the form is locked until it answers.
+var _waiting := false
+
 @onready var _title: Label = %Title
 @onready var _email_field: LineEdit = %EmailField
 @onready var _password_field: LineEdit = %PasswordField
@@ -12,10 +16,6 @@ const MENU_SCENE := "res://scenes/main_menu.tscn"
 @onready var _status_label: Label = %StatusLabel
 @onready var _submit_button: Button = %SubmitButton
 @onready var _mode_button: Button = %ModeButton
-
-var _creating_account := false
-## True while a request is in flight; the form is locked until it answers.
-var _waiting := false
 
 
 func _ready() -> void:
@@ -79,7 +79,12 @@ func _on_submit_pressed() -> void:
 	if _creating_account:
 		var username := _username_field.text.strip_edges()
 		if not SyncLogic.is_valid_username(username):
-			_set_status("Username must be %d-%d characters." % [GameConfig.USERNAME_MIN_LENGTH, GameConfig.USERNAME_MAX_LENGTH])
+			_set_status(
+				(
+					"Username must be %d-%d characters."
+					% [GameConfig.USERNAME_MIN_LENGTH, GameConfig.USERNAME_MAX_LENGTH]
+				)
+			)
 			return
 		_start_waiting()
 		Sync.register(email, password, username)

@@ -1,13 +1,14 @@
 class_name BrandMark
 extends Control
 ## Draws the DropGrid mark from the prototype: four small squares tilted -8 degrees.
-## GRID is the small 2x2 mark next to the wordmark. DIAGONAL is the three-square mark on the game over screen.
+## GRID is the small 2x2 mark next to the wordmark. DIAGONAL is the
+## three-square mark on the game over screen.
 
 enum Style { GRID, DIAGONAL }
 
-@export var style := Style.GRID
-
 const TILT_DEGREES := -8.0
+
+@export var style := Style.GRID
 
 
 func _ready() -> void:

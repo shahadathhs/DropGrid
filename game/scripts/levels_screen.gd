@@ -3,11 +3,11 @@ extends Control
 ## unlocked once lifetime Save.total_lines reaches 10 * (level - 1). Locked tiles are
 ## disabled; an unlocked tile starts a game at that level.
 
+enum NodeState { UNLOCKED, LOCKED }
+
 const MENU_SCENE := "res://scenes/main_menu.tscn"
 const GAME_SCENE := "res://scenes/game.tscn"
 const TILE_HEIGHT := 132.0
-
-enum NodeState { UNLOCKED, LOCKED }
 
 @onready var _summary_label: Label = %SummaryLabel
 @onready var _level_tree: GridContainer = %LevelTree
@@ -16,7 +16,9 @@ enum NodeState { UNLOCKED, LOCKED }
 
 func _ready() -> void:
 	var total := Save.total_lines
-	_summary_label.text = "%s %s CLEARED" % [UiFormat.thousands(total), "LINE" if total == 1 else "LINES"]
+	_summary_label.text = (
+		"%s %s CLEARED" % [UiFormat.thousands(total), "LINE" if total == 1 else "LINES"]
+	)
 	for level in range(1, GameConfig.MAX_START_LEVEL + 1):
 		_level_tree.add_child(_make_node(level, node_state(level, total)))
 
@@ -55,7 +57,9 @@ func _make_node(level: int, state: NodeState) -> Button:
 	var number := Label.new()
 	number.text = str(level)
 	number.theme_type_variation = &"Score"
-	number.add_theme_color_override("font_color", Palette.ACCENT_INK if unlocked else Palette.TEXT_MUTED)
+	number.add_theme_color_override(
+		"font_color", Palette.ACCENT_INK if unlocked else Palette.TEXT_MUTED
+	)
 	number.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	number.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	number.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
@@ -66,7 +70,9 @@ func _make_node(level: int, state: NodeState) -> Button:
 
 func _on_locked_input(event: InputEvent, level: int) -> void:
 	if event is InputEventMouseButton and event.pressed:
-		_needs_label.text = "Level %d needs %s lines" % [level, UiFormat.thousands(lines_to_reach(level))]
+		_needs_label.text = (
+			"Level %d needs %s lines" % [level, UiFormat.thousands(lines_to_reach(level))]
+		)
 
 
 func _on_node_pressed(level: int) -> void:

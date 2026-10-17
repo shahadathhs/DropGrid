@@ -7,6 +7,15 @@ const LEVELS_SCENE := "res://scenes/levels.tscn"
 ## Haptics only run on phones; desktop and web builds never vibrate.
 const HAPTIC_OS_NAMES: Array[String] = ["Android", "iOS"]
 const HAPTIC_DURATION_MS := 20
+## Design margin at the top and bottom of the screen, in design units.
+const EDGE_MARGIN := 24
+## Extra room kept between the controls and a system bar.
+const SAFE_AREA_PADDING := 12
+
+var game: GameController
+## Start level of this run; Play again repeats it.
+var _start_level := 1
+var _window_had_focus := false
 
 @onready var _margin: MarginContainer = %Margin
 @onready var _board_view: Control = %BoardView
@@ -15,17 +24,6 @@ const HAPTIC_DURATION_MS := 20
 @onready var _pause_button: Button = %PauseButton
 @onready var _pause_overlay: Control = %PauseOverlay
 @onready var _game_over_overlay: Control = %GameOverOverlay
-
-var game: GameController
-## Start level of this run; Play again repeats it.
-var _start_level := 1
-var _window_had_focus := false
-
-
-## Design margin at the top and bottom of the screen, in design units.
-const EDGE_MARGIN := 24
-## Extra room kept between the controls and a system bar.
-const SAFE_AREA_PADDING := 12
 
 
 func _ready() -> void:
@@ -56,8 +54,12 @@ func _apply_safe_area() -> void:
 	var to_design := size.x / float(window_size.x)
 	var top := maxf(0.0, safe.position.y) * to_design
 	var bottom := maxf(0.0, window_size.y - safe.end.y) * to_design
-	_margin.add_theme_constant_override("margin_top", maxi(EDGE_MARGIN, int(top) + SAFE_AREA_PADDING))
-	_margin.add_theme_constant_override("margin_bottom", maxi(EDGE_MARGIN, int(bottom) + SAFE_AREA_PADDING))
+	_margin.add_theme_constant_override(
+		"margin_top", maxi(EDGE_MARGIN, int(top) + SAFE_AREA_PADDING)
+	)
+	_margin.add_theme_constant_override(
+		"margin_bottom", maxi(EDGE_MARGIN, int(bottom) + SAFE_AREA_PADDING)
+	)
 
 
 func _process(delta: float) -> void:
@@ -71,8 +73,10 @@ func _notification(what: int) -> void:
 	# backgrounding only after the window has actually held focus once.
 	if what == NOTIFICATION_APPLICATION_FOCUS_IN:
 		_window_had_focus = true
-	elif what == NOTIFICATION_APPLICATION_PAUSED \
-			or (what == NOTIFICATION_APPLICATION_FOCUS_OUT and _window_had_focus):
+	elif (
+		what == NOTIFICATION_APPLICATION_PAUSED
+		or (what == NOTIFICATION_APPLICATION_FOCUS_OUT and _window_had_focus)
+	):
 		if is_instance_valid(game) and game.state == GameController.State.PLAYING:
 			game.set_paused(true)
 
@@ -91,7 +95,7 @@ func _on_game_over(final_score: int) -> void:
 	Sfx.play("game_over")
 	_buzz()
 	var improved := Save.record_run(final_score, game.lines)
-	Sync.push_stats() # no-op for guests; never blocks the game over screen
+	Sync.push_stats()  # no-op for guests; never blocks the game over screen
 	_game_over_overlay.show_results(final_score, Save.best_score, improved, game.lines, game.level)
 	_game_over_overlay.show()
 	_pause_button.disabled = true

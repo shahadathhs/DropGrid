@@ -38,14 +38,20 @@ func test_fall_interval_shrinks_each_level() -> void:
 	var previous := GameController.fall_interval(1)
 	for level in range(2, 10):
 		var interval := GameController.fall_interval(level)
-		assert_lt(interval, previous, "level %d should fall faster than level %d" % [level, level - 1])
+		assert_lt(
+			interval, previous, "level %d should fall faster than level %d" % [level, level - 1]
+		)
 		previous = interval
 
 
 func test_fall_interval_never_drops_below_the_floor() -> void:
 	for level in [20, 50, 500]:
-		assert_almost_eq(GameController.fall_interval(level), GameConfig.MIN_FALL_INTERVAL, 0.0001,
-			"level %d should be at the minimum fall interval" % level)
+		assert_almost_eq(
+			GameController.fall_interval(level),
+			GameConfig.MIN_FALL_INTERVAL,
+			0.0001,
+			"level %d should be at the minimum fall interval" % level
+		)
 
 
 func test_hud_drop_value_for_level_one_reads_0_80s() -> void:

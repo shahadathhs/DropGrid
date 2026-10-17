@@ -6,6 +6,9 @@ extends Control
 const MENU_SCENE := "res://scenes/main_menu.tscn"
 const SIGN_IN_SCENE := "res://scenes/sign_in.tscn"
 
+## True while a rename request is in flight, so a profile refresh is not reported as "saved".
+var _renaming := false
+
 @onready var _username_label: Label = %UsernameLabel
 @onready var _subtitle_label: Label = %SubtitleLabel
 @onready var _settings_overlay: Control = %SettingsOverlay
@@ -17,14 +20,12 @@ const SIGN_IN_SCENE := "res://scenes/sign_in.tscn"
 @onready var _games_value: Label = %GamesValue
 @onready var _rename_button: Button = %RenameButton
 @onready var _status_label: Label = %StatusLabel
+
 @onready var _sign_out_button: Button = %SignOutButton
 @onready var _delete_button: Button = %DeleteButton
 @onready var _confirm_box: Control = %ConfirmBox
 @onready var _confirm_delete_button: Button = %ConfirmDeleteButton
 @onready var _cancel_delete_button: Button = %CancelDeleteButton
-
-## True while a rename request is in flight, so a profile refresh is not reported as "saved".
-var _renaming := false
 
 
 func _ready() -> void:
@@ -112,7 +113,12 @@ func _on_signed_out() -> void:
 func _on_rename_pressed() -> void:
 	var new_name := _name_field.text.strip_edges()
 	if not SyncLogic.is_valid_username(new_name):
-		_set_status("Username must be %d-%d characters." % [GameConfig.USERNAME_MIN_LENGTH, GameConfig.USERNAME_MAX_LENGTH])
+		_set_status(
+			(
+				"Username must be %d-%d characters."
+				% [GameConfig.USERNAME_MIN_LENGTH, GameConfig.USERNAME_MAX_LENGTH]
+			)
+		)
 		return
 	_renaming = true
 	_rename_button.disabled = true

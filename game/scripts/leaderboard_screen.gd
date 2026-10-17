@@ -55,7 +55,9 @@ func _on_request_failed(action: String, _message: String) -> void:
 ## One flat row: rank | name | best score. The player's own row sits on a filled ink bar.
 func _add_row(entry: Dictionary) -> void:
 	var username := str(entry.get("username", ""))
-	var is_me := Sync.is_signed_in() and username != "" and username.to_lower() == Sync.username().to_lower()
+	var is_me := (
+		Sync.is_signed_in() and username != "" and username.to_lower() == Sync.username().to_lower()
+	)
 	var ink := Palette.ACCENT_INK if is_me else Palette.TEXT
 
 	var row := VBoxContainer.new()
@@ -88,7 +90,9 @@ func _add_row(entry: Dictionary) -> void:
 	name_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	name_label.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
 	line.add_child(name_label)
-	line.add_child(_make_label(UiFormat.thousands(int(entry.get("best_score", 0))), &"StatValue", ink, 0))
+	line.add_child(
+		_make_label(UiFormat.thousands(int(entry.get("best_score", 0))), &"StatValue", ink, 0)
+	)
 
 	if not is_me:
 		var rule := ColorRect.new()

@@ -2,12 +2,12 @@ extends Node
 ## Updates the HUD row (score, level, lines, next piece) from GameController signals.
 ## Never computes scoring itself.
 
+var game: GameController
+
 @onready var _score_label: Label = %ScoreLabel
 @onready var _lines_label: Label = %LinesLabel
 @onready var _level_label: Label = %LevelLabel
 @onready var _next_preview: Control = %NextPreview
-
-var game: GameController
 
 
 func setup(controller: GameController) -> void:

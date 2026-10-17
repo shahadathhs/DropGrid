@@ -2,22 +2,29 @@ extends Node
 ## Autoload singleton ("Save"): the one shared SaveManager instance for the whole app.
 ## Registered in Project Settings > Autoload (see project.godot).
 
-var _manager := SaveManager.new()
-
 var best_score: int:
-	get: return _manager.best_score
+	get:
+		return _manager.best_score
 var sound_enabled: bool:
-	get: return _manager.sound_enabled
+	get:
+		return _manager.sound_enabled
 var haptics: bool:
-	get: return _manager.haptics
+	get:
+		return _manager.haptics
 var total_lines: int:
-	get: return _manager.total_lines
+	get:
+		return _manager.total_lines
 var games_played: int:
-	get: return _manager.games_played
+	get:
+		return _manager.games_played
 var pending_sync: bool:
-	get: return _manager.pending_sync
+	get:
+		return _manager.pending_sync
 var stats_revision: int:
-	get: return _manager.stats_revision
+	get:
+		return _manager.stats_revision
+
+var _manager := SaveManager.new()
 
 
 func _ready() -> void:

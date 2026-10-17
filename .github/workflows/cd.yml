@@ -1,0 +1,167 @@
+# Deployment and release, after CI succeeds. On main: deploy the backend to
+# Render, build the APK, and refresh the rolling "latest" pre-release. On a
+# v* tag: build the APK and publish an official release.
+# Secrets and variables: docs/CI.md.
+name: CD
+
+on:
+  workflow_run:
+    workflows: [CI]
+    types: [completed]
+
+concurrency:
+  group: cd-${{ github.event.workflow_run.head_branch }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  gate:
+    # Continue only for successful CI runs on main or a v* tag.
+    if: github.event.workflow_run.conclusion == 'success'
+    runs-on: ubuntu-latest
+    outputs:
+      is-main: ${{ steps.check.outputs.is-main }}
+      is-tag: ${{ steps.check.outputs.is-tag }}
+    steps:
+      - id: check
+        run: |
+          branch="${{ github.event.workflow_run.head_branch }}"
+          case "$branch" in
+            main) echo "is-main=true" >> "$GITHUB_OUTPUT" ;;
+            v*)   echo "is-tag=true"  >> "$GITHUB_OUTPUT" ;;
+            *)    echo "Nothing to do for '${branch}'." ;;
+          esac
+
+  deploy-render:
+    name: Deploy backend (Render)
+    needs: gate
+    if: needs.gate.outputs.is-main == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger the deploy and wait for it to go live
+        env:
+          HOOK_URL: ${{ secrets.RENDER_DEPLOY_HOOK_URL }}
+          API_KEY: ${{ secrets.RENDER_API_KEY }}
+        run: |
+          if [ -z "$HOOK_URL" ]; then
+            echo "::warning::RENDER_DEPLOY_HOOK_URL is not set: backend not deployed. The URL is in Render > your service > Settings > Deploy Hook (docs/CI.md)."
+            exit 0
+          fi
+          SERVICE_ID=$(echo "$HOOK_URL" | sed -E 's|.*/deploy/(srv-[A-Za-z0-9]+).*|\1|')
+          DEPLOY_ID=$(curl -sS -X POST "$HOOK_URL" | jq -r '.deploy.id // empty')
+          if [ -z "$DEPLOY_ID" ]; then
+            echo "::warning::Render did not return a deploy id; continuing without waiting."
+            exit 0
+          fi
+          echo "Deploy ${DEPLOY_ID} started on ${SERVICE_ID}."
+          if [ -z "$API_KEY" ]; then
+            echo "::warning::RENDER_API_KEY is not set: cannot verify the deploy. Create an API key in Render > Account Settings (docs/CI.md)."
+            exit 0
+          fi
+          # Poll until the deploy is live (~10 min budget).
+          for _ in $(seq 1 40); do
+            STATUS=$(curl -sS -H "Authorization: Bearer $API_KEY" \
+              "https://api.render.com/v1/services/${SERVICE_ID}/deploys/${DEPLOY_ID}" \
+              | jq -r '.status // empty')
+            echo "status: ${STATUS:-unknown}"
+            case "$STATUS" in
+              live) exit 0 ;;
+              build_failed|pre_deploy_failed|update_failed|deploy_failed|canceled|deactivated)
+                echo "::error::Render deploy ${DEPLOY_ID} reported '${STATUS}'."
+                exit 1 ;;
+            esac
+            sleep 15
+          done
+          echo "::error::Timed out waiting for the Render deploy."
+          exit 1
+
+  apk:
+    name: Build APK
+    needs: [gate, deploy-render]
+    if: success() && (needs.gate.outputs.is-main == 'true' || needs.gate.outputs.is-tag == 'true')
+    runs-on: ubuntu-latest
+    env:
+      # Repository variable, e.g. https://dropgrid-api.onrender.com/v1 (optional).
+      API_BASE_URL: ${{ vars.API_BASE_URL }}
+      # Repository secret: base64 of a fixed debug keystore (optional, see docs/CI.md).
+      ANDROID_DEBUG_KEYSTORE_BASE64: ${{ secrets.ANDROID_DEBUG_KEYSTORE_BASE64 }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.workflow_run.head_sha }}
+
+      - name: Set version and server URL
+        run: |
+          # Each build gets a higher version code, so a newer APK installs over an older one.
+          sed -i "s|^version/code=.*|version/code=${GITHUB_RUN_NUMBER}|" game/export_presets.cfg
+          if [ "${{ needs.gate.outputs.is-tag }}" = "true" ]; then
+            VERSION="${{ github.event.workflow_run.head_branch }}"
+            VERSION="${VERSION#v}"
+          else
+            VERSION="0.1.0-${GITHUB_SHA::7}"
+          fi
+          sed -i "s|^version/name=.*|version/name=\"${VERSION}\"|" game/export_presets.cfg
+          echo "VERSION=${VERSION}" >> "$GITHUB_ENV"
+
+          if [ -n "${API_BASE_URL}" ]; then
+            case "${API_BASE_URL}" in
+              https://*/v1) ;;
+              *) echo "API_BASE_URL must be https://.../v1 (got: ${API_BASE_URL})" >&2; exit 1 ;;
+            esac
+            sed -i "s|^network/api_base_url=.*|network/api_base_url=\"${API_BASE_URL}\"|" game/project.godot
+            sed -i "s|^network/api_base_url.release=.*|network/api_base_url.release=\"${API_BASE_URL}\"|" game/project.godot
+          else
+            echo "::warning::API_BASE_URL is not set: this APK points at localhost, so accounts and the leaderboard will not work on a phone."
+          fi
+          if [ -z "${ANDROID_DEBUG_KEYSTORE_BASE64}" ]; then
+            echo "::warning::ANDROID_DEBUG_KEYSTORE_BASE64 is not set: this APK is signed with a one-off key and cannot be installed over a previous build."
+          fi
+
+      - name: Build the APK
+        run: make apk
+
+      - name: Name the file
+        run: mv game/build/dropgrid-debug.apk "game/build/dropgrid-${VERSION}.apk"
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: dropgrid-apk
+          path: game/build/dropgrid-*.apk
+          if-no-files-found: error
+          retention-days: 30
+
+  release:
+    needs: [gate, apk]
+    if: success() && (needs.gate.outputs.is-main == 'true' || needs.gate.outputs.is-tag == 'true')
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: dropgrid-apk
+
+      # Main builds refresh one rolling pre-release, so "latest" always points
+      # at the newest APK without flooding the releases page.
+      - name: Refresh the latest pre-release
+        if: needs.gate.outputs.is-main == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release delete latest --repo "${GITHUB_REPOSITORY}" --cleanup-tag --yes || true
+          gh release create latest dropgrid-*.apk --repo "${GITHUB_REPOSITORY}" \
+            --title "Latest build (${{ github.event.workflow_run.head_branch }}@${GITHUB_SHA::7})" \
+            --notes "Automatic build of commit ${GITHUB_SHA}. Not a versioned release; expect rough edges." \
+            --prerelease
+
+      - name: Create the versioned release
+        if: needs.gate.outputs.is-tag == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "${{ github.event.workflow_run.head_branch }}" dropgrid-*.apk \
+            --repo "${GITHUB_REPOSITORY}" \
+            --title "${{ github.event.workflow_run.head_branch }}" \
+            --generate-notes
