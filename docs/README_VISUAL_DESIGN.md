@@ -1,6 +1,6 @@
 # Visual Design
 
-The look is called **Cell Unit**: the board's square cell is the unit for everything. The board, the next-piece preview, the wordmark and the level tiles all draw blocks through one helper (`game/scripts/cell_style.gd`). Chosen from `docs/design/01-analysis.md` (concept B). The tokens live in `game/scripts/palette.gd` and the styles in `game/scripts/game_theme.gd`; this file describes the rules those two follow.
+The look is called **Cell Unit**: the board's square cell is the unit for everything. The board, the next-piece preview, the wordmark and the level tiles all draw blocks through one helper (`game/scripts/cell_style.gd`). The tokens live in `game/scripts/palette.gd` and the styles in `game/scripts/game_theme.gd`; this file describes the rules those two follow.
 
 ## Rules
 

@@ -13,7 +13,7 @@ docker/         Container helper scripts (Godot image entrypoint, Android setup)
 
 ## Status
 
-Working toward MVP1, the first Google Play release: the offline game, a start-level picker, optional accounts with a leaderboard, and a visual redesign. The code for the game, the picker, sync, and the backend is built. The backend is not deployed, the redesign is in progress, and nothing has been validated on a phone yet. Phases and status are in [docs/MVP1_PLAN.md](docs/MVP1_PLAN.md) and the [implementation plan](docs/README_IMPLEMENTATION_PLAN.md). Guest play makes no network calls.
+Working toward MVP1, the first Google Play release: the offline game, a start-level picker, optional accounts with a leaderboard, and a visual redesign. The code for the game, the picker, sync, the backend, and the visual redesign is built. The backend is not deployed, and nothing has been validated on a phone yet. Phases and status are in the [implementation plan](docs/README_IMPLEMENTATION_PLAN.md). Guest play makes no network calls.
 
 ## Docs
 

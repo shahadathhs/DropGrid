@@ -37,7 +37,7 @@ MVP1 is the first public Google Play release. It contains:
 1. **The core game, fully offline.** Menu, play, pause, game over, restart. Local best score, sound, haptics.
 2. **A start-level picker.** Players can start a game at any level they have unlocked (levels 1 to 10). Level N unlocks when lifetime lines cleared reach 10 × (N − 1). This is a simple lines threshold, not a complex unlock system.
 3. **Optional accounts and a global leaderboard.** Email + password with a username, background sync of best score, total lines, and games played, a profile screen, and a top-50 leaderboard. Signing in on another device brings the stats and unlocked levels across. Runs on one small FastAPI backend with one SQL database.
-4. **The visual redesign** from [MasterPrompt.md](../MasterPrompt.md).
+4. **The visual redesign** to the Cell Unit design system, described in [README_VISUAL_DESIGN.md](README_VISUAL_DESIGN.md).
 
 Included in the core game:
 - Main menu.

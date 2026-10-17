@@ -32,11 +32,11 @@ Every doc describes the code as it is now.
 
 **Checkpoint:** production smoke test passes; privacy and deletion pages reachable over HTTPS.
 
-### Phase D — Redesign: in progress (analysis only)
-- Implement MasterPrompt phases 1–5 on the MVP1 screen set. No redesign code yet.
-- Then rewrite `README_VISUAL_DESIGN.md` from the result.
+### Phase D — Redesign: code landed, polish possible
+- The Cell Unit redesign is implemented: `palette.gd`, `game_theme.gd`, and `README_VISUAL_DESIGN.md` describe one system, and the screens use it.
+- Remaining: verify every screen still obeys the house style in `AGENTS.md` (one primary button, no cards in cards, animations ≤ 250 ms, and so on).
 
-**Checkpoint:** the MasterPrompt acceptance checklist passes. C can run in parallel with D.
+**Checkpoint:** the visual rules in `AGENTS.md` hold on every screen. C can run in parallel with D.
 
 ### Phase E — Device validation: not started
 - Android export, debug APK, real-device checks: touch, aspect ratios, performance, background/resume, safe areas.

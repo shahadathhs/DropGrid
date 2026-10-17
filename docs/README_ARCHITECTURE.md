@@ -75,7 +75,7 @@ backend/
 └── Dockerfile
 ```
 
-Other top-level files: `render.yaml` (Render deploy blueprint), `Makefile`, `compose.yaml` (headless Godot and local Postgres), `Dockerfile`, `docker/` (helper scripts), `docs/`, `MasterPrompt.md` (redesign brief).
+Other top-level files: `render.yaml` (Render deploy blueprint), `Makefile`, `compose.yaml` (headless Godot and local Postgres), `Dockerfile`, `docker/` (helper scripts), `docs/`, `AGENTS.md` (instructions for AI coding agents).
 
 Do not create empty scripts or scenes just to fill the tree.
 
