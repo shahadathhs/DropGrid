@@ -101,3 +101,8 @@ func record_category_run(category: String, payload: Dictionary) -> bool:
 
 func counting_best(category: String) -> Dictionary:
 	return _manager.counting_best(category)
+
+
+## The category entries Sync sends with the stats (every best except marathon's).
+func category_payload() -> Array:
+	return _manager.category_payload()

@@ -69,6 +69,32 @@ func test_daily_records_are_stamped_with_the_utc_date() -> void:
 	assert_eq(int(best["score"]), 700)
 
 
+func test_category_payload_lists_every_best_except_marathon() -> void:
+	var manager := _manager()
+	manager.record_category_run("marathon", {"score": 500, "lines": 4})
+	manager.record_category_run("sprint", {"duration_ms": 61_000, "lines": 40})
+	manager.record_category_run("ultra", {"score": 900, "lines": 12})
+	var categories: Array = manager.category_payload().map(func(entry): return entry["category"])
+	assert_eq(categories.size(), 2)
+	assert_true("sprint" in categories)
+	assert_true("ultra" in categories)
+	assert_false("marathon" in categories, "marathon's best travels as best_score")
+
+
+func test_category_payload_carries_each_entry_with_its_numbers() -> void:
+	var manager := _manager()
+	manager.record_category_run("sprint", {"duration_ms": 61_000, "lines": 40})
+	var entry: Dictionary = manager.category_payload()[0]
+	assert_eq(entry["category"], "sprint")
+	assert_eq(int(entry["duration_ms"]), 61_000)
+
+
+func test_category_payload_skips_an_expired_daily_best() -> void:
+	var manager := _manager()
+	manager.category_bests["daily"] = {"score": 700, "lines": 3, "date": "1999-01-01"}
+	assert_eq(manager.category_payload(), [])
+
+
 func test_unknown_categories_are_rejected() -> void:
 	var manager := _manager()
 	assert_false(manager.record_category_run("zen", {"score": 10, "lines": 1}))
