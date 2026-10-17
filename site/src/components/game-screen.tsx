@@ -1,4 +1,16 @@
-import { ACTIVE, BOARD, COLS, GHOST, LEVEL, LINES, NEXT, ROWS, SCORE } from "@/lib/board-data";
+import {
+  ACTIVE,
+  BOARD,
+  COLS,
+  ELAPSED,
+  GHOST,
+  HOLD,
+  LEVEL,
+  LINES,
+  QUEUE,
+  ROWS,
+  SCORE,
+} from "@/lib/board-data";
 import { cn } from "@/lib/cn";
 import { PIECE_LETTERS, pieceShape } from "@/lib/pieces";
 
@@ -17,26 +29,29 @@ export function GameScreen({ light = false }: { light?: boolean }) {
     occupied.set(`${x},${y}`, PIECE_LETTERS[ACTIVE.type]);
   }
 
-  const next = pieceShape(NEXT + 1);
-  const nextGrid: (string | null)[][] = Array.from({ length: next.rows }, () =>
-    Array.from({ length: next.cols }, () => null),
-  );
-  for (const [x, y] of next.cells) nextGrid[y][x] = PIECE_LETTERS[NEXT];
-
   return (
     <div className={cn("flex flex-col gap-3 px-3 pb-5", light && "light")}>
-      <div className="flex items-end justify-between gap-2 px-1">
-        <div>
-          <div className="text-[1.35rem] font-semibold leading-none tabular-nums">{SCORE}</div>
-          <div className="mt-1 text-[10px] tracking-[0.2em] text-text-faint">SCORE</div>
+      <div className="flex items-start justify-between gap-2 px-1">
+        <div className="flex flex-col gap-2">
+          <Slot piece={HOLD >= 0 ? HOLD : null} />
+          <div>
+            <div className="text-[1.35rem] font-semibold leading-none tabular-nums">{SCORE}</div>
+            <div className="mt-1 text-[10px] tracking-[0.2em] text-text-faint">SCORE</div>
+          </div>
         </div>
-        <div className="flex items-end gap-4">
+        <div className="flex items-start gap-3">
           <Stat label="LEVEL" value={LEVEL} />
           <Stat label="LINES" value={LINES} />
-        </div>
-        <div>
-          <NextPreview grid={nextGrid} />
-          <div className="mt-1 text-right text-[10px] tracking-[0.2em] text-text-faint">NEXT</div>
+          <div className="text-right">
+            <div className="text-sm leading-none tabular-nums">{ELAPSED}</div>
+            <div className="mt-1 text-[10px] tracking-[0.2em] text-text-faint">TIME</div>
+          </div>
+          <div className="flex flex-col gap-1.5">
+            <div className="text-right text-[10px] tracking-[0.2em] text-text-faint">NEXT</div>
+            {QUEUE.map((pieceType, i) => (
+              <Slot key={i} piece={pieceType} tiny />
+            ))}
+          </div>
         </div>
       </div>
 
@@ -82,26 +97,31 @@ function Stat({ label, value }: { label: string; value: number }) {
   );
 }
 
-function NextPreview({ grid }: { grid: (string | null)[][] }) {
+/** A single piece tile (hold slot, or one entry of the next queue). */
+function Slot({ piece, tiny = false }: { piece: number | null; tiny?: boolean }) {
+  const shape = piece === null ? null : pieceShape(piece + 1);
+  const cells: [number, number][] = shape ? shape.cells : [];
   return (
     <div
       className="grid gap-[2px] rounded-cell bg-board-cell p-1.5"
-      style={{ gridTemplateColumns: `repeat(${grid[0].length}, minmax(0, 1fr))` }}
+      style={{
+        gridTemplateColumns: `repeat(${shape ? shape.cols : 1}, minmax(0, 1fr))`,
+        width: tiny ? 40 : 52,
+      }}
       aria-hidden
     >
-      {grid.flatMap((row, y) =>
-        row.map((piece, x) =>
-          piece ? (
+      {piece !== null
+        ? cells.map(([x, y]) => (
             <span
               key={`${x},${y}`}
-              className="aspect-square w-2.5 rounded-[2px]"
-              style={{ background: `var(--piece-${piece})` }}
+              className="aspect-square rounded-[2px]"
+              style={{
+                background: `var(--piece-${PIECE_LETTERS[piece]})`,
+                width: tiny ? 9 : 11,
+              }}
             />
-          ) : (
-            <span key={`${x},${y}`} className="aspect-square w-2.5" />
-          ),
-        ),
-      )}
+          ))
+        : null}
     </div>
   );
 }
