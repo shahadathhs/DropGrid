@@ -12,6 +12,8 @@ Read `docs/README_PROJECT_OVERVIEW.md` for scope. Do not add features from its "
 
 All changes go through **`dev`** → pull request → merge into `main`. Merges to `main` trigger the CI/CD pipeline (Render deploy, APK, rolling `latest` release); `v*` tags produce versioned releases. Keep `dev` fast-forwarded to `main` after each merge.
 
+Commits follow **Conventional Commits** (`feat:`, `fix:`, `docs:`, `chore:`, …), enforced by the commit-msg hook (commitlint, config in the root `commitlint.config.mjs`). The pre-commit hook (lint-staged) lints and formats staged JS/TS/JSON/MD.
+
 ## Commands
 
 The `Makefile` is the command surface. Headless Godot runs in Docker (`make` wraps `docker compose run`); the backend uses [uv](https://docs.astral.sh/uv/).
@@ -26,12 +28,13 @@ make backend-test   # pytest (run from repo root; cds into backend/)
 make backend-lint   # ruff check
 make backend-format # ruff format + autofix
 make backend-typecheck # pyright
-make backend-run    # serve API at http://localhost:8000 (needs db: make db-up)
+make backend-run    # serve the API at http://localhost:8000 (needs db: make db-up)
+make site-dev       # run the marketing site dev server on :3000 (pnpm)
 make run            # play the game on this PC (host Godot)
 make run-game       # run straight into the game scene
 ```
 
-After changing game code, run `make lint`, `make check`, and `make test` — formatting is enforced (`gdformat`), so run `make format` if lint complains. After changing backend code, run `make backend-lint`, `make backend-typecheck`, and `make backend-test`. Docs in `docs/` must match the code; update them in the same change when behavior changes.
+After changing game code, run `make lint`, `make check`, and `make test` — formatting is enforced (`gdformat`), so run `make format` if lint complains. After changing backend code, run `make backend-lint`, `make backend-typecheck`, and `make backend-test`. After changing site code, run `make site-lint`, `make site-typecheck`, and `make site-build`. Docs in `docs/` must match the code; update them in the same change when behavior changes.
 
 ## Game architecture — do not break
 

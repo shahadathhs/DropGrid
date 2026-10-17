@@ -1,0 +1,7 @@
+node_modules/
+pnpm-lock.yaml
+site/.next/
+game/build/
+game/.godot/
+next-env.d.ts
+*.tsbuildinfo
