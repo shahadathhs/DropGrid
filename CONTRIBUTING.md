@@ -18,11 +18,11 @@ Play the game on your computer with `make run`; work on the backend API with `ma
 
 Run the checks that cover your change:
 
-| Changed | Run |
-|---|---|
-| `game/` | `make lint` (style is enforced), `make check`, `make test` |
+| Changed    | Run                                                                |
+| ---------- | ------------------------------------------------------------------ |
+| `game/`    | `make lint` (style is enforced), `make check`, `make test`         |
 | `backend/` | `make backend-lint`, `make backend-typecheck`, `make backend-test` |
-| anything | keep `docs/` matching the code |
+| anything   | keep `docs/` matching the code                                     |
 
 CI runs the same commands; a PR that fails them will not be reviewed in detail.
 
@@ -37,8 +37,9 @@ CI runs the same commands; a PR that fails them will not be reviewed in detail.
 
 ## Commits and PRs
 
-- Commit messages: short imperative summary, no prefix conventions ("Add HTTPS redirect", not "feat: ...").
-- One logical change per PR. Keep it reviewable.
+- Commits follow **Conventional Commits**, enforced by a commit-msg hook (`commitlint`): `feat:`, `fix:`, `docs:`, `refactor:`, `chore:`, `ci:`, … with an optional scope — `feat(site): add leaderboard teaser`. Keep the subject imperative and under ~72 characters.
+- A `pre-commit` hook runs lint-staged (oxlint + prettier on staged JS/TS/JSON/MD files). If it fails, fix and re-add.
+- One logical change per commit. Keep PRs reviewable.
 - Describe how you tested the change. If you could not test something, say so plainly.
 
 ## Reporting issues

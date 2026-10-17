@@ -9,6 +9,7 @@ A polished, lightweight 2D falling-block puzzle game built with **Godot 4.x** an
 ```text
 game/           Godot project (scenes, scripts, assets, tests)
 backend/        FastAPI service: accounts, stats sync, leaderboard
+site/           Next.js marketing page (deployed on Vercel)
 docs/           Specifications
 docker/         Container helper scripts (Godot image entrypoint, Android setup)
 ```

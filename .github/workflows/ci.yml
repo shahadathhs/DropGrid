@@ -55,6 +55,27 @@ jobs:
       - name: Test
         run: uv run pytest -q
 
+  site:
+    name: Site (lint + build)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: pnpm/action-setup@v6 # version comes from the root package.json packageManager
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: pnpm
+          cache-dependency-path: pnpm-lock.yaml
+      # pnpm workspace: one install covers the root tooling and site/.
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+      - name: Lint
+        run: pnpm --dir site lint
+      - name: Type-check
+        run: pnpm --dir site typecheck
+      - name: Build
+        run: pnpm --dir site build
+
   deploy-render:
     name: Deploy backend (Render)
     needs: [game-tests, backend-tests]

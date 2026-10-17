@@ -1,0 +1,88 @@
+@import "tailwindcss";
+
+/* DropGrid design tokens — game/scripts/palette.gd is law.
+   Two grounds, one system: warm graphite with off-white ink (default) and
+   off-white paper with graphite ink (.light). The ink is the accent: primary
+   buttons are filled ink, so color is left to the pieces and one signal red.
+   Everything uses the 4px cell radius (game_theme.gd RADIUS_*). */
+
+@custom-variant light (&:is(.light *));
+
+:root {
+  --background: #161513;
+  --background-deep: #0f0e0d;
+  --surface: #1f1d1a;
+  --surface-2: #2a2724;
+  --surface-3: #353230;
+  --line: #2b2824;
+  --line-strong: #4a453f;
+  --text: #ece7dc;
+  --text-muted: #a09a8e;
+  --text-faint: #6e695f;
+  --accent: #ece7dc;
+  --accent-soft: #2a2724;
+  --accent-ink: #161513;
+  --signal: #ff5a36; /* one signal color: destructive actions, errors */
+
+  /* Piece colors, brightness-spaced for grayscale legibility (index 1..7). */
+  --piece-i: #96dce6;
+  --piece-o: #f6e292;
+  --piece-t: #874ccb;
+  --piece-s: #58c083;
+  --piece-z: #db548c;
+  --piece-j: #265ab4;
+  --piece-l: #f59f5d;
+}
+
+.light {
+  --background: #efebe2;
+  --background-deep: #e3ded2;
+  --surface: #e6e1d6;
+  --surface-2: #ddd7ca;
+  --surface-3: #cfc8b9;
+  --line: #d5cfc1;
+  --line-strong: #9c9586;
+  --text: #1b1a17;
+  --text-muted: #6b665c;
+  --text-faint: #9a9488;
+  --accent: #1b1a17;
+  --accent-soft: #ddd7ca;
+  --accent-ink: #efebe2;
+  --signal: #d63a18;
+
+  --piece-i: #60cada;
+  --piece-o: #eec82f;
+  --piece-t: #6f34b3;
+  --piece-s: #3fa66a;
+  --piece-z: #d43275;
+  --piece-j: #1c4283;
+  --piece-l: #f17e25;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-background-deep: var(--background-deep);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-surface-3: var(--surface-3);
+  --color-line: var(--line);
+  --color-line-strong: var(--line-strong);
+  --color-text: var(--text);
+  --color-text-muted: var(--text-muted);
+  --color-text-faint: var(--text-faint);
+  --color-accent: var(--accent);
+  --color-accent-soft: var(--accent-soft);
+  --color-accent-ink: var(--accent-ink);
+  --color-signal: var(--signal);
+  --color-piece-i: var(--piece-i);
+  --color-piece-o: var(--piece-o);
+  --color-piece-t: var(--piece-t);
+  --color-piece-s: var(--piece-s);
+  --color-piece-z: var(--piece-z);
+  --color-piece-j: var(--piece-j);
+  --color-piece-l: var(--piece-l);
+
+  --radius-cell: 4px; /* game_theme.gd RADIUS_SM..XL — the only radius */
+  --font-mono: var(--font-martian-mono), ui-monospace, monospace;
+  --font-display: var(--font-departure-mono), var(--font-martian-mono), monospace;
+}
