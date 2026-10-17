@@ -79,6 +79,7 @@ func _on_node_pressed(level: int) -> void:
 	if node_state(level, Save.total_lines) != NodeState.UNLOCKED:
 		return
 	StartLevel.pending = level
+	PendingMode.pending = GameMode.new(GameMode.Mode.MARATHON)
 	get_tree().change_scene_to_file(GAME_SCENE)
 
 

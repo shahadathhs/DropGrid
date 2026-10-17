@@ -5,6 +5,7 @@ signal play_again_pressed
 signal levels_pressed
 signal menu_pressed
 
+@onready var _heading_label: Label = %Heading
 @onready var _note_label: Label = %NoteLabel
 @onready var _score_label: Label = %ScoreLabel
 @onready var _lines_label: Label = %LinesLabel
@@ -14,7 +15,12 @@ signal menu_pressed
 
 ## Fills the screen with the finished run. "improved" means this run set a new personal best.
 func show_results(
-	final_score: int, best_score: int, improved: bool, lines: int = 0, level: int = 1
+	final_score: int,
+	best_score: int,
+	improved: bool,
+	lines: int = 0,
+	level: int = 1,
+	headline: String = "GAME OVER",
 ) -> void:
 	_score_label.text = UiFormat.thousands(final_score)
 	_lines_label.text = str(lines)
@@ -22,6 +28,7 @@ func show_results(
 	_best_label.text = UiFormat.thousands(best_score)
 	_note_label.text = "NEW BEST" if improved else ""
 	_note_label.visible = improved
+	_heading_label.text = headline
 
 
 func _on_play_again_pressed() -> void:

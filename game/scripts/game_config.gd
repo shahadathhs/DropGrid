@@ -19,6 +19,26 @@ const MIN_FALL_INTERVAL := 0.08
 const SOFT_DROP_INTERVAL := 0.04
 const MAX_FRAME_DELTA := 0.25  # clamps long frames (e.g. after resuming)
 
+# Lock delay: a landed piece waits this long before locking. A successful move
+# or rotation resets the timer, at most MAX_LOCK_RESETS times per piece.
+const LOCK_DELAY := 0.5
+const MAX_LOCK_RESETS := 15
+
+# HUD previews: how many upcoming pieces the queue shows.
+const NEXT_QUEUE_SIZE := 3
+
+# Scoring depth. Combo bonus is COMBO_BONUS * combo * level, where combo counts
+# consecutive line-clearing locks (first clear = combo 0 = no bonus). A tetris
+# right after another difficult clear multiplies by BACK_TO_BACK_MULTIPLIER.
+const COMBO_BONUS := 50
+const BACK_TO_BACK_MULTIPLIER := 1.5
+
+# Modes. Sprint ends at GOAL_LINES cleared; Ultra ends when the time limit is
+# up. Zen has no game over: the board sheds its top rows instead. Daily plays
+# by marathon rules on a seed derived from the UTC date.
+const SPRINT_GOAL_LINES := 40
+const ULTRA_TIME_LIMIT := 120.0
+
 # Hold-to-repeat for left/right buttons.
 const MOVE_REPEAT_DELAY := 0.16
 const MOVE_REPEAT_INTERVAL := 0.05

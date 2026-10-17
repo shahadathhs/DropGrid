@@ -58,6 +58,25 @@ layout_mode = 2
 mouse_filter = 2
 theme_override_constants/separation = 14
 
+[node name="HoldColumn" type="VBoxContainer" parent="Margin/Column/HudRow"]
+custom_minimum_size = Vector2(66, 0)
+layout_mode = 2
+mouse_filter = 2
+theme_override_constants/separation = 4
+alignment = 1
+
+[node name="Caption" type="Label" parent="Margin/Column/HudRow/HoldColumn"]
+layout_mode = 2
+theme_type_variation = &"StatCaption"
+text = "HOLD"
+
+[node name="HoldPreview" type="Control" parent="Margin/Column/HudRow/HoldColumn"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(66, 44)
+layout_mode = 2
+mouse_filter = 2
+script = ExtResource("7_next")
+
 [node name="ScoreColumn" type="VBoxContainer" parent="Margin/Column/HudRow"]
 layout_mode = 2
 size_flags_horizontal = 3
@@ -112,8 +131,26 @@ layout_mode = 2
 theme_type_variation = &"StatValue"
 text = "0"
 
+[node name="TimeColumn" type="VBoxContainer" parent="Margin/Column/HudRow"]
+custom_minimum_size = Vector2(66, 0)
+layout_mode = 2
+mouse_filter = 2
+theme_override_constants/separation = 4
+alignment = 1
+
+[node name="Caption" type="Label" parent="Margin/Column/HudRow/TimeColumn"]
+layout_mode = 2
+theme_type_variation = &"StatCaption"
+text = "TIME"
+
+[node name="TimeLabel" type="Label" parent="Margin/Column/HudRow/TimeColumn"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"StatValue"
+text = "0:00"
+
 [node name="NextColumn" type="VBoxContainer" parent="Margin/Column/HudRow"]
-custom_minimum_size = Vector2(84, 0)
+custom_minimum_size = Vector2(96, 0)
 layout_mode = 2
 mouse_filter = 2
 theme_override_constants/separation = 4
@@ -126,7 +163,21 @@ text = "NEXT"
 
 [node name="NextPreview" type="Control" parent="Margin/Column/HudRow/NextColumn"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(84, 44)
+custom_minimum_size = Vector2(96, 44)
+layout_mode = 2
+mouse_filter = 2
+script = ExtResource("7_next")
+
+[node name="NextPreview2" type="Control" parent="Margin/Column/HudRow/NextColumn"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(96, 44)
+layout_mode = 2
+mouse_filter = 2
+script = ExtResource("7_next")
+
+[node name="NextPreview3" type="Control" parent="Margin/Column/HudRow/NextColumn"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(96, 44)
 layout_mode = 2
 mouse_filter = 2
 script = ExtResource("7_next")
@@ -192,6 +243,14 @@ theme_override_constants/icon_max_width = 64
 icon = ExtResource("13_rotate")
 icon_alignment = 1
 expand_icon = true
+
+[node name="HoldButton" type="Button" parent="Margin/Column/Controls"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 144)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_type_variation = &"PadButton"
+text = "HOLD"
 
 [node name="SoftDropButton" type="Button" parent="Margin/Column/Controls"]
 unique_name_in_owner = true

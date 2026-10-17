@@ -1,5 +1,7 @@
 [gd_scene format=3]
 
+[ext_resource type="Script" path="res://scripts/hero_board.gd" id="4_hero"]
+
 [ext_resource type="Script" path="res://scripts/main_menu.gd" id="1_s"]
 [ext_resource type="PackedScene" path="res://scenes/settings_overlay.tscn" id="2_settings"]
 [ext_resource type="Script" path="res://scripts/wordmark.gd" id="3_word"]
@@ -52,6 +54,11 @@ layout_mode = 2
 mouse_filter = 2
 script = ExtResource("3_word")
 
+[node name="HeroBoard" type="Control" parent="Margin/Column"]
+layout_mode = 2
+size_flags_horizontal = 4
+script = ExtResource("4_hero")
+
 [node name="Gap" type="Control" parent="Margin/Column"]
 custom_minimum_size = Vector2(0, 36)
 layout_mode = 2
@@ -83,12 +90,30 @@ theme_type_variation = &"PrimaryButton"
 theme_override_font_sizes/font_size = 30
 text = "Play"
 
-[node name="Links" type="HBoxContainer" parent="Margin/Column"]
+[node name="Links" type="VBoxContainer" parent="Margin/Column"]
 layout_mode = 2
 mouse_filter = 2
 theme_override_constants/separation = 0
 
-[node name="LevelsButton" type="Button" parent="Margin/Column/Links"]
+[node name="LinksRow1" type="HBoxContainer" parent="Margin/Column/Links"]
+layout_mode = 2
+mouse_filter = 2
+theme_override_constants/separation = 0
+
+[node name="LinksRow2" type="HBoxContainer" parent="Margin/Column/Links"]
+layout_mode = 2
+mouse_filter = 2
+theme_override_constants/separation = 0
+
+[node name="StatsButton" type="Button" parent="Margin/Column/Links/LinksRow1"]
+custom_minimum_size = Vector2(0, 96)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_type_variation = &"TextButton"
+theme_override_font_sizes/font_size = 18
+text = "Stats"
+
+[node name="LevelsButton" type="Button" parent="Margin/Column/Links/LinksRow1"]
 custom_minimum_size = Vector2(0, 96)
 layout_mode = 2
 size_flags_horizontal = 3
@@ -96,7 +121,7 @@ theme_type_variation = &"TextButton"
 theme_override_font_sizes/font_size = 18
 text = "Levels"
 
-[node name="LeaderboardButton" type="Button" parent="Margin/Column/Links"]
+[node name="LeaderboardButton" type="Button" parent="Margin/Column/Links/LinksRow1"]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(0, 96)
 layout_mode = 2
@@ -105,7 +130,7 @@ theme_type_variation = &"TextButton"
 theme_override_font_sizes/font_size = 18
 text = "Leaderboard"
 
-[node name="AccountButton" type="Button" parent="Margin/Column/Links"]
+[node name="AccountButton" type="Button" parent="Margin/Column/Links/LinksRow2"]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(0, 96)
 layout_mode = 2
@@ -114,7 +139,7 @@ theme_type_variation = &"TextButton"
 theme_override_font_sizes/font_size = 18
 text = "Sign in"
 
-[node name="SettingsButton" type="Button" parent="Margin/Column/Links"]
+[node name="SettingsButton" type="Button" parent="Margin/Column/Links/LinksRow2"]
 custom_minimum_size = Vector2(0, 96)
 layout_mode = 2
 size_flags_horizontal = 3
@@ -132,7 +157,8 @@ grow_horizontal = 2
 grow_vertical = 2
 
 [connection signal="pressed" from="Margin/Column/PlayButton" to="." method="_on_play_pressed"]
-[connection signal="pressed" from="Margin/Column/Links/LevelsButton" to="." method="_on_levels_pressed"]
-[connection signal="pressed" from="Margin/Column/Links/LeaderboardButton" to="." method="_on_leaderboard_pressed"]
-[connection signal="pressed" from="Margin/Column/Links/AccountButton" to="." method="_on_account_pressed"]
-[connection signal="pressed" from="Margin/Column/Links/SettingsButton" to="." method="_on_settings_pressed"]
+[connection signal="pressed" from="Margin/Column/Links/LinksRow1/StatsButton" to="." method="_on_stats_pressed"]
+[connection signal="pressed" from="Margin/Column/Links/LinksRow1/LevelsButton" to="." method="_on_levels_pressed"]
+[connection signal="pressed" from="Margin/Column/Links/LinksRow1/LeaderboardButton" to="." method="_on_leaderboard_pressed"]
+[connection signal="pressed" from="Margin/Column/Links/LinksRow2/AccountButton" to="." method="_on_account_pressed"]
+[connection signal="pressed" from="Margin/Column/Links/LinksRow2/SettingsButton" to="." method="_on_settings_pressed"]

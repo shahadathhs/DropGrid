@@ -1,6 +1,7 @@
 extends Control
 
-const GAME_SCENE := "res://scenes/game.tscn"
+const MODE_PICKER_SCENE := "res://scenes/mode_picker.tscn"
+const STATS_SCENE := "res://scenes/stats.tscn"
 const SIGN_IN_SCENE := "res://scenes/sign_in.tscn"
 const PROFILE_SCENE := "res://scenes/profile.tscn"
 const LEADERBOARD_SCENE := "res://scenes/leaderboard.tscn"
@@ -24,7 +25,11 @@ func _ready() -> void:
 
 
 func _on_play_pressed() -> void:
-	get_tree().change_scene_to_file(GAME_SCENE)
+	get_tree().change_scene_to_file(MODE_PICKER_SCENE)
+
+
+func _on_stats_pressed() -> void:
+	get_tree().change_scene_to_file(STATS_SCENE)
 
 
 func _on_levels_pressed() -> void:

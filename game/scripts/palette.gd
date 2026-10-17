@@ -56,3 +56,42 @@ static var PIECE_COLORS: Array[Color] = [
 
 static func _pick(light_hex: String, dark_hex: String) -> Color:
 	return Color(light_hex if LIGHT else dark_hex)
+
+
+## Recomputes every token for the current ground. Called once at class load and
+## again when the saved Ground setting is applied at startup.
+static func apply_ground(light: bool) -> void:
+	LIGHT = light
+	BACKGROUND = _pick("EFEBE2", "161513")
+	BACKGROUND_DEEP = _pick("E3DED2", "0F0E0D")
+	SURFACE = _pick("E6E1D6", "1F1D1A")
+	SURFACE_2 = _pick("DDD7CA", "2A2724")
+	SURFACE_3 = _pick("CFC8B9", "353230")
+	LINE = _pick("D5CFC1", "2B2824")
+	LINE_STRONG = _pick("9C9586", "4A453F")
+	TEXT = _pick("1B1A17", "ECE7DC")
+	TEXT_MUTED = _pick("6B665C", "A09A8E")
+	TEXT_FAINT = _pick("9A9488", "6E695F")
+	ACCENT = _pick("1B1A17", "ECE7DC")
+	ACCENT_SOFT = _pick("DDD7CA", "2A2724")
+	ACCENT_INK = _pick("EFEBE2", "161513")
+	ACCENT_BORDER = _pick("9C9586", "4A453F")
+	ACCENT_ROW_BORDER = _pick("1B1A17", "ECE7DC")
+	SUCCESS = _pick("1B1A17", "ECE7DC")
+	WARNING = _pick("D63A18", "FF5A36")
+	DANGER = _pick("D63A18", "FF5A36")
+	DANGER_SOFT = _pick("E8D3C9", "2E1A15")
+	DANGER_LINE = _pick("D63A18", "6B2E20")
+	BOARD_BG = _pick("EFEBE2", "161513")
+	BOARD_CELL = _pick("E3DED2", "262320")
+	PANEL = Color(BACKGROUND, 0.96)
+	PIECE_COLORS = [
+		Color(0, 0, 0, 0),
+		_pick("60CADA", "96DCE6"),
+		_pick("EEC82F", "F6E292"),
+		_pick("6F34B3", "874CCB"),
+		_pick("3FA66A", "58C083"),
+		_pick("D43275", "DB548C"),
+		_pick("1C4283", "265AB4"),
+		_pick("F17E25", "F59F5D"),
+	]

@@ -59,7 +59,8 @@ func _draw() -> void:
 	_draw_empty_cells(origin, cell)
 	_draw_locked_cells(origin, cell)
 	if game.state == GameController.State.PLAYING and game.has_active:
-		_draw_ghost(origin, cell)
+		if Save.ghost_enabled:
+			_draw_ghost(origin, cell)
 		_draw_active(origin, cell)
 
 

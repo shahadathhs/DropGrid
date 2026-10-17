@@ -14,3 +14,11 @@ static func thousands(value: int) -> String:
 		result = digits[i] + result
 		count += 1
 	return "-" + result if value < 0 else result
+
+
+## Formats milliseconds as m:ss, for example 83000 -> "1:23".
+static func clock(ms: int) -> String:
+	@warning_ignore("integer_division")
+	var total_seconds := ms / 1000
+	@warning_ignore("integer_division")
+	return "%d:%02d" % [total_seconds / 60, total_seconds % 60]

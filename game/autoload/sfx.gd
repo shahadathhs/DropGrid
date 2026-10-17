@@ -1,6 +1,6 @@
 extends Node
-## Autoload singleton ("Sfx"): short sound effects, muted via Save.sound_enabled.
-## Original tones generated for this project; see assets/audio/.
+## Autoload singleton ("Sfx"): short sound effects routed to the SFX bus, muted
+## via Save.sound_enabled. Original tones; see assets/audio/.
 
 const SOUNDS := {
 	"move": preload("res://assets/audio/move.wav"),
@@ -8,6 +8,7 @@ const SOUNDS := {
 	"lock": preload("res://assets/audio/lock.wav"),
 	"line_clear": preload("res://assets/audio/line_clear.wav"),
 	"game_over": preload("res://assets/audio/game_over.wav"),
+	"finish": preload("res://assets/audio/music/finish.wav"),
 }
 
 var _players: Array[AudioStreamPlayer] = []
@@ -15,10 +16,11 @@ var _next_player := 0
 
 
 func _ready() -> void:
+	_ensure_bus("SFX")
 	# A small pool so overlapping sounds (e.g. two quick moves) don't cut off.
 	for i in 4:
 		var player := AudioStreamPlayer.new()
-		player.bus = "Master"
+		player.bus = "SFX"
 		add_child(player)
 		_players.append(player)
 
@@ -33,3 +35,16 @@ func play(sound_name: String) -> void:
 	_next_player = (_next_player + 1) % _players.size()
 	player.stream = stream
 	player.play()
+
+
+## Applies the saved sound toggle to the bus. Called by the settings screen.
+func update_buses() -> void:
+	var index := AudioServer.get_bus_index("SFX")
+	if index >= 0:
+		AudioServer.set_bus_mute(index, not Save.sound_enabled)
+
+
+func _ensure_bus(bus: String) -> void:
+	if AudioServer.get_bus_index(bus) == -1:
+		AudioServer.add_bus()
+		AudioServer.set_bus_name(AudioServer.bus_count - 1, bus)

@@ -163,6 +163,7 @@ func _send_stats(force: bool) -> void:
 	_sync_queued = true
 	var revision := Save.stats_revision
 	var body := Save.stats()
+	body["categories"] = Save.category_payload()
 	_enqueue("sync", HTTPClient.METHOD_POST, "/sync", body, true, _on_sync_finished.bind(revision))
 
 
@@ -183,10 +184,15 @@ func _on_retry_timer_timeout() -> void:
 	_send_stats(false)
 
 
-## Merges the server profile into the save (max per stat). The revision check
-## keeps pending_sync true if a run was recorded while the request was in flight.
+## Merges the server profile into the save (max per stat and per category). The
+## revision check keeps pending_sync true if a run was recorded while the
+## request was in flight.
 func _apply_profile(profile: Dictionary, revision: int = -1) -> void:
-	Save.apply_merged_stats(SyncLogic.merge_stats(Save.stats(), profile))
+	var merged := SyncLogic.merge_stats(Save.stats(), profile)
+	merged["category_bests"] = SyncLogic.merge_category_bests(
+		Save.stats().get("category_bests", {}), profile.get("category_bests", {})
+	)
+	Save.apply_merged_stats(merged)
 	if revision >= 0:
 		Save.mark_synced(revision)
 	if profile.has("username"):
