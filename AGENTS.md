@@ -26,12 +26,13 @@ make backend-test   # pytest (run from repo root; cds into backend/)
 make backend-lint   # ruff check
 make backend-format # ruff format + autofix
 make backend-typecheck # pyright
-make backend-run    # serve API at http://localhost:8000 (needs db: make db-up)
+make backend-run    # serve the API at http://localhost:8000 (needs db: make db-up)
+make site-dev       # run the marketing site dev server on :3000 (pnpm)
 make run            # play the game on this PC (host Godot)
 make run-game       # run straight into the game scene
 ```
 
-After changing game code, run `make lint`, `make check`, and `make test` — formatting is enforced (`gdformat`), so run `make format` if lint complains. After changing backend code, run `make backend-lint`, `make backend-typecheck`, and `make backend-test`. Docs in `docs/` must match the code; update them in the same change when behavior changes.
+After changing game code, run `make lint`, `make check`, and `make test` — formatting is enforced (`gdformat`), so run `make format` if lint complains. After changing backend code, run `make backend-lint`, `make backend-typecheck`, and `make backend-test`. After changing site code, run `make site-lint`, `make site-typecheck`, and `make site-build`. Docs in `docs/` must match the code; update them in the same change when behavior changes.
 
 ## Game architecture — do not break
 

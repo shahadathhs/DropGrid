@@ -15,6 +15,7 @@ shot-out  ?= /tmp/dropgrid-shot.png
 .DEFAULT_GOAL := help
 .PHONY: help android-key setup check-tools backend-env godot-install db-up db-down import check test apk install run-device run run-game lint format shot \
         backend-install backend-run backend-test backend-lint backend-typecheck backend-format backend-migrate backend-migration \
+        site-install site-dev site-build site-lint site-typecheck \
         shell clean
 
 help: ## Show this help
@@ -130,6 +131,23 @@ backend-migration: ## Generate a migration: make backend-migration m="add x"
 	cd $(BACKEND) && uv run alembic upgrade head
 	cd $(BACKEND) && uv run alembic revision --autogenerate -m "$(m)"
 	@echo "If upgrade()/downgrade() are just 'pass', there were no model changes - delete the file."
+
+# ── Site (Next.js marketing page, Vercel) ─────────────────────────────
+
+site-install: ## Install site dependencies (pnpm)
+	cd site && pnpm install
+
+site-dev: ## Run the site dev server on :3000
+	cd site && pnpm dev
+
+site-build: ## Build the site (next build)
+	cd site && pnpm build
+
+site-lint: ## Lint the site (oxlint + eslint + prettier)
+	cd site && pnpm lint
+
+site-typecheck: ## Type-check the site (tsc)
+	cd site && pnpm typecheck
 
 # ── Misc ──────────────────────────────────────────────────────────────
 
