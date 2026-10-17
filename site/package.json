@@ -5,7 +5,9 @@
   "type": "module",
   "packageManager": "pnpm@11.5.3",
   "scripts": {
+    "predev": "node scripts/fetch-playground.mjs",
     "dev": "next dev",
+    "prebuild": "node scripts/fetch-playground.mjs",
     "build": "next build",
     "start": "next start",
     "lint": "oxlint --type-aware src && prettier --check .",

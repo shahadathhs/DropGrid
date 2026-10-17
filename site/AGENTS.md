@@ -34,13 +34,20 @@ view()` or `scroll()`, progress-driven by scroll position, never
   is required for any content or motion. Hover transitions are 150ms or less
   and change only color, border, opacity, or transform. The utilities live in
   `src/app/motion.css`.
+- One user-started interactive island: /play embeds the game's Web export in an
+  iframe that loads only after the visitor presses Play (a plain link inside the
+  iframe's poster). No autoplay, no client JavaScript of ours, and the page is
+  complete without it.
 
 ## Code structure
 
 - One exported React component per file, kebab-case file names.
 - `src/lib/` is small files by concern (`cn`, `tokens`, `links`).
 - No client components unless strictly needed; the page must render with
-  JS disabled.
+  JS disabled. The one interactive island is /play (see Motion above).
+- `public/play/` is the game's Web export, fetched at build time by
+  `scripts/fetch-playground.mjs` (never committed, gitignored). The script never
+  fails the build; `/play` shows an unavailable state when the files are absent.
 
 ## Quality
 

@@ -4,21 +4,24 @@ import { cn } from "@/lib/cn";
  * A device around a screen. The bezel is hardware, not UI, so its corners are
  * exempt from the 4px rule; everything drawn inside the screen uses the cell
  * radius. Flat: one border, no shadow. `size="sm"` is the small-screen variant.
- * The picture is decorative: put the real text in the copy beside it.
+ * The picture is decorative by default: put the real text in the copy beside it.
  */
 export function PhoneFrame({
   children,
   size = "md",
+  decorative = true,
   className,
 }: {
   children: React.ReactNode;
   size?: "md" | "sm";
+  /** False when the screen holds something interactive (the /play iframe). */
+  decorative?: boolean;
   className?: string;
 }) {
   const small = size === "sm";
   return (
     <div
-      aria-hidden
+      aria-hidden={decorative ? true : undefined}
       className={cn(
         "relative w-full border border-line-strong bg-surface-3",
         small

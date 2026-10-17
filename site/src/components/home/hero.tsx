@@ -28,6 +28,9 @@ export function Hero() {
           <Link href="/how-to-play" className="link-quiet py-2 text-sm">
             How to play
           </Link>
+          <Link href="/play" className="link-quiet py-2 text-sm">
+            Play in your browser
+          </Link>
         </div>
       </div>
       <div className="flex justify-center lg:w-[22rem] lg:justify-end">

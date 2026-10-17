@@ -2,6 +2,7 @@
 export const navLinks = [
   { href: "/modes", label: "Modes" },
   { href: "/how-to-play", label: "How to play" },
+  { href: "/play", label: "Play" },
   { href: "/leaderboard", label: "Leaderboard" },
   { href: "/download", label: "Download" },
 ] as const;
@@ -11,6 +12,7 @@ export const sitemapRoutes = [
   "/",
   "/modes",
   "/how-to-play",
+  "/play",
   "/leaderboard",
   "/download",
   "/privacy",
