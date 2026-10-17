@@ -44,7 +44,10 @@ curl -i -X DELETE $BASE/v1/players/me -H "authorization: Bearer $TOKEN"   # 204
 curl -s $BASE/v1/leaderboard          # gone again
 ```
 
-Also open `$BASE/privacy` and `$BASE/account/delete` in a browser. These two URLs are the ones to enter in the Google Play Console (privacy policy and account deletion links).
+Also open [$BASE/privacy](https://playdropgrid.vercel.app/privacy) (the site hosts the
+privacy policy) and `$BASE/account/delete` (the API hosts account deletion) in a
+browser. These two URLs are the ones to enter in the Google Play Console — privacy
+policy and account deletion links.
 
 ## 4. Point the game at it
 

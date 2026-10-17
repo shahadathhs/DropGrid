@@ -2,25 +2,34 @@
 
 One workflow: `.github/workflows/ci.yml`. Pull requests and pushes run the quality gates; pushes to `main` and `v*` tags continue through deploy, packaging, and release — all visible as check status on the commit.
 
-| Job | Runs for | What it does |
-|---|---|---|
-| `game-tests` | every push and PR | `make lint`, `make check`, `make test` (headless Godot in Docker) |
-| `backend-tests` | every push and PR | ruff, pyright, pytest in `backend/` |
-| `deploy-render` | `main`, tags | POSTs the Render deploy hook, then polls the Render API until the deploy is live (fails the run otherwise) |
-| `apk` | `main`, tags | Version + server-URL injection, `make apk`, uploads the `dropgrid-apk` artifact (30 days) |
-| `release` | `main`, tags | `main`: refreshes the rolling **Latest build** release. Tags: official `DropGrid vX.Y.Z` release with generated notes |
+| Job             | Runs for          | What it does                                                                                                                        |
+| --------------- | ----------------- | ----------------------------------------------------------------------------------------------------------------------------------- |
+| `game-tests`    | every push and PR | `make lint`, `make check`, `make test` (headless Godot in Docker)                                                                   |
+| `backend-tests` | every push and PR | ruff, pyright, pytest in `backend/`                                                                                                 |
+| `site`          | every push and PR | site lint (oxlint + prettier), tsc, `next build`                                                                                    |
+| `deploy-render` | `main`            | POSTs the Render deploy hook, then polls the Render API until the deploy is live (fails the run otherwise)                          |
+| `apk`           | `main`            | Version + server-URL injection, `make apk`, uploads the `dropgrid-apk` artifact (30 days)                                           |
+| `release`       | `main`            | Refreshes the rolling **Latest build**; if the `VERSION` file names a version without a release, also publishes **DropGrid vX.Y.Z** |
 
-So a normal push to `main` does: gates → backend deploy → APK → new *Latest build*. A tagged push (`v0.2.0`) does: gates → APK → official release. Dependabot opens weekly PRs for GitHub Actions updates (grouped) and backend dependency bumps.
+So a normal push to `main` does: gates → backend deploy → APK → new rolling _Latest build_. A version bump does all of that plus the versioned release.
+
+## Cutting a versioned release
+
+```sh
+make release v=0.2.0   # writes VERSION, updates export_presets, commits, pushes
+```
+
+Merge to `main` (or push the commit there) and the pipeline publishes
+**DropGrid v0.2.0** with `dropgrid-0.2.0.apk`, marked as the latest release.
+Rolling dev builds keep flowing and never take the latest flag. Releases are
+idempotent: a version is published once, when `VERSION` names a version that has
+no release yet.
 
 ## Downloading the APK
 
-1. **Latest build** (main): [releases/latest](https://github.com/shahadathhs/DropGrid/releases/latest) — always the newest APK. Also linked from the README.
-2. **Run artifact**: GitHub > **Actions** > the run > **Artifacts** > `dropgrid-apk` (a zip with the APK in it).
-3. **Versioned release**: tag and push, and the APK lands on a stable release page:
-
-```sh
-git tag v0.2.0 && git push origin v0.2.0
-```
+1. **Versioned release**: [releases/latest](https://github.com/shahadathhs/DropGrid/releases/latest) — the newest `vX.Y.Z`.
+2. **Rolling dev build**: [releases/tag/latest](https://github.com/shahadathhs/DropGrid/releases/tag/latest) — automatic build of `main`.
+3. **Run artifact**: GitHub > **Actions** > the run > **Artifacts** > `dropgrid-apk` (a zip with the APK in it).
 
 To install: copy it to the phone and open it (allow "install unknown apps" once), or `adb install -r dropgrid-*.apk`.
 
@@ -67,6 +76,7 @@ gh secret set RENDER_API_KEY           # Render > Account Settings > API Keys
 ```sh
 make lint check test apk    # writes game/build/dropgrid-debug.apk
 ```
+
 To sign locally with the same key CI uses, export `ANDROID_DEBUG_KEYSTORE_BASE64` first (the value from `make android-key`). Locally the key lives in a Docker volume, so the first build creates it and later builds reuse it.
 
 ## Known limits

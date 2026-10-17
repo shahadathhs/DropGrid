@@ -23,6 +23,7 @@
   --accent-soft: #2a2724;
   --accent-ink: #161513;
   --signal: #ff5a36; /* one signal color: destructive actions, errors */
+  --board-cell: #262320; /* empty board tiles (palette.gd BOARD_CELL) */
 
   /* Piece colors, brightness-spaced for grayscale legibility (index 1..7). */
   --piece-i: #96dce6;
@@ -49,6 +50,7 @@
   --accent-soft: #ddd7ca;
   --accent-ink: #efebe2;
   --signal: #d63a18;
+  --board-cell: #e3ded2;
 
   --piece-i: #60cada;
   --piece-o: #eec82f;
@@ -74,6 +76,7 @@
   --color-accent-soft: var(--accent-soft);
   --color-accent-ink: var(--accent-ink);
   --color-signal: var(--signal);
+  --color-board-cell: var(--board-cell);
   --color-piece-i: var(--piece-i);
   --color-piece-o: var(--piece-o);
   --color-piece-t: var(--piece-t);
