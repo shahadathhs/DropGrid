@@ -8,6 +8,10 @@ DropGrid: a portrait falling-block puzzle game for Android, built with **Godot 4
 
 Read `docs/README_PROJECT_OVERVIEW.md` for scope. Do not add features from its "not included" list, and do not change gameplay for visual reasons. Never claim you ran Godot, exported an APK, or tested on a phone unless you actually did.
 
+## Branching
+
+All changes go through **`dev`** → pull request → merge into `main`. Merges to `main` trigger the CI/CD pipeline (Render deploy, APK, rolling `latest` release); `v*` tags produce versioned releases. Keep `dev` fast-forwarded to `main` after each merge.
+
 ## Commands
 
 The `Makefile` is the command surface. Headless Godot runs in Docker (`make` wraps `docker compose run`); the backend uses [uv](https://docs.astral.sh/uv/).

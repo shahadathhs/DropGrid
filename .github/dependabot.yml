@@ -1,0 +1,18 @@
+# Dependency updates. Action bumps are grouped into one PR per week.
+# Backend deps: the `pip` ecosystem reads backend/pyproject.toml; Dependabot
+# does not resolve backend/uv.lock, so after merging its PR run `uv lock`
+# locally and commit the lockfile (CI fails on `uv sync --frozen` otherwise).
+version: 2
+updates:
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+    groups:
+      actions:
+        patterns:
+          - "*"
+  - package-ecosystem: pip
+    directory: /backend
+    schedule:
+      interval: weekly
