@@ -7,10 +7,10 @@ services:
     runtime: docker
     dockerfilePath: ./backend/Dockerfile
     dockerContext: ./backend
-    # Migrations run on every start. That is safe with one instance (alembic upgrade head
-    # does nothing when the database is current) and works on the free plan, which has
-    # no pre-deploy command. Render sets $PORT.
-    dockerCommand: sh -c "alembic upgrade head && exec uvicorn main:app --host 0.0.0.0 --port $PORT --proxy-headers --forwarded-allow-ips='*'"
+    # The image's start script (backend/start.sh, the Dockerfile CMD) applies
+    # migrations on every boot. That is safe with one instance (alembic upgrade
+    # head is a no-op when the database is current) and works on the free plan,
+    # which has no pre-deploy command. Render sets $PORT; no dockerCommand needed.
     # Keep this at one instance. Rate limits live in process memory, so a second instance
     # would double the limits and split their counters. Do not scale out without moving the
     # limiter to a shared store.

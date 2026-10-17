@@ -18,14 +18,18 @@ RUN uv sync --frozen --no-install-project --no-dev
 
 COPY . .
 
+# start.sh must be executable regardless of local file modes.
+RUN chmod +x start.sh
+
 # Run as an unprivileged user.
 RUN useradd --system --no-create-home --uid 10001 app
 USER app
 
 ENV PORT=8000
 EXPOSE 8000
-# Shell form so ${PORT} is expanded; exec keeps uvicorn as PID 1 for clean signals.
-# --proxy-headers: behind the host's proxy the real client IP (used by the rate limiter)
-# arrives in X-Forwarded-For. Trusting "*" is safe only because the app is reachable
-# solely through that proxy.
-CMD exec uvicorn main:app --host 0.0.0.0 --port "${PORT}" --proxy-headers --forwarded-allow-ips='*'
+# start.sh applies migrations before serving (safe with one instance: alembic
+# upgrade head is a no-op when the database is current). It is exec'd so uvicorn
+# is PID 1 and gets clean signals. --proxy-headers: behind the host's proxy the
+# real client IP (used by the rate limiter) arrives in X-Forwarded-For, and
+# trusting "*" is safe only because the app is reachable solely through that proxy.
+CMD ["./start.sh"]
