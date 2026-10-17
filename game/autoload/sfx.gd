@@ -16,7 +16,9 @@ var _next_player := 0
 
 
 func _ready() -> void:
-	_ensure_bus("SFX")
+	# The SFX bus comes from res://default_bus_layout.tres. It must not be created in
+	# code: on the web, buses added at runtime are mismatched in the browser's audio
+	# graph and a mute on one lands on the master bus, silencing everything.
 	# A small pool so overlapping sounds (e.g. two quick moves) don't cut off.
 	for i in 4:
 		var player := AudioStreamPlayer.new()
@@ -42,9 +44,3 @@ func update_buses() -> void:
 	var index := AudioServer.get_bus_index("SFX")
 	if index >= 0:
 		AudioServer.set_bus_mute(index, not Save.sound_enabled)
-
-
-func _ensure_bus(bus: String) -> void:
-	if AudioServer.get_bus_index(bus) == -1:
-		AudioServer.add_bus()
-		AudioServer.set_bus_name(AudioServer.bus_count - 1, bus)

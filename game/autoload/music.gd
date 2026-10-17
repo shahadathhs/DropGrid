@@ -13,7 +13,8 @@ var _current := ""
 
 
 func _ready() -> void:
-	_ensure_bus("Music")
+	# The Music bus comes from res://default_bus_layout.tres (see sfx.gd for why it is
+	# never created in code).
 	_player = AudioStreamPlayer.new()
 	_player.bus = "Music"
 	add_child(_player)
@@ -60,9 +61,3 @@ func _sync_player() -> void:
 	stream.loop_end = stream.data.size() / 2  # frames: 16-bit mono, 2 bytes per frame
 	_player.stream = stream
 	_player.play()
-
-
-func _ensure_bus(bus: String) -> void:
-	if AudioServer.get_bus_index(bus) == -1:
-		AudioServer.add_bus()
-		AudioServer.set_bus_name(AudioServer.bus_count - 1, bus)
