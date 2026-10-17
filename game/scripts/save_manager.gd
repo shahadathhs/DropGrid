@@ -4,17 +4,30 @@ extends RefCounted
 ## A small autoload (Save.gd) wraps this with a single shared instance; see autoload below.
 
 const SAVE_PATH := "user://save.json"
-## Version 2 added total_lines, games_played, pending_sync, and haptics. Version 1 files still load.
-const CURRENT_VERSION := 2
+## Version 3 added per-mode settings (music, ground, ghost, left-handed, large
+## buttons) and per-category bests. Versions 1 and 2 still load with defaults.
+const CURRENT_VERSION := 3
+
+## Score categories (see GameMode): marathon, sprint, ultra, daily. Zen keeps no best.
+const SCORE_CATEGORIES: Array[String] = ["marathon", "sprint", "ultra", "daily"]
 
 ## Where this instance reads and writes. Tests point it at a temp file.
 var save_path := SAVE_PATH
 
 var best_score := 0
 var sound_enabled := true
+var music_enabled := false  # off by default: the loops are there if you want them
+var ground_light := false
+var ghost_enabled := true
+var left_handed := false
+var large_buttons := false
 var haptics := true
 var total_lines := 0
 var games_played := 0
+## Per category bests, e.g. category_bests["marathon"] = {"score": 120, "lines": 4}.
+## Sprint stores duration_ms instead of a score (lower is better); daily adds
+## the UTC "date" the best was set on.
+var category_bests := {}
 ## True when local stats changed since the last successful sync.
 var pending_sync := false
 ## Goes up on every recorded run (not saved). A sync remembers the revision it sent,
@@ -48,7 +61,18 @@ func load_data() -> void:
 func apply_data(data: Dictionary) -> void:
 	best_score = int(data.get("best_score", 0))
 	sound_enabled = bool(data.get("sound_enabled", true))
+	music_enabled = bool(data.get("music_enabled", false))
+	ground_light = bool(data.get("ground_light", false))
+	ghost_enabled = bool(data.get("ghost_enabled", true))
+	left_handed = bool(data.get("left_handed", false))
+	large_buttons = bool(data.get("large_buttons", false))
 	haptics = bool(data.get("haptics", true))
+	category_bests = {}
+	var stored_bests: Variant = data.get("category_bests", {})
+	if typeof(stored_bests) == TYPE_DICTIONARY:
+		for key in stored_bests:
+			if key in SCORE_CATEGORIES and typeof(stored_bests[key]) == TYPE_DICTIONARY:
+				category_bests[key] = stored_bests[key]
 	total_lines = int(data.get("total_lines", 0))
 	games_played = int(data.get("games_played", 0))
 	pending_sync = bool(data.get("pending_sync", false))
@@ -59,10 +83,16 @@ func to_dictionary() -> Dictionary:
 		"version": CURRENT_VERSION,
 		"best_score": best_score,
 		"sound_enabled": sound_enabled,
+		"music_enabled": music_enabled,
+		"ground_light": ground_light,
+		"ghost_enabled": ghost_enabled,
+		"left_handed": left_handed,
+		"large_buttons": large_buttons,
 		"haptics": haptics,
 		"total_lines": total_lines,
 		"games_played": games_played,
 		"pending_sync": pending_sync,
+		"category_bests": category_bests,
 	}
 
 
@@ -96,7 +126,24 @@ func stats() -> Dictionary:
 		"best_score": best_score,
 		"total_lines": total_lines,
 		"games_played": games_played,
+		"category_bests": category_bests,
 	}
+
+
+## The sync payload's category entries: every best except marathon, whose best
+## travels as best_score on the player row.
+func category_payload() -> Array:
+	var entries: Array = []
+	for category in SCORE_CATEGORIES:
+		if category == "marathon":
+			continue
+		var best: Dictionary = counting_best(category)
+		if best.is_empty():
+			continue
+		var entry := best.duplicate()
+		entry["category"] = category
+		entries.append(entry)
+	return entries
 
 
 ## Writes merged stats (see SyncLogic.merge_stats) back into the save.
@@ -104,6 +151,13 @@ func apply_merged_stats(merged: Dictionary) -> void:
 	best_score = int(merged.get("best_score", best_score))
 	total_lines = int(merged.get("total_lines", total_lines))
 	games_played = int(merged.get("games_played", games_played))
+	if merged.has("category_bests"):
+		category_bests = {}
+		var server_bests: Variant = merged.get("category_bests", {})
+		if typeof(server_bests) == TYPE_DICTIONARY:
+			for key in server_bests:
+				if key in SCORE_CATEGORIES and typeof(server_bests[key]) == TYPE_DICTIONARY:
+					category_bests[key] = server_bests[key]
 	save_data()
 
 
@@ -122,3 +176,63 @@ func set_sound_enabled(enabled: bool) -> void:
 func set_haptics(enabled: bool) -> void:
 	haptics = enabled
 	save_data()
+
+
+func set_music_enabled(enabled: bool) -> void:
+	music_enabled = enabled
+	save_data()
+
+
+func set_ground_light(light: bool) -> void:
+	ground_light = light
+	save_data()
+
+
+func set_ghost_enabled(enabled: bool) -> void:
+	ghost_enabled = enabled
+	save_data()
+
+
+func set_left_handed(left: bool) -> void:
+	left_handed = left
+	save_data()
+
+
+func set_large_buttons(large: bool) -> void:
+	large_buttons = large
+	save_data()
+
+
+## Records a category best. Score categories compare score (higher wins);
+## sprint compares duration_ms (lower wins); daily only competes within its
+## UTC date. Returns true when the local best improved.
+func record_category_run(category: String, payload: Dictionary) -> bool:
+	if not category in SCORE_CATEGORIES:
+		return false
+	var current: Dictionary = category_bests.get(category, {})
+	if category == "daily":
+		var today: String = GameMode.daily_date()
+		if str(current.get("date", "")) != today:
+			current = {}
+		payload["date"] = today
+	var improved := false
+	if category == "sprint":
+		var duration := int(payload.get("duration_ms", 0))
+		if duration <= 0 or current.is_empty() or duration < int(current.get("duration_ms", 0)):
+			improved = true
+	else:
+		var score := int(payload.get("score", 0))
+		if current.is_empty() or score > int(current.get("score", 0)):
+			improved = true
+	if improved:
+		category_bests[category] = payload
+		save_data()
+	return improved
+
+
+## The best that still counts today (an expired daily best returns empty).
+func counting_best(category: String) -> Dictionary:
+	var best: Dictionary = category_bests.get(category, {})
+	if category == "daily" and str(best.get("date", "")) != GameMode.daily_date():
+		return {}
+	return best

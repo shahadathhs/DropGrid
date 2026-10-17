@@ -19,6 +19,16 @@ func next_piece() -> int:
 	return _queue.pop_back()
 
 
+## Look at the next `count` pieces without consuming them.
+func peek(count: int) -> Array[int]:
+	var out: Array[int] = []
+	while out.size() < count:
+		if _queue.is_empty():
+			_refill()
+		out.append(_queue[_queue.size() - 1 - out.size()])
+	return out
+
+
 func _refill() -> void:
 	for type in PieceData.TYPE_COUNT:
 		_queue.append(type)

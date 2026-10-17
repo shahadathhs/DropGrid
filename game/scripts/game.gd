@@ -3,16 +3,23 @@ extends Control
 ## signals to the board view, HUD, touch controls, and overlays.
 
 const MENU_SCENE := "res://scenes/main_menu.tscn"
+const MODE_PICKER_SCENE := "res://scenes/mode_picker.tscn"
 const LEVELS_SCENE := "res://scenes/levels.tscn"
 ## Haptics only run on phones; desktop and web builds never vibrate.
 const HAPTIC_OS_NAMES: Array[String] = ["Android", "iOS"]
-const HAPTIC_DURATION_MS := 20
+## Per-event vibration lengths: a lock tick, a clear thud, a tetris rumble.
+const HAPTIC_LOCK_MS := 10
+const HAPTIC_CLEAR_MS := 25
+const HAPTIC_TETRIS_MS := 45
+const HAPTIC_END_MS := 60
 ## Design margin at the top and bottom of the screen, in design units.
 const EDGE_MARGIN := 24
 ## Extra room kept between the controls and a system bar.
 const SAFE_AREA_PADDING := 12
 
 var game: GameController
+## Mode of this run; Play again repeats it.
+var _mode := GameMode.new()
 ## Start level of this run; Play again repeats it.
 var _start_level := 1
 var _window_had_focus := false
@@ -28,7 +35,9 @@ var _window_had_focus := false
 
 func _ready() -> void:
 	_apply_safe_area()
+	_mode = PendingMode.take()
 	_start_level = StartLevel.take()
+	Music.play("zen" if _mode.is_zen() else "gameplay")
 	_start_new_game()
 
 	_pause_button.pressed.connect(func(): game.set_paused(true))
@@ -86,17 +95,43 @@ func _on_pause_changed(is_paused: bool) -> void:
 	_pause_button.disabled = is_paused
 
 
-func _on_lines_cleared(_rows: Array[int], _points: int) -> void:
+func _on_lines_cleared(rows: Array[int], _points: int) -> void:
 	Sfx.play("line_clear")
-	_buzz()
+	_buzz(HAPTIC_TETRIS_MS if rows.size() >= 4 else HAPTIC_CLEAR_MS)
 
 
 func _on_game_over(final_score: int) -> void:
+	Music.stop()
 	Sfx.play("game_over")
-	_buzz()
+	_buzz(HAPTIC_END_MS)
+	_record_and_show(final_score, false)
+
+
+## Sprint: the goal was reached. Same results screen, different headline.
+func _on_run_finished(final_score: int) -> void:
+	Music.stop()
+	Sfx.play("finish")
+	_buzz(HAPTIC_END_MS)
+	_record_and_show(final_score, true)
+
+
+## Records the finished run (global best + this mode's category best), pushes
+## the stats, and shows the results screen.
+func _record_and_show(final_score: int, goal_reached: bool) -> void:
 	var improved := Save.record_run(final_score, game.lines)
-	Sync.push_stats()  # no-op for guests; never blocks the game over screen
-	_game_over_overlay.show_results(final_score, Save.best_score, improved, game.lines, game.level)
+	var payload := {"score": final_score, "lines": game.lines}
+	if _mode.id() == "sprint":
+		payload["duration_ms"] = game.elapsed_ms
+	Save.record_category_run(_mode.id(), payload)
+	Sync.push_stats()  # no-op for guests; never blocks the results screen
+	_game_over_overlay.show_results(
+		final_score,
+		Save.best_score,
+		improved,
+		game.lines,
+		game.level,
+		"FINISHED" if goal_reached else "GAME OVER"
+	)
 	_game_over_overlay.show()
 	_pause_button.disabled = true
 
@@ -112,23 +147,30 @@ func _restart() -> void:
 	_pause_overlay.hide()
 	_game_over_overlay.hide()
 	_pause_button.disabled = false
+	Music.play("zen" if _mode.is_zen() else "gameplay")
 	_start_new_game()
 
 
 func _start_new_game() -> void:
-	game = GameController.new(-1, _start_level)
+	game = GameController.new(-1, _start_level, _mode)
 	_board_view.setup(game)
 	_hud.setup(game)
 	_touch_controls.setup(game)
-	game.piece_locked.connect(func(_cells): Sfx.play("lock"))
+	game.piece_locked.connect(
+		func(_cells):
+			Sfx.play("lock")
+			_buzz(HAPTIC_LOCK_MS)
+	)
 	game.piece_moved.connect(func(): Sfx.play("move"))
 	game.piece_rotated.connect(func(): Sfx.play("rotate"))
 	game.lines_cleared.connect(_on_lines_cleared)
 	game.game_over.connect(_on_game_over)
+	game.run_finished.connect(_on_run_finished)
 	game.pause_changed.connect(_on_pause_changed)
 
 
 func _go_to_menu() -> void:
+	Music.stop()
 	get_tree().change_scene_to_file(MENU_SCENE)
 
 
@@ -137,9 +179,9 @@ func _go_to_levels() -> void:
 
 
 ## Short vibration on line clears and game over, when the Haptics setting is on.
-func _buzz() -> void:
+func _buzz(duration_ms: int = HAPTIC_LOCK_MS) -> void:
 	if should_vibrate(Save.haptics, OS.get_name()):
-		Input.vibrate_handheld(HAPTIC_DURATION_MS)
+		Input.vibrate_handheld(duration_ms)
 
 
 ## Pure check so tests can cover the platform rule without a device.

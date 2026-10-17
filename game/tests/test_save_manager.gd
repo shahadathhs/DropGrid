@@ -38,12 +38,12 @@ func test_v1_save_loads_and_new_fields_default_to_zero() -> void:
 	assert_false(_manager.pending_sync)
 
 
-func test_saving_a_v1_file_writes_version_2() -> void:
+func test_saving_an_old_file_writes_the_current_version() -> void:
 	_write_text('{"version": 1, "best_score": 300}')
 	_manager.load_data()
 	_manager.save_data()
 	var parsed: Dictionary = JSON.parse_string(FileAccess.get_file_as_string(TEST_PATH))
-	assert_eq(int(parsed["version"]), 2)
+	assert_eq(int(parsed["version"]), SaveManager.CURRENT_VERSION)
 	assert_eq(int(parsed["best_score"]), 300)
 	assert_eq(int(parsed["games_played"]), 0)
 

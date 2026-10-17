@@ -40,6 +40,7 @@ MVP1 is the first public Google Play release. It contains:
 4. **The visual redesign** to the Cell Unit design system, described in [README_VISUAL_DESIGN.md](README_VISUAL_DESIGN.md).
 
 Included in the core game:
+
 - Main menu.
 - Playable game screen.
 - Falling pieces, movement, rotation, collision, locking, and line clearing.
@@ -51,19 +52,23 @@ Included in the core game:
 - Sound effects and haptics, each with an on/off setting.
 
 **Principles for accounts and sync:**
+
 - Guest play is a complete, first-class experience with zero network calls.
 - Local save stays the source of truth for gameplay; sync never blocks or breaks a session.
 - A build with no server URL set hides every online feature and makes no requests.
 - No ads, analytics, or third-party SDKs.
 - There is no password reset in MVP1. Losing an account loses only the synced copy; local stats stay.
 
-**Not in MVP1 / excluded:** hold piece, timers or other game modes, multiplayer and other social features, ads, in-app purchases, daily missions, achievements, skins or themes, battle pass, password reset, passwordless/OTP sign-in, XP/seasons/rating systems, real anti-cheat.
+**Scope update (2026-10-17):** hold piece, game modes, timers, and the daily seeded challenge are **now included** — the original exclusions below were amended when the mode system shipped. Still **not included:** multiplayer and other social features, ads, in-app purchases, daily missions, achievements, skins or themes beyond the two built-in grounds, battle pass, password reset, passwordless/OTP sign-in, XP/seasons/rating systems, real anti-cheat.
+
+**Included by amendment:** hold piece; a 3-piece next queue; lock delay with move resets; combo and back-to-back scoring; five modes — Marathon, Sprint (40 lines), Ultra (2 minutes), Daily (one shared UTC-seeded run), Zen (no game over); per-category leaderboards (sprint ranks by time, daily resets every UTC day, Zen earns nothing); a stats screen; music and an expanded settings set (ground, ghost piece, left-handed, large buttons).
 
 The path to release is in [README_IMPLEMENTATION_PLAN.md](README_IMPLEMENTATION_PLAN.md). Backend deployment is described in [DEPLOY.md](DEPLOY.md).
 
 ## 5. Definition of done
 
 MVP1 is ready for release when:
+
 - A complete game can be played from menu to game over and restarted.
 - Pieces cannot move or rotate through occupied cells or board boundaries.
 - Line clearing and score updates work consistently.

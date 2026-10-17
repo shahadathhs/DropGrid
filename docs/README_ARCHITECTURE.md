@@ -68,7 +68,7 @@ backend/
 ├── modules/
 │   ├── auth/               # register, login, refresh
 │   ├── players/            # profile, rename, delete
-│   ├── scores/             # POST /v1/sync, GET /v1/leaderboard
+│   ├── scores/             # POST /v1/sync, GET /v1/leaderboard (+ per category and rank)
 │   └── web/                # /privacy and /account/delete HTML pages
 ├── migrations/             # Alembic
 ├── tests/                  # pytest
@@ -82,6 +82,7 @@ Do not create empty scripts or scenes just to fill the tree.
 ## Autoloads
 
 There are four, set in `game/project.godot`:
+
 - `Save`: wraps one `SaveManager` so every screen shares the same local data.
 - `Sfx`: plays sound effects.
 - `Sync`: accounts, tokens, outbox, HTTP. The only networking code in the client.
@@ -90,21 +91,25 @@ There are four, set in `game/project.godot`:
 ## 3. Responsibilities
 
 ### `main_menu.tscn`
+
 - Displays title, best score, Play, the start-level entry, settings, and (only when online features are on) account, leaderboard, and Continue as guest.
 - Play starts the game at level 1. The levels entry opens the start-level picker.
 - Does not contain board rules.
 
 ### `game.tscn`
+
 - Contains the board view, HUD, touch controls, and pause/game-over overlays.
 - Connects gameplay events to UI updates.
 - Should not duplicate board collision or line-clearing rules.
 
 ### `game_controller.gd`
+
 - Owns the game flow and active piece.
 - Coordinates piece spawning, fall timer, movement requests, locking, line clears, scoring, levels, pause, and game-over.
 - Communicates state changes to the HUD via signals or clear method calls.
 
 ### `board_model.gd`
+
 - Owns the logical grid and occupied cells.
 - Checks whether a piece placement is valid.
 - Locks pieces into the grid.
@@ -112,35 +117,42 @@ There are four, set in `game/project.godot`:
 - Does not depend on screen coordinates or UI nodes.
 
 ### `piece_data.gd` / `piece_bag.gd`
+
 - Represents piece cell offsets, rotation state, and type.
 - Keeps shape data separate from visual nodes.
 - Use a simple representation that is easy to inspect and debug.
 
 ### `board_view.gd`
+
 - Draws the grid, locked cells, ghost preview, and the active piece.
 - Converts logical grid positions into screen positions.
 - Does not decide whether a move is legal.
 
 ### `levels_screen.gd` / `start_level.gd`
+
 - The levels screen lists levels 1 to 10 and locks those above the player's lifetime lines (level N needs 10 × (N − 1)).
 - A press stores the choice in `StartLevel` and opens the game. `game.gd` reads it once with `StartLevel.take()`; afterwards it is back to 1.
 - `GameController` takes the start level and uses `level_for_run(start, lines_this_game)` = `max(start, lines / 10 + 1)`. Restart reuses the run's start level.
 
 ### `touch_controls.gd`
+
 - Converts UI button presses into gameplay actions.
 - Does not directly edit board state.
 - Optional keyboard input may route through the same action methods.
 
 ### `hud_controller.gd`
+
 - Updates score, level, lines, and best score.
 - Shows pause and game-over overlays.
 - Should not calculate scoring independently.
 
 ### `save_manager.gd`
+
 - Loads and saves best score and settings in local user data.
 - Handles missing/corrupt data gracefully.
 
 ### `sync` autoload
+
 - Owns login state, JWT access/refresh tokens, and all HTTP calls.
 - Pushes local stats to `POST /v1/sync` and writes the merged result back to the save.
 - Queues and retries requests with backoff; failures never block or break gameplay.
@@ -148,6 +160,7 @@ There are four, set in `game/project.godot`:
 - Reads the server URL from the project setting `dropgrid/network/api_base_url` (see section 9). An empty URL means online features are off and no request is made.
 
 ### `backend/` FastAPI service
+
 - Exposes `/v1` routes for auth, profile, stats sync, and leaderboard, plus two public web pages.
 - Owns the server-side merge rule (`max` per stat) and the players table.
 - Game rules and scoring stay in the client; the server stores, it does not simulate.
@@ -157,6 +170,7 @@ There are four, set in `game/project.godot`:
 Prefer explicit signals or clear method calls over tight coupling and searching the scene tree for nodes at runtime.
 
 Examples of useful events:
+
 - `score_changed(score)`
 - `lines_changed(total_lines)`
 - `level_changed(level)`
@@ -181,6 +195,7 @@ Autoloads are kept to the four listed above. Do not add another without a concre
 For a small grid, use a straightforward 2D rendering approach. Possible options include a `TileMapLayer`, individual `ColorRect`/`Control` cells, or custom drawing. Pick the approach that best fits a polished responsive UI and the selected Godot version. Do not combine several rendering systems without a clear benefit.
 
 Separate:
+
 - **Model:** board occupancy and rules.
 - **Controller:** current game state and transitions.
 - **View:** rendering and animation.
@@ -189,6 +204,7 @@ Separate:
 ## 7. State management
 
 Use a small explicit state model, for example:
+
 - `MENU`
 - `PLAYING`
 - `PAUSED`
@@ -213,18 +229,18 @@ Make transitions intentional. A paused or game-over game must not continue advan
 
 **API (all routes under `/v1`, JSON, proper status codes):**
 
-| Method | Path | Auth | Purpose |
-|---|---|---|---|
-| POST | `/v1/auth/register` | — | Email + password + username (3–20 chars, blocklist applies) → account + tokens |
-| POST | `/v1/auth/login` | — | Email + password → tokens |
-| POST | `/v1/auth/refresh` | refresh | New access token |
-| GET | `/v1/players/me` | access | Profile: username + synced stats |
-| PATCH | `/v1/players/me` | access | Rename (unique, 3–20 chars, blocklist applies) |
-| POST | `/v1/sync` | access | Push local stats, server merges, returns merged profile |
-| GET | `/v1/leaderboard` | — | Top 50 by best score: rank, username, best_score |
-| DELETE | `/v1/players/me` | access | Hard-delete account and data (store compliance) |
-| GET | `/privacy` | — | Privacy policy page (HTML, outside `/v1`) |
-| GET, POST | `/account/delete` | — (form signs in) | Web form: email + password, then hard-delete (Google Play requirement; outside `/v1`) |
+| Method    | Path                | Auth              | Purpose                                                                               |
+| --------- | ------------------- | ----------------- | ------------------------------------------------------------------------------------- |
+| POST      | `/v1/auth/register` | —                 | Email + password + username (3–20 chars, blocklist applies) → account + tokens        |
+| POST      | `/v1/auth/login`    | —                 | Email + password → tokens                                                             |
+| POST      | `/v1/auth/refresh`  | refresh           | New access token                                                                      |
+| GET       | `/v1/players/me`    | access            | Profile: username + synced stats                                                      |
+| PATCH     | `/v1/players/me`    | access            | Rename (unique, 3–20 chars, blocklist applies)                                        |
+| POST      | `/v1/sync`          | access            | Push local stats, server merges, returns merged profile                               |
+| GET       | `/v1/leaderboard`   | —                 | Top 50 by best score: rank, username, best_score                                      |
+| DELETE    | `/v1/players/me`    | access            | Hard-delete account and data (store compliance)                                       |
+| GET       | `/privacy`          | —                 | Privacy policy page (HTML, outside `/v1`)                                             |
+| GET, POST | `/account/delete`   | — (form signs in) | Web form: email + password, then hard-delete (Google Play requirement; outside `/v1`) |
 
 **Data model:** one `players` table — `id` (UUID), `email` and `username` (both unique, case-insensitive), `password_hash`, `best_score`, `total_lines`, `games_played`, timestamps. Leaderboard is a query with an index on `best_score`; score history and rating tables come later and are not precluded.
 

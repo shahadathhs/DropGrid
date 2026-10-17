@@ -20,6 +20,37 @@ static func merge_stats(local: Dictionary, server: Dictionary) -> Dictionary:
 	return merged
 
 
+## Merges the server's per-category bests into the local ones. Score categories
+## take the higher score, sprint the lower duration; a daily best competes only
+## within its own UTC date (the newer date wins outright).
+static func merge_category_bests(local: Dictionary, server: Dictionary) -> Dictionary:
+	var merged := local.duplicate(true)
+	for category in server:
+		if not category in SaveManager.SCORE_CATEGORIES:
+			continue
+		if typeof(server[category]) != TYPE_DICTIONARY:
+			continue
+		var incoming: Dictionary = server[category]
+		var current: Dictionary = merged.get(category, {})
+		if current.is_empty():
+			merged[category] = incoming
+			continue
+		if category == "daily":
+			if str(incoming.get("date", "")) > str(current.get("date", "")):
+				merged[category] = incoming
+			elif str(incoming.get("date", "")) == str(current.get("date", "")):
+				if int(incoming.get("score", 0)) > int(current.get("score", 0)):
+					merged[category] = incoming
+			continue
+		if category == "sprint":
+			if int(incoming.get("duration_ms", 1 << 30)) < int(current.get("duration_ms", 1 << 30)):
+				merged[category] = incoming
+			continue
+		if int(incoming.get("score", 0)) > int(current.get("score", 0)):
+			merged[category] = incoming
+	return merged
+
+
 ## Seconds to wait after the nth failure in a row: 5, 10, 20, ... capped at 300.
 static func backoff_delay(failures: int) -> float:
 	if failures <= 0:

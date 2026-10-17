@@ -58,9 +58,9 @@ def test_sync_requires_auth(client: TestClient) -> None:
 
 def test_sync_plausibility_boundary(client: TestClient) -> None:
     tokens = register(client, "plaus@example.com", "plaus_user")
-    # 25 lines: 200 * 25 * (10 + 2) = 60000
-    assert _sync(client, tokens, 60_000, 25, 5).status_code == 200
-    over = _sync(client, tokens, 60_001, 25, 5)
+    # 25 lines: (300 * 25 + 25 * 25^2) * (10 + 2) = 277,500
+    assert _sync(client, tokens, 277_500, 25, 5).status_code == 200
+    over = _sync(client, tokens, 277_501, 25, 5)
     assert over.status_code == 422
     assert "detail" in over.json()
 

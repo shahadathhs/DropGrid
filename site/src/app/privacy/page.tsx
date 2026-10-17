@@ -1,8 +1,9 @@
 import type { Metadata } from "next";
-import { Wordmark } from "@/components/wordmark";
+import { PageShell } from "@/components/page-shell";
+import { contactEmail } from "@/lib/links";
 
 export const metadata: Metadata = {
-  title: "Privacy · DropGrid",
+  title: "Privacy",
 };
 
 const sections: { title: string; body: string }[] = [
@@ -24,7 +25,7 @@ const sections: { title: string; body: string }[] = [
   },
   {
     title: "Deletion",
-    body: "We keep your data until you delete your account. Delete it inside the game (Profile > Delete account), or on the account deletion page. Deletion is immediate and permanent.",
+    body: "We keep your data until you delete your account. Delete it inside the game (Profile > Delete account). Deletion is immediate and permanent.",
   },
   {
     title: "One limitation",
@@ -34,14 +35,10 @@ const sections: { title: string; body: string }[] = [
 
 export default function Privacy() {
   return (
-    <div className="mx-auto flex min-h-screen max-w-3xl flex-col px-5">
-      <header className="py-6">
-        <Wordmark />
-      </header>
-
-      <main className="flex flex-1 flex-col gap-8 pt-6 pb-20">
-        <h1 className="text-2xl font-semibold">Privacy</h1>
-        <div className="flex flex-col gap-6">
+    <PageShell current="/privacy">
+      <div className="wrap flex flex-1 flex-col gap-8 pt-6 pb-20">
+        <h1 className="font-display text-3xl lg:text-4xl">Privacy</h1>
+        <div className="measure flex flex-col gap-6">
           {sections.map((s) => (
             <section key={s.title} className="flex flex-col gap-1">
               <h2 className="text-sm font-semibold tracking-wide text-text-muted">
@@ -51,22 +48,16 @@ export default function Privacy() {
             </section>
           ))}
         </div>
-        <p className="text-sm text-text-faint">
+        <p className="measure text-sm text-text-faint">
           Questions about your data:{" "}
           <a
             className="underline underline-offset-4 hover:text-text"
-            href="mailto:shahadathhossensajib732@gmail.com"
+            href={`mailto:${contactEmail}`}
           >
-            shahadathhossensajib732@gmail.com
+            {contactEmail}
           </a>
         </p>
-      </main>
-
-      <footer className="border-t border-line py-6 text-sm text-text-faint">
-        <a className="hover:text-text" href="/">
-          Back to the game
-        </a>
-      </footer>
-    </div>
+      </div>
+    </PageShell>
   );
 }

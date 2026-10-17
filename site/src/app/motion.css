@@ -1,0 +1,441 @@
+/* Motion foundation. No JavaScript, no libraries.
+   Rules (site/AGENTS.md):
+   - Time-based motion is one-shot and 250ms or less. Hover transitions are
+     150ms or less and change only color, border, opacity, or transform.
+   - Scroll-linked motion is progress-driven by scroll position, never
+     autoplaying, never looping. It lives inside @supports (animation-timeline)
+     and @media (prefers-reduced-motion: no-preference); everywhere else the page
+     is complete and static, nothing starts hidden. */
+
+/* ---- Hover (all pointers that hover; 150ms; color, border, opacity, transform) ---- */
+
+.link-quiet {
+  color: var(--text-muted);
+  text-decoration: underline;
+  text-decoration-color: transparent;
+  text-underline-offset: 0.3em;
+  transition:
+    color 120ms linear,
+    text-decoration-color 120ms linear;
+}
+
+.link-quiet:hover,
+.link-quiet:focus-visible,
+.link-quiet[aria-current="page"] {
+  color: var(--text);
+  text-decoration-color: currentColor;
+}
+
+.btn-primary {
+  background: var(--accent);
+  color: var(--accent-ink);
+  border-radius: var(--radius-cell);
+  transition: opacity 120ms linear;
+}
+
+.btn-primary:hover,
+.btn-primary:focus-visible {
+  opacity: 0.86;
+}
+
+/* A plain row that lights up: background color only, plus an optional detail
+   that fades in. Without hover (touch) the detail is always visible. */
+.row-hover {
+  transition:
+    background-color 120ms linear,
+    color 120ms linear;
+}
+
+.row-hover:hover,
+.row-hover:focus-visible {
+  background-color: var(--surface);
+}
+
+.row-hover .row-detail {
+  opacity: 1;
+  transition: opacity 120ms linear;
+}
+
+@media (hover: hover) {
+  .row-hover .row-detail {
+    opacity: 0;
+  }
+
+  .row-hover:hover .row-detail,
+  .row-hover:focus-visible .row-detail {
+    opacity: 1;
+  }
+}
+
+.row-hover .row-name {
+  transition: transform 120ms linear;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .row-hover:hover .row-name,
+  .row-hover:focus-visible .row-name {
+    transform: translateX(0.25rem);
+  }
+
+  .phone-hover {
+    transition: transform 120ms linear;
+  }
+
+  .phone-hover:hover {
+    transform: translateY(-0.25rem);
+  }
+}
+
+/* ---- Scroll-linked reveal ---- */
+
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    @keyframes reveal-in {
+      from {
+        opacity: 0;
+        transform: translateY(1.25rem);
+      }
+      to {
+        opacity: 1;
+        transform: none;
+      }
+    }
+
+    /* .reveal: eases in once as it enters. .reveal-stagger: its children do,
+       each starting a little later in the same scroll distance. */
+    .reveal,
+    .reveal-stagger > * {
+      animation: reveal-in linear both;
+      animation-duration: auto;
+      animation-timeline: view();
+      animation-range: entry 0% entry 55%;
+    }
+
+    .reveal-stagger > :nth-child(2) {
+      animation-range: entry 6% entry 61%;
+    }
+    .reveal-stagger > :nth-child(3) {
+      animation-range: entry 12% entry 67%;
+    }
+    .reveal-stagger > :nth-child(4) {
+      animation-range: entry 18% entry 73%;
+    }
+    .reveal-stagger > :nth-child(5) {
+      animation-range: entry 24% entry 79%;
+    }
+    .reveal-stagger > :nth-child(n + 6) {
+      animation-range: entry 30% entry 85%;
+    }
+
+    /* ---- Hero: the page plays the game as you scroll ----
+       One move, driven by the root scroll position (vh of scroll):
+         0 - 36   the active piece falls one cell per step to its ghost (--fall cells,
+                  --levels = --fall + 1 steps, jump-none); the
+                  ghost goes out as the piece lands on it and its frame settles to
+                  the locked frame
+         38 - 43  the rows it completed fade out
+         43 - 51  the blocks above drop one cell per step, by the number of rows
+                  cleared (.settle-N, N+1 levels, jump-none)
+       The dumped state is the static page: piece at the top, nothing cleared. */
+    @keyframes piece-fall {
+      from {
+        transform: translateY(0);
+      }
+      to {
+        transform: translateY(calc(var(--p) * var(--fall)));
+      }
+    }
+
+    @keyframes piece-lock {
+      0%,
+      88% {
+        border-color: var(--text);
+      }
+      100% {
+        border-color: color-mix(in srgb, var(--c), black 32%);
+      }
+    }
+
+    @keyframes cells-vanish {
+      from {
+        opacity: 1;
+      }
+      to {
+        opacity: 0;
+      }
+    }
+
+    @keyframes cells-settle {
+      from {
+        transform: translateY(0);
+      }
+      to {
+        transform: translateY(calc(var(--p) * var(--n)));
+      }
+    }
+
+    .fall-on-scroll,
+    .fall-on-scroll .active-cell,
+    .ghost-gone,
+    .vanish,
+    .settle {
+      animation-duration: auto;
+      animation-fill-mode: both;
+      animation-timeline: scroll(root block);
+      animation-timing-function: linear;
+    }
+
+    .fall-on-scroll {
+      animation-name: piece-fall;
+      animation-timing-function: steps(var(--levels), jump-none);
+      animation-range: 0vh 36vh;
+    }
+
+    .fall-on-scroll .active-cell {
+      animation-name: piece-lock;
+      animation-range: 0vh 36vh;
+    }
+
+    .ghost-gone {
+      animation-name: cells-vanish;
+      animation-range: 35vh 36vh;
+    }
+
+    .vanish {
+      animation-name: cells-vanish;
+      animation-range: 38vh 43vh;
+    }
+
+    .settle {
+      animation-name: cells-settle;
+      animation-range: 43vh 51vh;
+    }
+
+    .fall-on-scroll .active-cell.vanish {
+      animation-name: piece-lock, cells-vanish;
+      animation-range:
+        0vh 36vh,
+        38vh 43vh;
+    }
+
+    .fall-on-scroll .active-cell.settle {
+      animation-name: piece-lock, cells-settle;
+      animation-range:
+        0vh 36vh,
+        43vh 51vh;
+    }
+
+    .fall-on-scroll .active-cell.settle-1 {
+      animation-timing-function: linear, steps(2, jump-none);
+    }
+    .fall-on-scroll .active-cell.settle-2 {
+      animation-timing-function: linear, steps(3, jump-none);
+    }
+    .fall-on-scroll .active-cell.settle-3 {
+      animation-timing-function: linear, steps(4, jump-none);
+    }
+    .fall-on-scroll .active-cell.settle-4 {
+      animation-timing-function: linear, steps(5, jump-none);
+    }
+
+    .settle-1 {
+      --n: 1;
+      animation-timing-function: steps(2, jump-none);
+    }
+    .settle-2 {
+      --n: 2;
+      animation-timing-function: steps(3, jump-none);
+    }
+    .settle-3 {
+      --n: 3;
+      animation-timing-function: steps(4, jump-none);
+    }
+    .settle-4 {
+      --n: 4;
+      animation-timing-function: steps(5, jump-none);
+    }
+
+    /* ---- Screen tour: the pinned phone changes screen with the step in view ----
+       Each step declares a named view timeline; its screen and its text follow
+       that step's own progress (opacity only). A step is 50vh tall, so the
+       timeline spans 150vh and the next step sits 33.3% of it further on. A step
+       is full for 44-56%, then fades out over 56-77.3% while the next one fades
+       in over its 22.7-44%: at the halfway point each is at one half. */
+    @keyframes tour-screen {
+      0%,
+      22.7% {
+        opacity: 0;
+      }
+      44%,
+      56% {
+        opacity: 1;
+      }
+      77.3%,
+      100% {
+        opacity: 0;
+      }
+    }
+
+    @keyframes tour-screen-first {
+      0%,
+      56% {
+        opacity: 1;
+      }
+      77.3%,
+      100% {
+        opacity: 0;
+      }
+    }
+
+    @keyframes tour-screen-last {
+      0%,
+      22.7% {
+        opacity: 0;
+      }
+      44%,
+      100% {
+        opacity: 1;
+      }
+    }
+
+    /* The text of a step: quiet away from its turn, full ink during it. */
+    @keyframes tour-text {
+      0%,
+      22.7% {
+        opacity: 0.3;
+      }
+      44%,
+      56% {
+        opacity: 1;
+      }
+      77.3%,
+      100% {
+        opacity: 0.3;
+      }
+    }
+
+    @keyframes tour-text-last {
+      0%,
+      22.7% {
+        opacity: 0.3;
+      }
+      44%,
+      100% {
+        opacity: 1;
+      }
+    }
+
+    .tour {
+      timeline-scope: --tour-1, --tour-2, --tour-3, --tour-4, --tour-5, --tour-6;
+    }
+
+    .tour-step[data-step="1"] {
+      view-timeline: --tour-1 block;
+    }
+    .tour-step[data-step="2"] {
+      view-timeline: --tour-2 block;
+    }
+    .tour-step[data-step="3"] {
+      view-timeline: --tour-3 block;
+    }
+    .tour-step[data-step="4"] {
+      view-timeline: --tour-4 block;
+    }
+    .tour-step[data-step="5"] {
+      view-timeline: --tour-5 block;
+    }
+    .tour-step[data-step="6"] {
+      view-timeline: --tour-6 block;
+    }
+
+    .tour-screen {
+      animation: tour-screen linear both;
+      animation-duration: auto;
+      animation-range: cover;
+    }
+    .tour-screen[data-step="1"] {
+      animation-name: tour-screen-first;
+      animation-timeline: --tour-1;
+    }
+    .tour-screen[data-step="2"] {
+      animation-timeline: --tour-2;
+    }
+    .tour-screen[data-step="3"] {
+      animation-timeline: --tour-3;
+    }
+    .tour-screen[data-step="4"] {
+      animation-timeline: --tour-4;
+    }
+    .tour-screen[data-step="5"] {
+      animation-timeline: --tour-5;
+    }
+    .tour-screen[data-step="6"] {
+      animation-name: tour-screen-last;
+      animation-timeline: --tour-6;
+    }
+
+    /* Only beside the pinned phone, where a step is 50vh tall. */
+    @media (min-width: 64rem) {
+      .tour-text {
+        animation: tour-text linear both;
+        animation-duration: auto;
+        animation-range: cover;
+      }
+      .tour-text[data-step="1"] {
+        animation-timeline: --tour-1;
+      }
+      .tour-text[data-step="2"] {
+        animation-timeline: --tour-2;
+      }
+      .tour-text[data-step="3"] {
+        animation-timeline: --tour-3;
+      }
+      .tour-text[data-step="4"] {
+        animation-timeline: --tour-4;
+      }
+      .tour-text[data-step="5"] {
+        animation-timeline: --tour-5;
+      }
+      .tour-text[data-step="6"] {
+        animation-name: tour-text-last;
+        animation-timeline: --tour-6;
+      }
+    }
+  }
+}
+
+/* ---- Tour layout: pinned phone only where it can be driven by scroll ----
+   Everywhere else (small screens, no timeline support, reduced motion) each step
+   shows its own phone inline. The pinned variant is aria-hidden in the markup and
+   not displayed unless all of the conditions hold. */
+
+.tour-pinned {
+  display: none;
+}
+
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) and (min-width: 64rem) {
+    .tour-pinned {
+      display: block;
+    }
+
+    .tour-inline {
+      display: none;
+    }
+
+    .tour-grid {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      column-gap: 6rem;
+    }
+
+    .tour-step {
+      min-height: 50vh;
+      flex-direction: column;
+      align-items: flex-start;
+      justify-content: center;
+      padding-block: 0;
+      border-top-width: 0;
+    }
+  }
+}

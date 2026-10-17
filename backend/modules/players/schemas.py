@@ -16,6 +16,9 @@ class PlayerOut(BaseModel):
     best_score: int
     total_lines: int
     games_played: int
+    # Per-category bests (sprint/ultra/daily). Populated by /sync only; other
+    # endpoints return it empty.
+    category_bests: dict[str, dict] = {}
 
 
 class PlayerUpdateIn(BaseModel):
