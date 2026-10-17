@@ -15,7 +15,7 @@ services:
     # would double the limits and split their counters. Do not scale out without moving the
     # limiter to a shared store.
     plan: free
-    region: frankfurt # pick one near your players, and put the Neon database in the same area
+    region: singapore # pick one near your players, and put the Neon database in the same area
     healthCheckPath: /health
     # Only redeploy when the backend changes, not on game or docs commits.
     buildFilter:
