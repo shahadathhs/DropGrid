@@ -2,6 +2,8 @@
 
 A polished, lightweight 2D falling-block puzzle game built with **Godot 4.x** and **GDScript**. Portrait, offline-first, no ads or purchases. Optional accounts and a leaderboard run on a small FastAPI backend.
 
+**Download the newest test build:** [latest APK](https://github.com/shahadathhs/DropGrid/releases/latest) · [CI/CD status](https://github.com/shahadathhs/DropGrid/actions/workflows/ci.yml)
+
 ## Repository layout
 
 ```text
